@@ -1,28 +1,31 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Driver for testing functionality of the simulator, will eventually migrate to a menu driven system
+ *
+ * @author Robert P Smith
+ * @version 0.1
+ * @since 20 June 2024
+ */
 public class Main {
 
+    /**
+     * Simple driver for testing
+     *
+     * @param args none required or provisioned for
+     */
     public static void main(String[] args) {
 
-        //testing the 50/50 case
-//        ComplexNumber a = new ComplexNumber(1/(Math.sqrt(2))); // Example: sqrt(1/2) + 0i
-//        ComplexNumber b = new ComplexNumber(1/(Math.sqrt(2))); // Example: 0 + sqrt(1/2)i
+        //testing case, input your arguments as the numbers in the ComplexNumber instantiates
+        ComplexNumber[] nums = {
+                new ComplexNumber(0.0),
+                new ComplexNumber(1 / (Math.sqrt(2))),
+                new ComplexNumber(1 / (Math.sqrt(2))),
+                new ComplexNumber(0.0)
+        };
 
-        //testing the zero case
-//        ComplexNumber a = new ComplexNumber(1.0);
-//        ComplexNumber b = new ComplexNumber(0.0);
-
-        //testing the one case
-        ComplexNumber a = new ComplexNumber(1.0);
-        ComplexNumber b = new ComplexNumber(0.0);
-//        ComplexNumber c = new ComplexNumber(0.0);
-//        ComplexNumber d = new ComplexNumber(0.0);
-        List<ComplexNumber> listOfValues = new ArrayList<ComplexNumber>();
-        listOfValues.add(a);
-        listOfValues.add(b);
-//        listOfValues.add(c);
-//        listOfValues.add(d);
+        List<ComplexNumber> listOfValues = new ArrayList<>(List.of(nums));
         ComplexNumber[][] result = new ComplexNumber[0][];
 
         try {
@@ -37,7 +40,7 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
-        if(result.length > 0) {
+        if (result.length > 0) {
             Qubit.measureMat(result);
         }
     }
