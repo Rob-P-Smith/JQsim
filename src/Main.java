@@ -17,37 +17,20 @@ public class Main {
      * @param args none required or provisioned for
      */
     public static void main(String[] args) {
-
+        //the number of times to run the sim
+        int shots = 4096;
         //testing case, input your arguments as the numbers in the ComplexNumber instantiates
         ComplexNumber[] nums = {
                 new ComplexNumber(1 / (Math.sqrt(2))),
                 new ComplexNumber(1 / (Math.sqrt(2)))
         };
-
-        List<ComplexNumber> listOfValues = new ArrayList<>(List.of(nums));
-        ComplexNumber[][] result = new ComplexNumber[0][];
-
-        try {
-            result = Qubit.qubit(listOfValues);
-            System.out.println("\nQubit created successfully:");
-            for (int i = 0; i < result.length; i++) {
-                for (int j = 0; j < result[i].length; j++) {
-                    ComplexNumber num = result[i][j];
-                    System.out.println("[" + num.real + "]");
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+        ComplexNumber[][] matrix = buildMatrix(nums);
+        if (matrix.length > 0) {
+            runShots(nums, matrix, shots);
         }
-        if (result.length > 0) {
-            Qubit.measureMat(result);
-        }
-
-        runShots(nums, result);
     }
 
-    public static HashMap<String, Integer> runShots(ComplexNumber[] nums, ComplexNumber[][] matrix){
-        int shots = 1024;
+    public static HashMap<String, Integer> runShots(ComplexNumber[] nums, ComplexNumber[][] matrix, int shots){
         System.out.println("Running "+shots+" simulations...");        //Built the Hashmap that will collect the results
         HashMap<String, Integer> result = new HashMap<>();
         //Built the list of possible outputs
@@ -65,6 +48,24 @@ public class Main {
         System.out.println("\nResulting Outcomes: ");
         for(String key : result.keySet()){
             System.out.println(key + ": "+result.get(key));
+        }
+        return result;
+    }
+
+    public static ComplexNumber[][] buildMatrix(ComplexNumber[] nums){
+        List<ComplexNumber> listOfValues = new ArrayList<>(List.of(nums));
+        ComplexNumber[][] result = new ComplexNumber[0][];
+        try {
+            result = Qubit.qubit(listOfValues);
+            System.out.println("\nQubit created successfully:");
+            for (int i = 0; i < result.length; i++) {
+                for (int j = 0; j < result[i].length; j++) {
+                    ComplexNumber num = result[i][j];
+                    System.out.println("[" + num.real + "]");
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
         }
         return result;
     }
