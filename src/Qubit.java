@@ -41,33 +41,23 @@ public class Qubit {
         }
     }
 
-    static void measureMat(ComplexNumber[][] matrix) {
+    static String measureMat(ComplexNumber[][] matrix) {
 
         int len = matrix.length;
         int blen = (int) Math.ceil(Math.log(len));
         List<List<Integer>> obs = new ArrayList<>(bitsOfLen(len));
         double[] ampls = new double[len];
 
-        System.out.println("Blen is: " + blen);
-        System.out.println("Matrix size is: " + matrix.length);
-
         for (int i = 0; i < len; i++) {
             double num = Double.valueOf(String.valueOf(matrix[i][0]));
             ampls[i] = num * num * 100;
-        }
-
-        for (double value : ampls) {
-            System.out.println("Value from scaling: " + value);
-        }
-        for (List<Integer> entry : obs) {
-            System.out.println(entry);
         }
 
         Random rand = new Random();
         int roll = rand.nextInt(99);
 
         List<Integer> result = rangeMap(0, ampls, obs, roll, 0, len);
-        System.out.println("Result: " + result);
+        return result.toString();
     }
 
     /**
@@ -81,14 +71,15 @@ public class Qubit {
      * @param length the length of the matrix of qubit(s)
      * @return a list of the current binary value located
      */
-    private static List<Integer> rangeMap(double start, double[] ampls, List<List<Integer>> obs, int roll, int index, int length) {
-        System.out.println("\n////////////////");
-        System.out.println("LowerBound: " + start + ", UpperBound: " + (start + ampls[index]));
-        System.out.println("Index: " + index +
-                "\nBlen: " + ampls.length +
-                "\nroll: " + roll +
-                "\nampls: " + Arrays.toString(ampls)
-        );
+    public static List<Integer> rangeMap(double start, double[] ampls, List<List<Integer>> obs, int roll, int index, int length) {
+            //enable the below to observe the recursive checks through the qubit(s)
+//                System.out.println("\n////////////////");
+//                System.out.println("LowerBound: " + start + ", UpperBound: " + (start + ampls[index]));
+//                System.out.println("Index: " + index +
+//                        "\nBlen: " + ampls.length +
+//                        "\nroll: " + roll +
+//                        "\nampls: " + Arrays.toString(ampls)
+//                );
 
         if (index == ampls.length) {
             throw new IllegalStateException("No observation from circuit - invalid state");
@@ -102,7 +93,7 @@ public class Qubit {
     }
 
     //Generates a List of List<Integer> that contains all the possible binary values for the qubits
-    private static List<List<Integer>> bitsOfLen(int n) {
+    public static List<List<Integer>> bitsOfLen(int n) {
         // Check for invalid length
         if (n < 1) {
             throw new IllegalArgumentException("Invalid bits length, must be >= 1");
