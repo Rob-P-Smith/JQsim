@@ -7,7 +7,7 @@
 public class ComplexNumber {
 
     // Define a ComplexNumber class to represent complex numbers and compute magnitude
-    double real = 0;
+    double real;
 
     /**
      * Constructor for the complex Number class
@@ -23,14 +23,6 @@ public class ComplexNumber {
      */
     public double magnitude() {
         return Math.sqrt(real * real);
-    }
-
-    /**
-     * Gets the real number from the complex number
-     * @return the number as a double
-     */
-    public double getReal() {
-        return real;
     }
 
     /**
