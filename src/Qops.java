@@ -12,32 +12,28 @@ import java.util.Random;
 public class Qops {
 
     // Define a function to check approximate equality to within 0.00001 and fix float calc errors
-    private static boolean eEqual(double x, double y) {
+    public static boolean eEqual(double x, double y) {
         return Math.abs(x - y) < 0.00001;
     }
 
-    // Define a function to create a state vector dynamically sized based on the input size
-    private static Double[][] colMatrix(List<Double> listOfNumbers) {
-        Double[][] matrix = new Double[listOfNumbers.size()][1];
-        for (int i = 0; i < listOfNumbers.size(); i++) {
-            matrix[i][0] = listOfNumbers.get(i);
+    static String measureMat(Qubit a) {
+
+        int len = matrix.length;
+        List<List<Integer>> obs = new ArrayList<>(bitsOfLen(len));
+        double[] amplitudes = new double[len];
+
+        for (int i = 0; i < len; i++) {
+            double num = Double.valueOf(String.valueOf(matrix[i][0]));
+            amplitudes[i] = num * num * 100;
         }
-        return matrix;
+
+        Random rand = new Random();
+        int roll = rand.nextInt(99);
+
+        List<Integer> result = rangeMap(0, amplitudes, obs, roll, 0);
+        return result.toString();
     }
 
-    // The qubit function to populate the qubit values after verifying they follow the qubit sum of squares = 1 rule
-    static Double[][] qubit(List<Double> listOfNumbers) {
-        double sumMagnitudesSquared = 0.0;
-        for (double nums : listOfNumbers) {
-            double num = Math.sqrt(nums*nums);
-            sumMagnitudesSquared += num * num;
-        }
-        if (eEqual(sumMagnitudesSquared, 1.0)) {
-            return colMatrix(listOfNumbers);
-        } else {
-            throw new IllegalArgumentException("Cannot create qubit, bad probabilities");
-        }
-    }
 
     static String measureMat(Double[][] matrix) {
 

@@ -6,10 +6,10 @@
  * @since 20 June 2024
  */
 public class Gates {
+    private static final double H_FACTOR = 1 / Math.sqrt(2);
     private static final Matrix PAULI_X = new Matrix(new double[][]{{0, 1}, {1, 0}});
     private static final Matrix PAULI_Z = new Matrix(new double[][]{{1, 0}, {0, -1}});
     private static final Matrix PAULI_Y = new Matrix(new double[][]{{0, -1}, {1, 0}});
-    private static final double H_FACTOR = 1 / Math.sqrt(2);
     private static final Matrix HADAMARD = new Matrix(new double[][]{{H_FACTOR, H_FACTOR}, {H_FACTOR, -H_FACTOR}});
 
     public static Qubit applyPauliX(Qubit q) {
