@@ -1,3 +1,5 @@
+package qubits;
+
 /**
  * Represents the quantum gates to be called in adjusting the state when setting up the simulation
  *
@@ -7,7 +9,7 @@
  */
 public class Gates {
     private static final double H_FACTOR = 1 / Math.sqrt(2);
-    private static final Matrix PAULI_X = new Matrix(new double[][]{{0, 1}, {1, 0}});
+    static final Matrix PAULI_X = new Matrix(new double[][]{{0, 1}, {1, 0}});
     private static final Matrix PAULI_Z = new Matrix(new double[][]{{1, 0}, {0, -1}});
     private static final Matrix PAULI_Y = new Matrix(new double[][]{{0, -1}, {1, 0}});
     private static final Matrix HADAMARD = new Matrix(new double[][]{{H_FACTOR, H_FACTOR}, {H_FACTOR, -H_FACTOR}});
@@ -30,6 +32,6 @@ public class Gates {
 
     private static Qubit applyGate(Matrix gate, Qubit q) {
         Matrix result = gate.multiply(q.getState());
-        return new Qubit(result.getMatrix()[0][0], result.getMatrix()[1][0]);
+        return new Qubit(result.get(0, 0), result.get(1, 0));
     }
 }

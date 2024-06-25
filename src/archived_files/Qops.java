@@ -1,9 +1,11 @@
+package archived_files;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /**
- * Qubit class that contains all the qubit related methods
+ * original_files.Qubit class that contains all the qubit related methods
  *
  * @author Robert P Smith
  * @version 0.1
@@ -12,27 +14,27 @@ import java.util.Random;
 public class Qops {
 
     // Define a function to check approximate equality to within 0.00001 and fix float calc errors
-    public static boolean eEqual(double x, double y) {
-        return Math.abs(x - y) < 0.00001;
-    }
-
-    static String measureMat(Qubit a) {
-
-        int len = matrix.length;
-        List<List<Integer>> obs = new ArrayList<>(bitsOfLen(len));
-        double[] amplitudes = new double[len];
-
-        for (int i = 0; i < len; i++) {
-            double num = Double.valueOf(String.valueOf(matrix[i][0]));
-            amplitudes[i] = num * num * 100;
-        }
-
-        Random rand = new Random();
-        int roll = rand.nextInt(99);
-
-        List<Integer> result = rangeMap(0, amplitudes, obs, roll, 0);
-        return result.toString();
-    }
+//    public static boolean eEqual(double x, double y) {
+//        return Math.abs(x - y) < 0.00001;
+//    }
+//
+//    static String measureMat(original_files.Qubit a) {
+//
+////        int len = matrix.length;
+////        List<List<Integer>> obs = new ArrayList<>(bitsOfLen(len));
+////        double[] amplitudes = new double[len];
+////
+////        for (int i = 0; i < len; i++) {
+////            double num = Double.valueOf(String.valueOf(matrix[i][0]));
+////            amplitudes[i] = num * num * 100;
+////        }
+//
+//        Random rand = new Random();
+//        int roll = rand.nextInt(99);
+//
+////        List<Integer> result = rangeMap(0, amplitudes, obs, roll, 0);
+////        return result.toString();
+//    }
 
 
     static String measureMat(Double[][] matrix) {
