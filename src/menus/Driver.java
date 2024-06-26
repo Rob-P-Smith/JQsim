@@ -57,7 +57,7 @@ public class Driver {
                 }
                 //Runs the simulation and returns the expectation values
                 case 4 -> {
-                    System.out.println("Selected: "+selection);
+                    System.out.println("Selected: " + selection);
                     selection = -1;
                 }
                 //Save system state to file
@@ -92,7 +92,7 @@ public class Driver {
         }
         int count = 0;
         for (ComplexQubit qubit : workingQubits) {
-            System.out.println("Qubit #" + count + ":\n" + qubit);
+            System.out.println("Qubit #" + qubit.getQubitID() + ":\n" + qubit+"\n");
         }
     }
 
@@ -103,18 +103,18 @@ public class Driver {
             return null;
         } else {
             selection = -1;
-             do{
+            do {
                 System.out.println("Which qubit (number) do you want to apply a gate to?");
                 for (int i = 0; i < workingQubits.length; i++) {
                     System.out.println("Qubit #" + i);
                 }
                 selection = Console.getInt();
                 //check the qubit selected is in the array of cubits
-                if (selection < 0 || selection > workingQubits.length-1) {
+                if (selection < 0 || selection > workingQubits.length - 1) {
                     System.out.println("Please select a valid qubit to modify");
                     selection = -1;
                 }
-            }while (selection < 0 || selection > workingQubits.length-1);
+            } while (selection < 0 || selection > workingQubits.length - 1);
         }
 
         int gateToApply = -1;
@@ -137,27 +137,48 @@ public class Driver {
                     return workingQubits;
                 }
                 case 1 -> {
-                    System.out.println("Selected: " +gateToApply);
+                    System.out.println("Selected: " + gateToApply);
                     workingQubits[selection] = ComplexGates.applyPauliX(workingQubits[selection]);
                 }
                 case 2 -> {
-                    System.out.println("Selected: " +gateToApply);
+                    System.out.println("Selected: " + gateToApply);
                     workingQubits[selection] = ComplexGates.applyPauliY(workingQubits[selection]);
                 }
                 case 3 -> {
-                    System.out.println("Selected: " +gateToApply);
+                    System.out.println("Selected: " + gateToApply);
                     workingQubits[selection] = ComplexGates.applyPauliZ(workingQubits[selection]);
                 }
                 case 4 -> {
-                    System.out.println("Selected: " +gateToApply);
+                    System.out.println("Selected: " + gateToApply);
                     workingQubits[selection] = ComplexGates.applyHadamard(workingQubits[selection]);
                 }
                 case 5 -> {
-                    System.out.println("Selected: " +gateToApply);
-                    System.out.println("Cannot Apply CNOT yet...");
+                    System.out.println("Selected: " + gateToApply);
+                    workingQubits = applyCNOT(workingQubits, selection);
                 }
             }
         }
+        return workingQubits;
+    }
+
+    private static ComplexQubit[] applyCNOT(ComplexQubit[] workingQubits, int control) {
+        int target = -1;
+        System.out.println("Qubit "+control+" selected as control.");
+        do {
+            System.out.println("Which qubit (number) is the target qubit?");
+            for (int i = 0; i < workingQubits.length; i++) {
+                if (i != control) {
+                    System.out.println("Qubit #" + i);
+                }
+            }
+            target = Console.getInt();
+            //check the qubit selected is in the array of cubits
+            if (target < 0 || target > workingQubits.length - 1 || control == target) {
+                System.out.println("Please select a valid target qubit");
+                control = -1;
+            }
+        } while ((target < 0 || target > workingQubits.length - 1) && control != target);
+        workingQubits[control].setEntangledQubit(workingQubits[target]);
         return workingQubits;
     }
 
@@ -177,7 +198,4 @@ public class Driver {
         return workingQubits;
     }
 
-    public static void selectQubitMenu(int workingQubitsLength) {
-
-    }
 }
