@@ -71,11 +71,11 @@ public class ComplexGates {
     /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.
      *
-     * @param q The input {@link ComplexQubit}.
+     * @param target The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-X gate.
      */
-    public static ComplexQubit applyPauliX(ComplexQubit q) {
-        return applyGate(PAULI_X, q);
+    public static ComplexQubit applyPauliX(ComplexQubit target) {
+        return applyGate(PAULI_X, target);
     }
 
     /**
@@ -112,12 +112,13 @@ public class ComplexGates {
      * Applies a given gate represented by a {@link ComplexMatrix} to a {@link ComplexQubit}.
      *
      * @param gate The gate matrix to apply.
-     * @param q    The input {@link ComplexQubit}.
+     * @param target    The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the gate.
      */
-    private static ComplexQubit applyGate(ComplexMatrix gate, ComplexQubit q) {
-        ComplexMatrix result = gate.multiply(q.getState());
-        return new ComplexQubit(result.get(0, 0), result.get(1, 0));
+    private static ComplexQubit applyGate(ComplexMatrix gate, ComplexQubit target) {
+        ComplexMatrix result = gate.multiply(target.getState());
+        target.setState(result);
+        return target;
     }
 
     /**

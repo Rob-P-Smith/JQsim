@@ -69,6 +69,10 @@ public class ComplexQubit {
         return entangledQubits;
     }
 
+    public void setState(ComplexMatrix newState) {
+        this.state = newState;
+    }
+
     /**
      * Getter for the current state
      *
@@ -119,4 +123,5 @@ public class ComplexQubit {
         }
         return sBuild.toString();
     }
+
 }
