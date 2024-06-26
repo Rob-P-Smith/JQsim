@@ -1,4 +1,4 @@
-package qubits;
+package archived_files;
 
 /**
  * Represents the quantum gates to be called in adjusting the state when setting up the simulation

@@ -1,4 +1,4 @@
-package qubits;
+package archived_files;
 
 import java.util.Arrays;
 
