@@ -5,5 +5,7 @@
 - Clifford Gates are the x/y/z/hadamard/cnot gates
 
 - How to decompose complex gates into basic gates
+    idea: decomposing custom gates back to a base state of 10 can be done using a dependency graph, aka a topological sort
+    of the possible states.
 - Simple demos between gate relationships
 - Intra-relationship between basic gates is of value to display

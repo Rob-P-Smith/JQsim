@@ -22,9 +22,9 @@ public class Driver {
                     \n1. Initialize Qubits
                     2. Apply Gates
                     3. Display Qubit States
-                    4. Run Simulation
-                    5. Save State To File
-                    6. Load State From File
+                    4. Run Simulation (pending implementation)
+                    5. Save State To File (pending implementation)
+                    6. Load State From File (pending implementation)
                     0. Exit
                     """);
             selection = Console.getInt();
@@ -92,7 +92,7 @@ public class Driver {
         }
         int count = 0;
         for (ComplexQubit qubit : workingQubits) {
-            System.out.println("Qubit #" + count + ": " + qubit);
+            System.out.println("Qubit #" + count + ":\n" + qubit);
         }
     }
 
