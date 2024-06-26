@@ -10,10 +10,9 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 
 ~~Implementing Clifford gates~~
 
-## Phase 2:
+## Phase 2: ***Currently Working***
 Implementing entanglement functionality via CNOT
 
-***Currently Working***
 
 ## Phase 3: 
 Implement a circuit builder to queue gates to apply to each qubit
