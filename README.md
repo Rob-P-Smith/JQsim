@@ -7,6 +7,7 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 
 ## Phase 1:
 ~~Currently working on initial implementation to ensure flexibility for any practical number of qubits.~~
+
 ~~Implementing Clifford gates~~
 
 ## Phase 2:
