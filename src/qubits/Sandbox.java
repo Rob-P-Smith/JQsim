@@ -1,6 +1,7 @@
 package qubits;
 
 import fileIO.Reader;
+import fileIO.Writer;
 
 public class Sandbox {
     public static void main(String[] args) {
@@ -26,6 +27,7 @@ public class Sandbox {
 //        System.out.println("Pauli Z applied: \n"+cQubit);
 
         ComplexQubit[] workingQubits = Reader.loadQubits("./savedStates/save.txt");
+        Writer.saveFile("save2.txt", workingQubits);
     }
 
 }
