@@ -40,6 +40,7 @@ public class ComplexQubit {
             this.state = new ComplexMatrix(new ComplexNumber[][]{{aVec}, {bVec}});
             this.qubitID = numQubits;
             numQubits++;
+            this.entangledQubits = new HashMap<>();
         } else {
             throw new IllegalArgumentException("Violates Born's Rule for provided values");
         }
