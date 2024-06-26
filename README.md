@@ -10,7 +10,7 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 
 ~~Implementing Clifford gates~~
 
-## Phase 2: <span style="color:red">***Currently Working***</span>
+## Phase 2: ***Currently Working***
 Implementing entanglement functionality via CNOT
 
 

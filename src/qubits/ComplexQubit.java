@@ -47,6 +47,24 @@ public class ComplexQubit {
     }
 
     /**
+     * Parameterized constructor for the qubit class when loading from a file, but not used elsewhere
+     *
+     * @param aVec the |0> vector
+     * @param bVec the |1> vector
+     * @param qubitID the ID for this qubit specified when loading a file from the saved qubit record
+     */
+    public ComplexQubit(ComplexNumber aVec, ComplexNumber bVec, int qubitID) {
+        if (Math.abs(aVec.magnitudeSquared() + bVec.magnitudeSquared() - 1.0) < ERROR_MARGIN) {
+            this.state = new ComplexMatrix(new ComplexNumber[][]{{aVec}, {bVec}});
+            this.qubitID = qubitID;
+            numQubits = this.qubitID+1;
+            this.entangledQubits = new HashMap<>();
+        } else {
+            throw new IllegalArgumentException("Violates Born's Rule for provided values");
+        }
+    }
+
+    /**
      * Add the provided parameter qubit to this qubit's entangledQubits HashMap and then add this qubit to the parameter
      * qubit's entangledQubits HashMap, so they remain synchronized as entangled with each other.
      *
@@ -92,6 +110,14 @@ public class ComplexQubit {
     }
 
     /**
+     * Setter for qubitID
+     *
+     */
+    public void setQubitID(int qubitID) {
+        this.qubitID = qubitID;
+    }
+
+    /**
      * Custom to string to display the current qubit and its entanglement map
      *
      * @return string
@@ -99,6 +125,7 @@ public class ComplexQubit {
     @Override
     public String toString() {
         StringBuilder sBuild = new StringBuilder();
+        sBuild.append("Qubit #"+this.qubitID+"\n");
         sBuild.append('α').append("\n");
         sBuild.append('[').append(state.get(0, 0)).append("]\n");
         sBuild.append('β').append("\n");
