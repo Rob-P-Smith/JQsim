@@ -3,16 +3,60 @@ package menus;
 import qubits.ComplexGates;
 import qubits.ComplexQubit;
 
+/**
+ * The main class that drives the JQsim quantum computing simulation.
+ *
+ * <p>
+ * This class provides a text-based menu system for interacting with quantum qubits
+ * and applying quantum gates. It allows users to initialize qubits, apply gates
+ * (such as Pauli-X, Pauli-Y, Pauli-Z, Hadamard, and CNOT), display qubit states,
+ * save and load system states to/from files (pending implementation), and exit the
+ * simulation.
+ * </p>
+ *
+ * <p>
+ * The menu system uses {@link Console} for user input and {@link ComplexGates} for
+ * applying quantum gates to {@link ComplexQubit} objects.
+ * </p>
+ *
+ * <p>
+ * Example usage:
+ * <pre>{@code
+ * public static void main(String[] args) {
+ *     welcomeMessage();
+ *     topMenu();
+ * }
+ * }</pre>
+ * </p>
+ *
+ * @author Robert Smith
+ * @version 0.1
+ * @since 25 June 2024
+ */
 public class Driver {
+
+    /**
+     * Main method that starts the simulation by displaying a welcome message
+     * and launching the top-level menu.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         welcomeMessage();
         topMenu();
     }
 
+    /**
+     * Displays a welcome message when the simulation starts.
+     */
     public static void welcomeMessage() {
         System.out.println("Welcome to JQsim");
     }
 
+    /**
+     * Displays the top-level menu for interacting with quantum qubits and gates.
+     * Keeps looping until the user chooses to exit (selection 0).
+     */
     public static void topMenu() {
         ComplexQubit[] workingQubits = new ComplexQubit[0];
         int selection = -1;
@@ -31,42 +75,35 @@ public class Driver {
             System.out.println("\033[H\033[2J");
 
             if (selection > 6) {
-                System.out.println("Selection ouf of range, select a valid option.");
+                System.out.println("Selection out of range, select a valid option.");
                 selection = -1;
             }
             switch (selection) {
-                //Exit JQsim selection
                 case 0 -> {
                     System.out.println("Goodbye");
                     System.exit(0);
                 }
-                //Initialize Qubits
                 case 1 -> {
                     workingQubits = initializeQubits(workingQubits);
                     selection = -1;
                 }
-                //Apply gates to qubits
                 case 2 -> {
                     workingQubits = applyQubitGates(workingQubits, selection);
                     selection = -1;
                 }
-                //Display current state of all qubits
                 case 3 -> {
                     displayQubitStates(workingQubits);
                     selection = -1;
                 }
-                //Runs the simulation and returns the expectation values
                 case 4 -> {
                     System.out.println("Selected: " + selection);
                     selection = -1;
                 }
-                //Save system state to file
                 case 5 -> {
                     System.out.println("Selected: " + selection);
                     saveSystemStateToFile(workingQubits);
                     selection = -1;
                 }
-                //Load system state from file
                 case 6 -> {
                     System.out.println("Selected: " + selection);
                     loadSystemSateFromFile(workingQubits);
@@ -76,26 +113,47 @@ public class Driver {
         }
     }
 
+    /**
+     * Loads the system state from a file (pending implementation).
+     *
+     * @param workingQubits The array of working qubits.
+     */
     private static void loadSystemSateFromFile(ComplexQubit[] workingQubits) {
         System.out.println("Loading state from file");
     }
 
+    /**
+     * Saves the system state to a file (pending implementation).
+     *
+     * @param workingQubits The array of working qubits.
+     */
     private static void saveSystemStateToFile(ComplexQubit[] workingQubits) {
         System.out.println("Saving state to file.");
     }
 
+    /**
+     * Displays the current states of all qubits in the system.
+     *
+     * @param workingQubits The array of working qubits.
+     */
     private static void displayQubitStates(ComplexQubit[] workingQubits) {
         System.out.println("Current Qubit state: ");
         if (workingQubits.length == 0) {
             System.out.println("Initialize Qubits before displaying them.");
             return;
         }
-        int count = 0;
         for (ComplexQubit qubit : workingQubits) {
-            System.out.println("Qubit #" + qubit.getQubitID() + ":\n" + qubit+"\n");
+            System.out.println("Qubit #" + qubit.getQubitID() + ":\n" + qubit + "\n");
         }
     }
 
+    /**
+     * Applies quantum gates to selected qubits based on user input.
+     *
+     * @param workingQubits The array of working qubits.
+     * @param selection     The user's gate selection.
+     * @return The updated array of working qubits after applying gates.
+     */
     private static ComplexQubit[] applyQubitGates(ComplexQubit[] workingQubits, int selection) {
         System.out.println("Selected: " + selection);
         if (workingQubits.length == 0) {
@@ -109,7 +167,6 @@ public class Driver {
                     System.out.println("Qubit #" + i);
                 }
                 selection = Console.getInt();
-                //check the qubit selected is in the array of cubits
                 if (selection < 0 || selection > workingQubits.length - 1) {
                     System.out.println("Please select a valid qubit to modify");
                     selection = -1;
@@ -161,9 +218,16 @@ public class Driver {
         return workingQubits;
     }
 
+    /**
+     * Applies a Controlled-NOT (CNOT) gate to selected qubits.
+     *
+     * @param workingQubits The array of working qubits.
+     * @param control       The index of the control qubit.
+     * @return The updated array of working qubits after applying the CNOT gate.
+     */
     private static ComplexQubit[] applyCNOT(ComplexQubit[] workingQubits, int control) {
         int target = -1;
-        System.out.println("Qubit "+control+" selected as control.");
+        System.out.println("Qubit " + control + " selected as control.");
         do {
             System.out.println("Which qubit (number) is the target qubit?");
             for (int i = 0; i < workingQubits.length; i++) {
@@ -172,7 +236,6 @@ public class Driver {
                 }
             }
             target = Console.getInt();
-            //check the qubit selected is in the array of cubits
             if (target < 0 || target > workingQubits.length - 1 || control == target) {
                 System.out.println("Please select a valid target qubit");
                 control = -1;
@@ -182,7 +245,12 @@ public class Driver {
         return workingQubits;
     }
 
-    //Initializes all qubits to a zero state inside workingQubits array
+    /**
+     * Initializes all qubits to a zero state inside the {@code workingQubits} array.
+     *
+     * @param workingQubits The array of working qubits.
+     * @return The initialized array of working qubits.
+     */
     private static ComplexQubit[] initializeQubits(ComplexQubit[] workingQubits) {
         System.out.println("How many qubits do you want to initialize?");
         int quantityQubitsInitialized = Console.getInt();
@@ -197,5 +265,4 @@ public class Driver {
         System.out.println(quantityQubitsInitialized + " initialized.");
         return workingQubits;
     }
-
 }
