@@ -1,8 +1,5 @@
 package qubits;
 
-import qubits.ComplexQubit;
-
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +66,16 @@ public class ComplexGates {
     });
 
     /**
+     * CNOT gate matrix representation.
+     */
+    private static final ComplexMatrix CNOT = new ComplexMatrix(new ComplexNumber[][]{
+            {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
+            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()}
+    });
+
+    /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.
      *
      * @param target The input {@link ComplexQubit}.
@@ -81,31 +88,31 @@ public class ComplexGates {
     /**
      * Applies the Pauli-Z gate to a {@link ComplexQubit}.
      *
-     * @param q The input {@link ComplexQubit}.
+     * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-Z gate.
      */
-    public static ComplexQubit applyPauliZ(ComplexQubit q) {
-        return applyGate(PAULI_Z, q);
+    public static ComplexQubit applyPauliZ(ComplexQubit qubit) {
+        return applyGate(PAULI_Z, qubit);
     }
 
     /**
      * Applies the Pauli-Y gate to a {@link ComplexQubit}.
      *
-     * @param q The input {@link ComplexQubit}.
+     * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-Y gate.
      */
-    public static ComplexQubit applyPauliY(ComplexQubit q) {
-        return applyGate(PAULI_Y, q);
+    public static ComplexQubit applyPauliY(ComplexQubit qubit) {
+        return applyGate(PAULI_Y, qubit);
     }
 
     /**
      * Applies the Hadamard gate to a {@link ComplexQubit}.
      *
-     * @param q The input {@link ComplexQubit}.
+     * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Hadamard gate.
      */
-    public static ComplexQubit applyHadamard(ComplexQubit q) {
-        return applyGate(HADAMARD, q);
+    public static ComplexQubit applyHadamard(ComplexQubit qubit) {
+        return applyGate(HADAMARD, qubit);
     }
 
     /**
@@ -119,6 +126,36 @@ public class ComplexGates {
         ComplexMatrix result = gate.multiply(target.getState());
         target.setState(result);
         return target;
+    }
+
+    /**
+     * Applies the CNOT gate to control and target qubits.
+     *
+     * @param controlQubit The control qubit.
+     * @param targetQubit  The target qubit.
+     * @return The resulting {@link ComplexQubit} after applying the CNOT gate.
+     * @throws IllegalArgumentException If the qubits are not properly initialized or have incompatible dimensions.
+     */
+    public static ComplexQubit applyCNOT(ComplexQubit controlQubit, ComplexQubit targetQubit) {
+        // Construct the CNOT matrix based on control and target qubit states
+        ComplexMatrix cnotMatrix = CNOT;
+
+        // Create a matrix representing the control qubit's state
+        ComplexMatrix controlState = controlQubit.getState();
+
+        // Ensure dimensions are compatible
+        if (controlState.getRows() != 2 || controlState.getCols() != 1) {
+            throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
+        }
+
+        // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
+        ComplexMatrix resultMatrix = cnotMatrix.tensorMultiply(controlState);
+        System.out.println("Result Matrix Of Tensor Multiply Applying a CNOT: "+resultMatrix);
+
+        // Update the target qubit's state with the result
+        targetQubit.setState(resultMatrix);
+
+        return targetQubit;
     }
 
     /**

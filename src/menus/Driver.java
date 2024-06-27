@@ -1,7 +1,12 @@
 package menus;
 
+import fileIO.Reader;
+import fileIO.Writer;
 import qubits.ComplexGates;
 import qubits.ComplexQubit;
+
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * The main class that drives the JQsim quantum computing simulation.
@@ -63,12 +68,12 @@ public class Driver {
 
         while (selection != 0) {
             System.out.println("""
-                    \n1. Initialize Qubits
-                    2. Apply Gates
+                    \n1. Initialize Wires
+                    2. Add Gate to wire
                     3. Display Qubit States
                     4. Run Simulation (pending implementation)
-                    5. Save State To File (pending implementation)
-                    6. Load State From File (pending implementation)
+                    5. Save State To File
+                    6. Load State From File
                     0. Exit
                     """);
             selection = Console.getInt();
@@ -106,7 +111,7 @@ public class Driver {
                 }
                 case 6 -> {
                     System.out.println("Selected: " + selection);
-                    loadSystemSateFromFile(workingQubits);
+                    workingQubits = loadSystemSateFromFile(workingQubits);
                     selection = -1;
                 }
             }
@@ -118,8 +123,17 @@ public class Driver {
      *
      * @param workingQubits The array of working qubits.
      */
-    private static void loadSystemSateFromFile(ComplexQubit[] workingQubits) {
+    private static ComplexQubit[] loadSystemSateFromFile(ComplexQubit[] workingQubits) {
+        System.out.println("Please provide the file name in the savedStates folder to open: ");
+        String[] contents = new File("./savedStates").list();
+        System.out.println("savedStates currently contains: \n");
+        for(String content : contents){
+            System.out.println(content);
+        }
+        String fileChoice = Console.getString();
+        workingQubits = Reader.loadQubits("./savedStates/"+fileChoice);
         System.out.println("Loading state from file");
+        return workingQubits;
     }
 
     /**
@@ -128,7 +142,19 @@ public class Driver {
      * @param workingQubits The array of working qubits.
      */
     private static void saveSystemStateToFile(ComplexQubit[] workingQubits) {
-        System.out.println("Saving state to file.");
+        System.out.println("Provide a file name to save as:");
+        String fileName = Console.getString();
+        try {
+            boolean saveAttempt = Writer.saveFile(fileName, workingQubits);
+            if (saveAttempt) {
+                System.out.println("Saving state to file.");
+            } else {
+                System.out.println("File not saved successfully.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error saving file, check file name and location.");
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
     }
 
     /**
@@ -143,7 +169,7 @@ public class Driver {
             return;
         }
         for (ComplexQubit qubit : workingQubits) {
-            System.out.println("Qubit #" + qubit.getQubitID() + ":\n" + qubit + "\n");
+            System.out.println(qubit + "\n");
         }
     }
 
@@ -211,7 +237,7 @@ public class Driver {
                 }
                 case 5 -> {
                     System.out.println("Selected: " + gateToApply);
-                    workingQubits = applyCNOT(workingQubits, selection);
+                    applyCNOT(workingQubits, selection);
                 }
             }
         }
@@ -241,7 +267,16 @@ public class Driver {
                 control = -1;
             }
         } while ((target < 0 || target > workingQubits.length - 1) && control != target);
-        workingQubits[control].setEntangledQubit(workingQubits[target]);
+        workingQubits[control].setEntangledQubit(workingQubits[target]); //I think I can get rid of this now...
+
+        System.out.println("Control Qubit is: " + workingQubits[control].getState());
+        System.out.println("Target Qubit is: " + workingQubits[target].getState());
+        try {
+            workingQubits[target] = ComplexGates.applyCNOT(workingQubits[control], workingQubits[target]);
+        } catch (Exception e) {
+            System.out.println("Exception in applying CNOT gate.");
+            e.printStackTrace();
+        }
         return workingQubits;
     }
 

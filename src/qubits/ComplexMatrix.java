@@ -131,6 +131,53 @@ public class ComplexMatrix {
     }
 
     /**
+     * Computes the tensor product of this matrix with another matrix.
+     *
+     * @param other The matrix to tensor multiply with this matrix.
+     * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
+     */
+    public ComplexMatrix tensorMultiply(ComplexMatrix other) {
+        int newRows = this.rows * other.rows;
+        int newCols = this.cols * other.cols;
+        ComplexNumber[][] result = new ComplexNumber[newRows][newCols];
+
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                for (int k = 0; k < other.rows; k++) {
+                    for (int l = 0; l < other.cols; l++) {
+                        int newRow = i * other.rows + k;
+                        int newCol = j * other.cols + l;
+                        result[newRow][newCol] = multiplyComplex(this.data[i][j], other.data[k][l]);
+                    }
+                }
+            }
+        }
+
+        return new ComplexMatrix(result);
+    }
+
+    /**
+     * Adds another matrix to this matrix and returns the result as a new matrix.
+     *
+     * @param other The matrix to add to this matrix.
+     * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
+     * @throws IllegalArgumentException If the matrices have different dimensions.
+     */
+    public ComplexMatrix add(ComplexMatrix other) {
+        if (this.rows != other.rows || this.cols != other.cols) {
+            throw new IllegalArgumentException("Matrix dimensions must be the same for addition: "
+                    + this.rows + "x" + this.cols + " cannot be added with " + other.rows + "x" + other.cols);
+        }
+        ComplexNumber[][] result = new ComplexNumber[this.rows][this.cols];
+        for (int i = 0; i < this.rows; i++) {
+            for (int j = 0; j < this.cols; j++) {
+                result[i][j] = addComplex(this.data[i][j], other.data[i][j]);
+            }
+        }
+        return new ComplexMatrix(result);
+    }
+
+    /**
      * Multiplies two complex numbers.
      *
      * @param aVec The first complex number.
@@ -174,9 +221,9 @@ public class ComplexMatrix {
      * @return A string representation of the matrix.
      */
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sBuild = new StringBuilder();
-        for(ComplexNumber[] row : data){
+        for (ComplexNumber[] row : data) {
             sBuild.append(Arrays.deepToString(row)).append("\n");
         }
         return sBuild.toString();
