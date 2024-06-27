@@ -267,10 +267,10 @@ public class Driver {
                 control = -1;
             }
         } while ((target < 0 || target > workingQubits.length - 1) && control != target);
-        workingQubits[control].setEntangledQubit(workingQubits[target]); //I think I can get rid of this now...
+//        workingQubits[control].setEntangledQubit(workingQubits[target]); //I think I can get rid of this now...
 
-        System.out.println("Control Qubit is: " + workingQubits[control].getState());
-        System.out.println("Target Qubit is: " + workingQubits[target].getState());
+        System.out.println("Control Qubit is: " + workingQubits[control].getState()); //TODO remove this trace
+        System.out.println("Target Qubit is: " + workingQubits[target].getState());//TODO remove this trace
         try {
             workingQubits[target] = ComplexGates.applyCNOT(workingQubits[control], workingQubits[target]);
         } catch (Exception e) {

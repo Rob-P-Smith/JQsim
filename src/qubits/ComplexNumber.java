@@ -107,8 +107,9 @@ public class ComplexNumber {
      * real and imag:
      * <ul>
      * <li>If imag is 0.0, it returns only the real part.</li>
-     * <li>If imag is positive, it formats as "real + imagⅈ".</li>
-     * <li>If imag is negative, it formats as "real - imagⅈ".</li>
+     * <li>If imag is positive or negative and real is 0.0, it formats as "imagⅈ"</li>
+     * <li>If imag is positive and real is not 0.0, it formats as "real + imagⅈ".</li>
+     * <li>If imag is negative and real is not 0.0, it formats as "real - imagⅈ".</li>
      * </ul>
      * </p>
      *
@@ -118,12 +119,20 @@ public class ComplexNumber {
     public String toString() {
         if (this.imag == 0.0) {
             return String.valueOf(real);
+        } else if (this.real == 0.0) {
+            if (this.imag > 0) {
+                return String.valueOf(imag) + 'ⅈ';
+            } else if (this.imag < 0) {
+                return String.valueOf(imag) + 'ⅈ';
+            }
         } else {
-            if (this.imag >= 0) {
-                return String.valueOf(real) + "+" + imag + 'ⅈ';
-            } else {
+            if (this.imag < 0) {
                 return String.valueOf(real) + imag + 'ⅈ';
+
+            } else {
+                return String.valueOf(real) + "+" + imag + 'ⅈ';
             }
         }
+        return "No values found";
     }
 }

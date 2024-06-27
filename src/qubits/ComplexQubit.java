@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class ComplexQubit {
     public static final double ERROR_MARGIN = 0.00001;
+    private double phase = 0.0;
     private static int numQubits = 0;
     private int qubitID;
     private ComplexMatrix state;
@@ -150,5 +151,4 @@ public class ComplexQubit {
         }
         return sBuild.toString();
     }
-
 }
