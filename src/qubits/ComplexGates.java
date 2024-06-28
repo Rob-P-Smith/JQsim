@@ -68,7 +68,7 @@ public class ComplexGates {
     /**
      * CNOT gate matrix representation.
      */
-    private static final ComplexMatrix CNOT = new ComplexMatrix(new ComplexNumber[][]{
+    static final ComplexMatrix CNOT = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
@@ -137,20 +137,19 @@ public class ComplexGates {
      * @throws IllegalArgumentException If the qubits are not properly initialized or have incompatible dimensions.
      */
     public static ComplexQubit applyCNOT(ComplexQubit controlQubit, ComplexQubit targetQubit) {
-        // Construct the CNOT matrix based on control and target qubit states
-        ComplexMatrix cnotMatrix = CNOT;
-
-        // Create a matrix representing the control qubit's state
+        // Create a matrix copy representing the control qubit's state
         ComplexMatrix controlState = controlQubit.getState();
+        ComplexMatrix targetState = targetQubit.getState();
 
         // Ensure dimensions are compatible
-        if (controlState.getRows() != 2 || controlState.getCols() != 1) {
+        if ((controlState.getRows() != 2 || controlState.getCols() != 1)||
+            (targetState.getRows() != 2 || targetState.getCols() != 1)) {
             throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
         }
 
         // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
-        ComplexMatrix resultMatrix = cnotMatrix.tensorMultiply(controlState);
-        System.out.println("Result Matrix Of Tensor Multiply Applying a CNOT: "+resultMatrix);
+        ComplexMatrix resultMatrix = CNOT.tensorMultiply(controlState, targetState);
+        System.out.println("\nResult Matrix Of Tensor Multiply Applying a CNOT: \n"+resultMatrix);
 
         // Update the target qubit's state with the result
         targetQubit.setState(resultMatrix);

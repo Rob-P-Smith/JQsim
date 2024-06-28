@@ -133,27 +133,42 @@ public class ComplexMatrix {
     /**
      * Computes the tensor product of this matrix with another matrix.
      *
-     * @param other The matrix to tensor multiply with this matrix.
+     * @param control The matrix to tensor multiply with this matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
      */
-    public ComplexMatrix tensorMultiply(ComplexMatrix other) {
-        int newRows = this.rows * other.rows;
-        int newCols = this.cols * other.cols;
-        ComplexNumber[][] result = new ComplexNumber[newRows][newCols];
-
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
-                for (int k = 0; k < other.rows; k++) {
-                    for (int l = 0; l < other.cols; l++) {
-                        int newRow = i * other.rows + k;
-                        int newCol = j * other.cols + l;
-                        result[newRow][newCol] = multiplyComplex(this.data[i][j], other.data[k][l]);
-                    }
-                }
-            }
+    public ComplexMatrix tensorMultiply(ComplexMatrix control, ComplexMatrix target) {
+        ComplexMatrix CNOT = ComplexGates.CNOT;
+        ComplexNumber[] stateVector = {
+                control.get(0,0),
+                control.get(1,0),
+                target.get(0,0),
+                target.get(1,0)
+        };
+        ComplexNumber[] resultVector = new ComplexNumber[4];
+        for(int i = 0; i < resultVector.length; i++){
+            resultVector[i] = new ComplexNumber(0,0);
         }
 
-        return new ComplexMatrix(result);
+        for(int i = 0; i < 4; i++){
+            ComplexNumber[] collector = new ComplexNumber[4];
+            for(int j = 0; j < 4; j++){
+                collector[j] = multiplyComplex(CNOT.get(i,j),stateVector[j]);
+            }
+            ComplexNumber sum = addComplex(
+                    addComplex(collector[0], collector[1]),
+                    addComplex(collector[2], collector[3])
+            );
+
+            resultVector[i] = sum;
+        }
+
+        // Convert result vector to a column matrix
+        ComplexNumber[][] resultMatrix = new ComplexNumber[4][1];
+        for (int i = 0; i < 4; i++) {
+            resultMatrix[i][0] = resultVector[i];
+        }
+
+        return new ComplexMatrix(resultMatrix);
     }
 
     /**
@@ -185,8 +200,11 @@ public class ComplexMatrix {
      * @return The complex number result of the multiplication.
      */
     private ComplexNumber multiplyComplex(ComplexNumber aVec, ComplexNumber bVec) {
+
         double real = aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag();
         double imag = aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal();
+//        System.out.println("Real result: " + real);
+//        System.out.println("Imag result: " + imag);
         return new ComplexNumber(real, imag);
     }
 
