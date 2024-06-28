@@ -10,12 +10,20 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 
 ~~Implementing Clifford gates~~
 
-## Phase 2: ***Currently Working***
-Implementing entanglement functionality via CNOT
+## Phase 2:
+~~Implementing entanglement functionality via CNOT~~
 
 
-## Phase 3: 
-Implement a circuit builder to queue gates to apply to each qubit
+## Phase 3:  ***Currently Working***
+~~Implement a circuit builder to queue gates to apply to each qubit~~
 
 Finish the Qops class to run the work queue and generate the expectation values
 
+## Phase 4: 
+Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates
+
+## Phase 5:
+Convert all outputs to JSON and prepare for front end construction
+
+## Phase 6:
+Build the front end (oh boy!)

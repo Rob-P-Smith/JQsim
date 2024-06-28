@@ -68,7 +68,7 @@ public class Driver {
                     4. Run Simulation (pending implementation)
                     5. Save State To File
                     6. Load State From File
-                    9. Dislpay workingQubitWires
+                    9. Display workingQubitWires
                     0. Exit
                     """);
             selection = Console.getInt();
