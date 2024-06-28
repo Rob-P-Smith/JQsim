@@ -20,7 +20,7 @@ import java.util.Arrays;
  * @since 25 June 2024
  */
 public class ComplexMatrix {
-
+    private static final boolean DEBUG = false;
     private int rows;
     private int cols;
     private ComplexNumber[][] data;
@@ -149,8 +149,8 @@ public class ComplexMatrix {
             resultVector[i] = new ComplexNumber(0,0);
         }
 
+        ComplexNumber[] collector = new ComplexNumber[4];
         for(int i = 0; i < 4; i++){
-            ComplexNumber[] collector = new ComplexNumber[4];
             for(int j = 0; j < 4; j++){
                 collector[j] = multiplyComplex(CNOT.get(i,j),stateVector[j]);
             }
@@ -163,10 +163,14 @@ public class ComplexMatrix {
         }
 
         // Convert result vector to a column matrix
-        ComplexNumber[][] resultMatrix = new ComplexNumber[4][1];
-        for (int i = 0; i < 4; i++) {
-            resultMatrix[i][0] = resultVector[i];
-        }
+        ComplexNumber[][] resultMatrix = new ComplexNumber[2][1];
+        resultMatrix[0][0] = resultVector[2];
+        resultMatrix[1][0] = resultVector[3];
+
+//        ComplexNumber[][] resultMatrix = new ComplexNumber[4][1];
+//        for (int i = 0; i < 4; i++) {
+//            resultMatrix[i][0] = resultVector[i];
+//        }
 
         return new ComplexMatrix(resultMatrix);
     }
@@ -203,8 +207,8 @@ public class ComplexMatrix {
 
         double real = aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag();
         double imag = aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal();
-//        System.out.println("Real result: " + real);
-//        System.out.println("Imag result: " + imag);
+        if(DEBUG) System.out.println("Real result: " + real);
+        if(DEBUG) System.out.println("Imag result: " + imag);
         return new ComplexNumber(real, imag);
     }
 

@@ -7,9 +7,7 @@ import qubits.ComplexGates;
 import qubits.ComplexQubit;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The main class that drives the JQsim quantum computing simulation.
@@ -31,24 +29,7 @@ import java.util.Set;
  * @since 25 June 2024
  */
 public class Driver {
-
-    /**
-     * Main method that starts the simulation by displaying a welcome message
-     * and launching the top-level menu.
-     *
-     * @param args Command-line arguments (not used).
-     */
-    public static void main(String[] args) {
-        welcomeMessage();
-        topMenu();
-    }
-
-    /**
-     * Displays a welcome message when the simulation starts.
-     */
-    public static void welcomeMessage() {
-        System.out.println("Welcome to JQsim");
-    }
+    private static final boolean DEBUG = false;
 
     /**
      * Displays the top-level menu for interacting with quantum qubits and gates.
@@ -66,15 +47,18 @@ public class Driver {
                     2. Add Gate to wire
                     3. Display Wire Gates
                     4. Run Simulation (pending implementation)
-                    5. Save State To File
-                    6. Load State From File
-                    9. Display workingQubitWires
+                    5. Display executed work log
+                    6. NOP
+                    7. NOP
+                    8. Save State To File
+                    9. Load State From File
+                                        
                     0. Exit
                     """);
             selection = Console.getInt();
             System.out.println("\033[H\033[2J");
 
-            if (selection > 99) {
+            if (selection > 9) {
                 System.out.println("Selection out of range, select a valid option.");
                 selection = -1;
             }
@@ -88,13 +72,13 @@ public class Driver {
                     // cast the returns into their correct types and assign them
                     workingQubits = (ComplexQubit[]) workingArrays[0];
                     workingQubitWires = (QubitWire[]) workingArrays[1];
-                    for(ComplexQubit qubit : workingQubits) {
+                    for (ComplexQubit qubit : workingQubits) {
                         qubitIDs.add(qubit.getQubitID());
                     }
                     selection = -1;
                 }
                 case 2 -> {
-                    workingQubitWires = applyQubitGates(workingQubitWires, qubitIDs, selection);
+                    workingQubitWires = addGateToWire(workingQubitWires, qubitIDs, selection);
                     selection = -1;
                 }
                 case 3 -> {
@@ -102,77 +86,73 @@ public class Driver {
                     selection = -1;
                 }
                 case 4 -> {
-                    System.out.println("Selected: " + selection);
+                    runSimulation(workingQubitWires, workingQubits);
                     selection = -1;
                 }
                 case 5 -> {
-                    System.out.println("Selected: " + selection);
+                    for (QubitWire wire : workingQubitWires) {
+                        List<String[]> workLog = wire.getWorkLog();
+                        for (String[] workItem : workLog) {
+                            System.out.println(Arrays.toString(workItem));
+                        }
+                    }
+                }
+                case 8 -> {
                     saveSystemStateToFile(workingQubits);
                     selection = -1;
                 }
-                case 6 -> {
-                    System.out.println("Selected: " + selection);
-                    workingQubits = loadSystemSateFromFile(workingQubits);
-                    selection = -1;
-                }
                 case 9 -> {
-                    System.out.println(Arrays.deepToString(workingQubitWires));
-                }
-                case 99 -> {
-                    displayQubitStates(workingQubits);
+                    workingQubits = loadSystemSateFromFile(workingQubits);
                     selection = -1;
                 }
             }
         }
     }
 
-    private static void displayWireGates(QubitWire[] workingQubitWires) {
-        for(QubitWire wire : workingQubitWires){
-            wire.viewLine();
-            System.out.println();
-        }
-    }
 
     /**
      * Applies quantum gates to selected qubits based on user input.
      *
      * @param workingQubitWires The array of working QubitWires.
-     * @param selection     The user's gate selection.
+     * @param selection         The user's gate selection.
      * @return The updated array of working qubits after applying gates.
      */
-    private static QubitWire[] applyQubitGates(QubitWire[] workingQubitWires,Set<Integer> qubitIDs, int selection) {
+    private static QubitWire[] addGateToWire(QubitWire[] workingQubitWires, Set<Integer> qubitIDs, int selection) {
         System.out.println("Selected: " + selection);
         if (workingQubitWires.length == 0) {
-            System.out.println("Initialize Wires before applying gates.");
+            System.out.println("Initialize wires before applying gates.");
             return null;
         } else {
             selection = -1;
             do {
                 System.out.println("Which wire (number) do you want to apply a gate to?");
                 //Display qubit selection by getting the qubit's ID instead of the workingQubits array location
-                for(Integer qubitID : qubitIDs) {
-                    System.out.println("Qubit #: "+qubitID);
+                for (Integer qubitID : qubitIDs) {
+                    System.out.println("Qubit #: " + qubitID);
                 }
                 selection = Console.getInt();
-                if(!qubitIDs.contains(selection)){
+                if (!qubitIDs.contains(selection)) {
                     System.out.println("Please select a valid qubit to modify");
                     selection = -1;
                 }
-            } while (selection < 0 || !qubitIDs.contains(selection));
+            } while (!qubitIDs.contains(selection));
         }
 
         int gateToApply = -1;
         while (gateToApply < 0) {
+            System.out.println("Applying gates for qubit #" + selection);
             System.out.println("""
                     1. PauliX
                     2. PauliY
                     3. PauliZ
                     4. Hadamard
                     5. CNOT
+                    6. Identity
+                    
                     0. Back to Main Menu
                     """);
             gateToApply = Console.getInt();
-            if (gateToApply > 5) {
+            if (gateToApply > 6) {
                 System.out.println("Please make a valid choice");
                 gateToApply = -1;
             }
@@ -182,31 +162,134 @@ public class Driver {
                 }
                 case 1 -> {
                     workingQubitWires[selection].addGate(new String[]{"PAULI_X", "0"});
+                    gateToApply = -1;
                 }
                 case 2 -> {
                     workingQubitWires[selection].addGate(new String[]{"PAULI_Y", "0"});
+                    gateToApply = -1;
                 }
                 case 3 -> {
                     workingQubitWires[selection].addGate(new String[]{"PAULI_Z", "0"});
+                    gateToApply = -1;
                 }
                 case 4 -> {
                     workingQubitWires[selection].addGate(new String[]{"HADAMARD", "0"});
+                    gateToApply = -1;
                 }
                 case 5 -> {
                     workingQubitWires[selection].addGate(gatesForCNOT(qubitIDs, selection));
+                    gateToApply = -1;
+                }
+                case 6 -> {
+                    workingQubitWires[selection].addGate(new String[]{"IDENTITY", "0"});
+                    gateToApply = -1;
                 }
             }
         }
         return workingQubitWires;
     }
 
-    private static String[] gatesForCNOT(Set<Integer> qubitIDs, int control){
+    private static void runSimulation(QubitWire[] workingQubitWires, ComplexQubit[] workingQubits) {
+        int workLength = workingQubitWires[0].getWorkQueue().size();
+        //Verify that each wire has an equal number of operations on it to ensure proper in-order execution of sim
+        for (QubitWire workingQubitWire : workingQubitWires) {
+            if (workingQubitWire.getWorkQueue().size() != workLength) {
+                System.out.println("Uneven work length across wires, cannot execute simulation.");
+                return;
+            }
+        }
+        String[] currentOP;
+        String currentGateType = "IDENTITY";
+        int currentQubitID = -1;
+        int controlQubitCNOT = -1;
+        int targetQubitCNOT = -1;
+
+        //for each wire get operation i and execute i for each wire
+        //increment i, then execute each wire's i gate again until done
+        for (int i = 0; i < workLength; i++) {
+            for (QubitWire activeWire : workingQubitWires) {
+                for (ComplexQubit activeQubit : workingQubits) {
+                    currentQubitID = activeQubit.getQubitID();
+                    if (currentQubitID == activeWire.getWireNumber()) {
+                        currentOP = activeWire.getNextGate(activeQubit);
+                        currentGateType = currentOP[0];
+                        if (currentGateType.equals("CNOT")) {
+                            controlQubitCNOT = Integer.parseInt(currentOP[1]);
+                            targetQubitCNOT = Integer.parseInt(currentOP[2]);
+                        }
+                        if (DEBUG)System.out.println("Dirver, Line 224, got \'" + Arrays.toString(currentOP) + "\' as gate to apply.");
+                        gateExecutor(currentGateType, workingQubits, currentQubitID, controlQubitCNOT, targetQubitCNOT);
+                        if(DEBUG) System.out.println("Current OP :"+currentGateType+" working qubit: "+currentQubitID);
+                        if(DEBUG) displayQubitStates(workingQubits);
+                    }
+                }
+            }
+        }
+        displayQubitStates(workingQubits);
+    }
+
+    private static void gateExecutor(String currentGateType, ComplexQubit[] workingQubits, int currentQubitID, int controlQubitCNOT, int targetQubitCNOT) {
+        switch (currentGateType) {
+            case "PAULI_X" -> {
+                if (DEBUG)System.out.println("Applying PAULI_X");
+                workingQubits[currentQubitID] = ComplexGates.applyPauliX(workingQubits[currentQubitID]);
+            }
+            case "PAULI_Y" -> {
+                if (DEBUG)System.out.println("Applying PAULI_Y");
+                workingQubits[currentQubitID] = ComplexGates.applyPauliY(workingQubits[currentQubitID]);
+            }
+            case "PAULI_Z" -> {
+                if (DEBUG)System.out.println("Applying PAULI_Z");
+                workingQubits[currentQubitID] = ComplexGates.applyPauliZ(workingQubits[currentQubitID]);
+            }
+            case "HADAMARD" -> {
+                if (DEBUG)System.out.println("Applying HADAMARD");
+                workingQubits[currentQubitID] = ComplexGates.applyHadamard(workingQubits[currentQubitID]);
+            }
+            case "CNOT" -> {
+                if (DEBUG)System.out.println("Applying CNOT");
+                ComplexQubit controlQubit = null, targetQubit = null;
+                for (ComplexQubit qubit : workingQubits) {
+                    if (qubit.getQubitID() == controlQubitCNOT) {
+                        controlQubit = qubit;
+                    }
+                    if (qubit.getQubitID() == targetQubitCNOT) {
+                        targetQubit = qubit;
+                    }
+                }
+                targetQubit = ComplexGates.applyCNOT(controlQubit, targetQubit);
+                for (ComplexQubit qubit : workingQubits) {
+                    if (qubit.getQubitID() == targetQubitCNOT) {
+                        qubit = targetQubit;
+                    }
+                }
+            }
+            case "IDENTITY" -> {
+                if (DEBUG)System.out.println("Applying IDENTITY");
+                workingQubits[currentQubitID] = ComplexGates.applyIdentity(workingQubits[currentQubitID]);
+            }
+        }
+    }
+
+    private static void topMenuSelector() {
+        //this will eventually move the switch out of the topMenu() into here to split getting a choice from
+        //executing a choice tasks
+    }
+
+    private static void displayWireGates(QubitWire[] workingQubitWires) {
+        for (QubitWire wire : workingQubitWires) {
+            wire.viewLine();
+            System.out.println();
+        }
+    }
+
+    private static String[] gatesForCNOT(Set<Integer> qubitIDs, int control) {
         int target = -1;
         System.out.println("Qubit " + control + " selected as control qubit.");
         do {
             System.out.println("Which qubit (number) is the target qubit?");
-            for(Integer qubitID : qubitIDs){
-                System.out.println("Qubit #" + qubitID);
+            for (Integer qubitID : qubitIDs) {
+                if (qubitID != control) System.out.println("Qubit #" + qubitID);
             }
             target = Console.getInt();
             if (!qubitIDs.contains(target) || control == target) {
@@ -215,42 +298,6 @@ public class Driver {
             }
         } while (!qubitIDs.contains(target) || control == target);
         return new String[]{"CNOT", String.valueOf(control), String.valueOf(target)};
-    }
-
-    /**
-     * Applies a Controlled-NOT (CNOT) gate to selected qubits.
-     *
-     * @param workingQubits The array of working qubits.
-     * @param control       The index of the control qubit.
-     * @return The updated array of working qubits after applying the CNOT gate.
-     */
-    private static ComplexQubit[] applyCNOT(ComplexQubit[] workingQubits, int control) {
-        int target = -1;
-        System.out.println("Qubit " + control + " selected as control.");
-        do {
-            System.out.println("Which qubit (number) is the target qubit?");
-            for (int i = 0; i < workingQubits.length; i++) {
-                if (i != control) {
-                    System.out.println("Qubit #" + i);
-                }
-            }
-            target = Console.getInt();
-            if (target < 0 || target > workingQubits.length - 1 || control == target) {
-                System.out.println("Please select a valid target qubit");
-                control = -1;
-            }
-        } while ((target < 0 || target > workingQubits.length - 1) && control != target);
-//        workingQubits[control].setEntangledQubit(workingQubits[target]); //I think I can get rid of this now...
-
-        System.out.println("Control Qubit is: " + workingQubits[control].getState()); //TODO remove this trace
-        System.out.println("Target Qubit is: " + workingQubits[target].getState());//TODO remove this trace
-        try {
-            workingQubits[target] = ComplexGates.applyCNOT(workingQubits[control], workingQubits[target]);
-        } catch (Exception e) {
-            System.out.println("Exception in applying CNOT gate.");
-            e.printStackTrace();
-        }
-        return workingQubits;
     }
 
     /**
@@ -331,4 +378,24 @@ public class Driver {
             System.out.println(qubit + "\n");
         }
     }
+
+    /**
+     * Displays a welcome message when the simulation starts.
+     */
+    public static void welcomeMessage() {
+        System.out.println("Welcome to JQsim");
+    }
+
+    /**
+     * Main method that starts the simulation by displaying a welcome message
+     * and launching the top-level menu.
+     *
+     * @param args Command-line arguments (not used).
+     */
+    public static void main(String[] args) {
+        welcomeMessage();
+        topMenu();
+    }
+
+
 }

@@ -30,11 +30,11 @@ import java.util.Map;
  * @since 25 June 2024
  */
 public class ComplexGates {
-
+    private static final boolean DEBUG = false;
     private static final double H_FACTOR = 1 / Math.sqrt(2);
 
     /**
-     * Pauli-X gate matrix representation.
+     * Pauli-X gate matrix.
      */
     private static final ComplexMatrix PAULI_X = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(), new ComplexNumber(1)},
@@ -42,7 +42,7 @@ public class ComplexGates {
     });
 
     /**
-     * Pauli-Z gate matrix representation.
+     * Pauli-Z gate matrix.
      */
     private static final ComplexMatrix PAULI_Z = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber()},
@@ -50,7 +50,7 @@ public class ComplexGates {
     });
 
     /**
-     * Pauli-Y gate matrix representation.
+     * Pauli-Y gate matrix.
      */
     private static final ComplexMatrix PAULI_Y = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(), new ComplexNumber(0, -1)},
@@ -58,7 +58,7 @@ public class ComplexGates {
     });
 
     /**
-     * Hadamard gate matrix representation.
+     * Hadamard gate matrix.
      */
     private static final ComplexMatrix HADAMARD = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(H_FACTOR), new ComplexNumber(H_FACTOR)},
@@ -66,13 +66,21 @@ public class ComplexGates {
     });
 
     /**
-     * CNOT gate matrix representation.
+     * CNOT gate matrix.
      */
     static final ComplexMatrix CNOT = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()}
+    });
+
+    /**
+     * Identity gate matrix.
+     */
+    private static final ComplexMatrix IDENTITY = new ComplexMatrix(new ComplexNumber[][]{
+            {new ComplexNumber(1), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber(1)}
     });
 
     /**
@@ -113,6 +121,16 @@ public class ComplexGates {
      */
     public static ComplexQubit applyHadamard(ComplexQubit qubit) {
         return applyGate(HADAMARD, qubit);
+    }
+
+    /**
+     * Applies the Identity gate to a {@link ComplexQubit}.
+     *
+     * @param qubit The input {@link ComplexQubit}.
+     * @return The resulting {@link ComplexQubit} after applying the Identity gate.
+     */
+    public static ComplexQubit applyIdentity(ComplexQubit qubit) {
+        return applyGate(IDENTITY, qubit);
     }
 
     /**
@@ -157,7 +175,7 @@ public class ComplexGates {
     }
 
     /**
-     * Prints the predefined quantum gates and their matrix representations.
+     * Prints the predefined quantum gates and their matrix.
      */
     public static void printGates() {
         Map<String, ComplexMatrix> gates = new HashMap<>();
@@ -165,6 +183,7 @@ public class ComplexGates {
         gates.put("PAULI_Y", PAULI_Y);
         gates.put("PAULI_Z", PAULI_Z);
         gates.put("HADAMARD", HADAMARD);
+        gates.put("IDENTITY", IDENTITY);
 
         for (String gate : gates.keySet()) {
             System.out.println(gate);
