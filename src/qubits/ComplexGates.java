@@ -149,7 +149,6 @@ public class ComplexGates {
 
         // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
         ComplexMatrix resultMatrix = CNOT.tensorMultiply(controlState, targetState);
-        System.out.println("\nResult Matrix Of Tensor Multiply Applying a CNOT: \n"+resultMatrix);
 
         // Update the target qubit's state with the result
         targetQubit.setState(resultMatrix);

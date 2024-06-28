@@ -129,6 +129,7 @@ public class Driver {
     private static void displayWireGates(QubitWire[] workingQubitWires) {
         for(QubitWire wire : workingQubitWires){
             wire.viewLine();
+            System.out.println();
         }
     }
 

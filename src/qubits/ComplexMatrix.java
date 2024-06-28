@@ -131,7 +131,7 @@ public class ComplexMatrix {
     }
 
     /**
-     * Computes the tensor product of this matrix with another matrix.
+     * Computes the tensor product of this matrix with a state vector.
      *
      * @param control The matrix to tensor multiply with this matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
@@ -219,18 +219,6 @@ public class ComplexMatrix {
         double real = aVec.getReal() + bVec.getReal();
         double imag = aVec.getImag() + bVec.getImag();
         return new ComplexNumber(real, imag);
-    }
-
-    /**
-     * Prints the matrix to the standard output.
-     */
-    public void print() {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                System.out.print(data[i][j] + " ");
-            }
-            System.out.println();
-        }
     }
 
     /**
