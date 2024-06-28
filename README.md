@@ -27,4 +27,5 @@ Convert all outputs to JSON and prepare for front end construction
 
 ## Phase 6:
 Build the front end (oh boy!)
+
 Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values
