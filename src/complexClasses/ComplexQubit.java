@@ -1,4 +1,4 @@
-package qubits;
+package complexClasses;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexQubit {
+public class ComplexQubit extends ComplexObject{
     public static final double ERROR_MARGIN = 0.00001;
     private double phase = 0.0;
     private static int numQubits = 0;

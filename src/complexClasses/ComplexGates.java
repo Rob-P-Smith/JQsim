@@ -1,4 +1,4 @@
-package qubits;
+package complexClasses;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexGates {
+public class ComplexGates extends ComplexObject{
     private static final boolean DEBUG = false;
     private static final double H_FACTOR = 1 / Math.sqrt(2);
 
@@ -141,7 +141,7 @@ public class ComplexGates {
      * @return The resulting {@link ComplexQubit} after applying the gate.
      */
     private static ComplexQubit applyGate(ComplexMatrix gate, ComplexQubit target) {
-        ComplexMatrix result = gate.multiply(target.getState());
+        ComplexMatrix result = gate.multiply(gate, target.getState());
         target.setState(result);
         return target;
     }

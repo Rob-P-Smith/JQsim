@@ -1,6 +1,6 @@
 package measurement;
 
-import qubits.ComplexQubit;
+import complexClasses.ComplexQubit;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

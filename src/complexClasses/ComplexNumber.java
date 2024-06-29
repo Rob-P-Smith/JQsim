@@ -1,4 +1,4 @@
-package qubits;
+package complexClasses;
 
 /**
  * Represents a complex number with real and imaginary parts.
@@ -21,7 +21,7 @@ package qubits;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexNumber {
+public class ComplexNumber extends ComplexObject {
     private double real; // Real part of the complex number
     private double imag; // Imaginary part of the complex number
 

@@ -3,8 +3,8 @@ package menus;
 import fileIO.Reader;
 import fileIO.Writer;
 import measurement.QubitWire;
-import qubits.ComplexGates;
-import qubits.ComplexQubit;
+import complexClasses.ComplexGates;
+import complexClasses.ComplexQubit;
 
 import java.io.File;
 import java.util.*;
