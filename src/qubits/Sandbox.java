@@ -5,6 +5,8 @@ import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
 import complexClasses.ComplexQubit;
 
+import java.util.Random;
+
 public class Sandbox {
     public static void main(String[] args) {
         ComplexQubit controlQubit = new ComplexQubit();
@@ -65,6 +67,27 @@ public class Sandbox {
         testing = ComplexGates.applyCNOT(controlQubit, targetQubit);
         System.out.println(testing);
         System.out.println("................................................................");
+
+        final double PI = 3.14159;
+        Random rand = new Random();
+        ComplexMatrix testMatrix = new ComplexMatrix(3,3);
+        for(int i = 0; i<testMatrix.getRows(); i++){
+            for(int j = 0; j<testMatrix.getCols(); j++){
+                int random = rand.nextInt(9);
+                int sign = rand.nextInt(2);
+                int phase = -1;
+                if(sign == 0){
+                    phase  = 1;
+                }
+                testMatrix.set(i,j,new ComplexNumber(phase*(i+random*PI),phase*-1*((random+j)*PI)));
+            }
+        }
+
+        System.out.println(testMatrix);
+
+        testMatrix = testMatrix.getConjugateTranspose(testMatrix);
+
+        System.out.println(testMatrix);
 
 //        testBit = ComplexGates.applyHadamard(testBit);
 //        System.out.println("Start State: "+testBit);

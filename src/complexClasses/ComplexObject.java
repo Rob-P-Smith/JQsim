@@ -151,7 +151,7 @@ public class ComplexObject {
      * @param target the target qubit
      * @return a ComplexNumber[] with length 4, containing the stateVector resultant from the tensor multiplication
      */
-    private ComplexNumber[] deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
+    public ComplexNumber[] deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
         ComplexNumber[] stateVector = new ComplexNumber[4];
         stateVector[0] = multiplyComplex(control.get(0, 0), target.get(0, 0));
         stateVector[1] = multiplyComplex(control.get(0, 0), target.get(1, 0));
@@ -163,5 +163,19 @@ public class ComplexObject {
         }
         return stateVector;
 
+    }
+
+    public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix){
+        ComplexMatrix resultMatrix = new ComplexMatrix(originMatrix.getRows(), originMatrix.getCols());
+        for(int i = 0; i < originMatrix.getRows(); i++){
+            for(int j = 0; j < originMatrix.getCols(); j++){
+                resultMatrix.set(i, j, conjugate(originMatrix.get(j,i)));
+            }
+        }
+        return resultMatrix;
+    }
+
+    private ComplexNumber conjugate(ComplexNumber sampleNumber) {
+        return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
     }
 }
