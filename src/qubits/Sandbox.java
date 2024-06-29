@@ -71,8 +71,8 @@ public class Sandbox {
         final double PI = 3.14159;
         Random rand = new Random();
         ComplexMatrix testMatrix = new ComplexMatrix(3,3);
-        for(int i = 0; i<testMatrix.getRows(); i++){
-            for(int j = 0; j<testMatrix.getCols(); j++){
+        for(int i = 0; i<testMatrix.getHeight(); i++){
+            for(int j = 0; j<testMatrix.getWidth(); j++){
                 int random = rand.nextInt(9);
                 int sign = rand.nextInt(2);
                 int phase = -1;
@@ -85,10 +85,24 @@ public class Sandbox {
 
         System.out.println(testMatrix);
 
-        testMatrix = testMatrix.getConjugateTranspose(testMatrix);
+//        testMatrix = testMatrix.getConjugateTranspose(testMatrix);
+        testMatrix = testMatrix.getTranspose(testMatrix);
 
         System.out.println(testMatrix);
 
+        ComplexMatrix testMatrixTwo = new ComplexMatrix(2,3);
+        testMatrixTwo.set(0,0,new ComplexNumber(1, 0));
+        testMatrixTwo.set(0,1,new ComplexNumber(2, 0));
+        testMatrixTwo.set(0,2,new ComplexNumber(3, 0));
+        testMatrixTwo.set(1,0,new ComplexNumber(4, 0));
+        testMatrixTwo.set(1,1,new ComplexNumber(5, 0));
+        testMatrixTwo.set(1,2,new ComplexNumber(6, 0));
+
+        System.out.println("Original \n"+testMatrixTwo);
+
+        testMatrixTwo = testMatrixTwo.getTranspose(testMatrixTwo);
+
+        System.out.println(testMatrixTwo);
 //        testBit = ComplexGates.applyHadamard(testBit);
 //        System.out.println("Start State: "+testBit);
 //        System.out.println("Start State: "+newBit);

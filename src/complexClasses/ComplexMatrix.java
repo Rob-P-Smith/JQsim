@@ -62,7 +62,7 @@ public class ComplexMatrix extends ComplexObject {
      *
      * @return The number of rows in the matrix.
      */
-    public int getRows() {
+    public int getHeight() {
         return rows;
     }
 
@@ -71,7 +71,7 @@ public class ComplexMatrix extends ComplexObject {
      *
      * @return The number of columns in the matrix.
      */
-    public int getCols() {
+    public int getWidth() {
         return cols;
     }
 

@@ -71,17 +71,17 @@ public class ComplexObject {
      * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
      */
     public ComplexMatrix multiply(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
-        if (matrixOne.getCols() != matrixTwo.getRows()) {
+        if (matrixOne.getWidth() != matrixTwo.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication: "
-                    + matrixOne.getRows() + "x" + matrixOne.getCols()
-                    + " cannot be multiplied with " + matrixTwo.getRows()
-                    + "x" + matrixTwo.getCols());
+                    + matrixOne.getHeight() + "x" + matrixOne.getWidth()
+                    + " cannot be multiplied with " + matrixTwo.getHeight()
+                    + "x" + matrixTwo.getWidth());
         }
-        ComplexNumber[][] result = new ComplexNumber[matrixOne.getRows()][matrixTwo.getCols()];
-        for (int i = 0; i < matrixOne.getRows(); i++) {
-            for (int j = 0; j < matrixTwo.getCols(); j++) {
+        ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixTwo.getWidth()];
+        for (int i = 0; i < matrixOne.getHeight(); i++) {
+            for (int j = 0; j < matrixTwo.getWidth(); j++) {
                 result[i][j] = new ComplexNumber(); // Initialize the result matrix cell
-                for (int k = 0; k < matrixOne.getCols(); k++) {
+                for (int k = 0; k < matrixOne.getWidth(); k++) {
                     result[i][j] = addComplex(result[i][j], multiplyComplex(matrixOne.get(i,k), matrixTwo.get(k,j)));
                 }
             }
@@ -117,15 +117,15 @@ public class ComplexObject {
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
     public ComplexMatrix add(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
-        if (matrixOne.getRows() != matrixTwo.getRows() || matrixOne.getCols() != matrixTwo.getCols()) {
+        if (matrixOne.getHeight() != matrixTwo.getHeight() || matrixOne.getWidth() != matrixTwo.getWidth()) {
             throw new IllegalArgumentException("Matrix dimensions must be the same for addition: "
-                    + matrixOne.getRows() + "x" + matrixOne.getCols()
-                    + " cannot be added with " + matrixTwo.getRows()
-                    + "x" + matrixTwo.getCols());
+                    + matrixOne.getHeight() + "x" + matrixOne.getWidth()
+                    + " cannot be added with " + matrixTwo.getHeight()
+                    + "x" + matrixTwo.getWidth());
         }
-        ComplexNumber[][] result = new ComplexNumber[matrixOne.getRows()][matrixOne.getCols()];
-        for (int i = 0; i < matrixOne.getRows(); i++) {
-            for (int j = 0; j < matrixOne.getCols(); j++) {
+        ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixOne.getWidth()];
+        for (int i = 0; i < matrixOne.getHeight(); i++) {
+            for (int j = 0; j < matrixOne.getWidth(); j++) {
                 result[i][j] = addComplex(matrixOne.get(i,j), matrixTwo.get(i,j));
             }
         }
@@ -165,10 +165,32 @@ public class ComplexObject {
 
     }
 
+    public ComplexMatrix getTranspose(ComplexMatrix originMatrix){
+        int height = originMatrix.getHeight();
+        int width = originMatrix.getWidth();
+        ComplexMatrix resultMatrix = new ComplexMatrix(0, 0);
+        if (height == width) {
+            resultMatrix = new ComplexMatrix(height, width);
+            for(int i = 0; i < height; i++){
+                for(int j = 0; j < width; j++){
+                    resultMatrix.set(i, j, originMatrix.get(j,i));
+                }
+            }
+        } else {
+            resultMatrix = new ComplexMatrix(width, height);
+            for(int i =0; i < width; i++){
+                for(int j = 0; j < height; j++){
+                    resultMatrix.set(i,j,originMatrix.get(j,i));
+                }
+            }
+        }
+        return resultMatrix;
+    }
+
     public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix){
-        ComplexMatrix resultMatrix = new ComplexMatrix(originMatrix.getRows(), originMatrix.getCols());
-        for(int i = 0; i < originMatrix.getRows(); i++){
-            for(int j = 0; j < originMatrix.getCols(); j++){
+        ComplexMatrix resultMatrix = new ComplexMatrix(originMatrix.getHeight(), originMatrix.getWidth());
+        for(int i = 0; i < originMatrix.getHeight(); i++){
+            for(int j = 0; j < originMatrix.getWidth(); j++){
                 resultMatrix.set(i, j, conjugate(originMatrix.get(j,i)));
             }
         }

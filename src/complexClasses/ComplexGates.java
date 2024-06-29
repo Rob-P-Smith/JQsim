@@ -160,8 +160,8 @@ public class ComplexGates extends ComplexObject{
         ComplexMatrix targetState = targetQubit.getState();
 
         // Ensure dimensions are compatible
-        if ((controlState.getRows() != 2 || controlState.getCols() != 1)||
-            (targetState.getRows() != 2 || targetState.getCols() != 1)) {
+        if ((controlState.getHeight() != 2 || controlState.getWidth() != 1)||
+            (targetState.getHeight() != 2 || targetState.getWidth() != 1)) {
             throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
         }
 
