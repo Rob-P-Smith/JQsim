@@ -3,6 +3,7 @@ package complexClasses;
 import java.util.HashMap;
 import java.util.Map;
 
+//TODO clean up obsolete entangled qubit hashmap if it ends up being superfluous
 /**
  * This class represents a single qubit. It uses ComplexNumbers so that 'i' can be used for qubit alpha and beta values
  * to track probabilities.
@@ -17,7 +18,7 @@ public class ComplexQubit extends ComplexObject{
     private static int numQubits = 0;
     private int qubitID;
     private ComplexMatrix state;
-    private Map<ComplexQubit, ComplexQubit> entangledQubits;
+//    private Map<ComplexQubit, ComplexQubit> entangledQubits;//TODO This can probably go away, marked for future removal
 
     /**
      * Default constructor for the qubit class
@@ -27,7 +28,7 @@ public class ComplexQubit extends ComplexObject{
         this.state = new ComplexMatrix(new ComplexNumber[][]{{new ComplexNumber(1)}, {new ComplexNumber()}});
         this.qubitID = numQubits;
         numQubits++;
-        this.entangledQubits = new HashMap<>();
+//        this.entangledQubits = new HashMap<>();
     }
 
     /**
@@ -41,7 +42,7 @@ public class ComplexQubit extends ComplexObject{
             this.state = new ComplexMatrix(new ComplexNumber[][]{{aVec}, {bVec}});
             this.qubitID = numQubits;
             numQubits++;
-            this.entangledQubits = new HashMap<>();
+//            this.entangledQubits = new HashMap<>();
         } else {
             throw new IllegalArgumentException("Violates Born's Rule for provided values");
         }
@@ -59,34 +60,36 @@ public class ComplexQubit extends ComplexObject{
             this.state = new ComplexMatrix(new ComplexNumber[][]{{aVec}, {bVec}});
             this.qubitID = qubitID;
             numQubits = this.qubitID+1;
-            this.entangledQubits = new HashMap<>();
+//            this.entangledQubits = new HashMap<>();
         } else {
             throw new IllegalArgumentException("Violates Born's Rule for provided values");
         }
     }
 
-    /**
-     * Add the provided parameter qubit to this qubit's entangledQubits HashMap and then add this qubit to the parameter
-     * qubit's entangledQubits HashMap, so they remain synchronized as entangled with each other.
-     *
-     * @param otherQubit A valid Qubit to entangle with.
-     */
-    public void setEntangledQubit(ComplexQubit otherQubit) {
-        // Add the other qubit to this qubit's list, and this qubit to the other qubit's list
-        if (!entangledQubits.containsKey(otherQubit)) {
-            entangledQubits.put(otherQubit, otherQubit);
-            otherQubit.entangledQubits.put(this, this);
-        }
-    }
+    //TODO This can probably go away, marked for future removal
+//    /**
+//     * Add the provided parameter qubit to this qubit's entangledQubits HashMap and then add this qubit to the parameter
+//     * qubit's entangledQubits HashMap, so they remain synchronized as entangled with each other.
+//     *
+//     * @param otherQubit A valid Qubit to entangle with.
+//     */
+//    public void setEntangledQubit(ComplexQubit otherQubit) {
+//        // Add the other qubit to this qubit's list, and this qubit to the other qubit's list
+//        if (!entangledQubits.containsKey(otherQubit)) {
+//            entangledQubits.put(otherQubit, otherQubit);
+//            otherQubit.entangledQubits.put(this, this);
+//        }
+//    }
 
-    /**
-     * Getter for the current entanglement map of entangled qubits with this qubit
-     *
-     * @return map of all qubit entangled with this qubit
-     */
-    public Map<ComplexQubit, ComplexQubit> getEntangledQubit() {
-        return entangledQubits;
-    }
+    //TODO This can probably go away, marked for future removal
+//    /**
+//     * Getter for the current entanglement map of entangled qubits with this qubit
+//     *
+//     * @return map of all qubit entangled with this qubit
+//     */
+//    public Map<ComplexQubit, ComplexQubit> getEntangledQubit() {
+//        return entangledQubits;
+//    }
 
     public void setState(ComplexMatrix newState) {
         this.state = newState;
@@ -131,24 +134,25 @@ public class ComplexQubit extends ComplexObject{
         sBuild.append('[').append(state.get(0, 0)).append("]\n");
         sBuild.append('β').append("\n");
         sBuild.append('[').append(state.get(1, 0)).append("]");
-        if (entangledQubits != null) {
-            if (entangledQubits.size() == 1) {
-                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #");
-                for (ComplexQubit value : entangledQubits.values()) {
-                    sBuild.append(value.getQubitID());
-                }
-            } else if (entangledQubits.size() > 1) {
-                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #s: ");
-                ComplexQubit[] values = entangledQubits.values().toArray(new ComplexQubit[0]);
-                for (int i = 0; i < values.length; i++) {
-                    if (i != entangledQubits.size() - 1) {
-                        sBuild.append(values[i].getQubitID()).append(", ");
-                    } else {
-                        sBuild.append(values[i].getQubitID());
-                    }
-                }
-            }
-        }
+        //TODO This can probably go away, marked for future removal
+//        if (entangledQubits != null) {
+//            if (entangledQubits.size() == 1) {
+//                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #");
+//                for (ComplexQubit value : entangledQubits.values()) {
+//                    sBuild.append(value.getQubitID());
+//                }
+//            } else if (entangledQubits.size() > 1) {
+//                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #s: ");
+//                ComplexQubit[] values = entangledQubits.values().toArray(new ComplexQubit[0]);
+//                for (int i = 0; i < values.length; i++) {
+//                    if (i != entangledQubits.size() - 1) {
+//                        sBuild.append(values[i].getQubitID()).append(", ");
+//                    } else {
+//                        sBuild.append(values[i].getQubitID());
+//                    }
+//                }
+//            }
+//        }
         return sBuild.toString();
     }
 }

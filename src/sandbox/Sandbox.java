@@ -1,4 +1,4 @@
-package qubits;
+package sandbox;
 
 import complexClasses.ComplexGates;
 import complexClasses.ComplexMatrix;

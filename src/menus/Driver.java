@@ -46,7 +46,7 @@ public class Driver {
                     \n1. Initialize Wires
                     2. Add Gate to wire
                     3. Display Wire Gates
-                    4. Run Simulation (pending implementation)
+                    4. Run Simulation (pending full implementation)
                     5. Display executed work log
                     6. NOP
                     7. NOP
@@ -108,7 +108,6 @@ public class Driver {
             }
         }
     }
-
 
     /**
      * Applies quantum gates to selected qubits based on user input.
@@ -228,7 +227,11 @@ public class Driver {
         displayQubitStates(workingQubits);
     }
 
-    private static void gateExecutor(String currentGateType, ComplexQubit[] workingQubits, int currentQubitID, int controlQubitCNOT, int targetQubitCNOT) {
+    private static void gateExecutor(String currentGateType,
+                                     ComplexQubit[] workingQubits,
+                                     int currentQubitID,
+                                     int controlQubitCNOT,
+                                     int targetQubitCNOT) {
         switch (currentGateType) {
             case "PAULI_X" -> {
                 if (DEBUG)System.out.println("Applying PAULI_X");
@@ -247,7 +250,7 @@ public class Driver {
                 workingQubits[currentQubitID] = ComplexGates.applyHadamard(workingQubits[currentQubitID]);
             }
             case "CNOT" -> {
-                if (DEBUG)System.out.println("Applying CNOT");
+                if(DEBUG) System.out.println("Applying CNOT");
                 ComplexQubit controlQubit = null, targetQubit = null;
                 for (ComplexQubit qubit : workingQubits) {
                     if (qubit.getQubitID() == controlQubitCNOT) {
@@ -369,7 +372,7 @@ public class Driver {
      * @param workingQubits The array of working qubits.
      */
     private static void displayQubitStates(ComplexQubit[] workingQubits) {
-        System.out.println("Current Qubit state: ");
+        System.out.println("Resulting Qubit state(s): \n");
         if (workingQubits.length == 0) {
             System.out.println("Initialize Qubits before displaying them.");
             return;

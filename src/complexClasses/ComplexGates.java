@@ -1,5 +1,7 @@
 package complexClasses;
 
+import measurement.Qops;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -165,6 +167,10 @@ public class ComplexGates extends ComplexObject{
             throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
         }
 
+        //resolve the state of the control qubit as 0 or 1 based on probability distribution before applying the CNOT
+        //to the target qubit so the CNOT functions correctly
+        controlState = Qops.measureMat(controlState);
+        controlQubit.setState(controlState);
         // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
         ComplexMatrix resultMatrix = CNOT.tensorMultiply(controlState, targetState);
 
