@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 /**
  * ComplexObject serves as the parent class for other complex classes, providing a single location for linear algebra
- * functions to be collected and giving universal across to those methods on each complex class.
+ * functions to be collected and giving universal access to those methods on each complex class.
  *
  * @author Robert Smith
  * @version 0.1
@@ -14,19 +14,18 @@ public class ComplexObject {
     private static final boolean DEBUG = false;
 
     /**
-     * Computes the tensor product of this matrix with a state vector.
+     * Computes the tensor product of the control and target matrices using the CNOT gate.
      *
-     * @param control The matrix to tensor multiply with this matrix.
+     * @param control The control matrix.
+     * @param target  The target matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
      */
     public ComplexMatrix tensorMultiply(ComplexMatrix control, ComplexMatrix target) {
         ComplexMatrix CNOT = ComplexGates.CNOT;
-        //get input state vector from input
         ComplexNumber[] stateVector = deriveStateVector(control, target);
         ComplexNumber[] resultVector = new ComplexNumber[4];
         ComplexNumber[] collector = new ComplexNumber[4];
 
-        //multiply CNOT matrix against state vector to get resulting state vector
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 collector[j] = multiplyComplex(CNOT.get(i, j), stateVector[j]);
@@ -44,7 +43,6 @@ public class ComplexObject {
             }
         }
 
-        // Convert result vector to a column matrix
         ComplexNumber[][] resultMatrix = new ComplexNumber[2][1];
         if (Math.abs(resultVector[1].getReal()) == 1.0 ||
                 Math.abs(resultVector[3].getReal()) == 1.0 ||
@@ -59,14 +57,13 @@ public class ComplexObject {
 
         System.out.println(Arrays.deepToString(resultMatrix));
         return new ComplexMatrix(resultMatrix);
-
     }
 
     /**
-     * Multiplies this matrix with another matrix and returns the result as a new matrix.
+     * Multiplies two matrices and returns the result as a new matrix.
      *
-     * @param matrixOne The matrix to multiply with matrixTwo.
-     * @param matrixTwo The matrix to multiply with matrixOne.
+     * @param matrixOne The first matrix.
+     * @param matrixTwo The second matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
      * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
      */
@@ -80,9 +77,9 @@ public class ComplexObject {
         ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixTwo.getWidth()];
         for (int i = 0; i < matrixOne.getHeight(); i++) {
             for (int j = 0; j < matrixTwo.getWidth(); j++) {
-                result[i][j] = new ComplexNumber(); // Initialize the result matrix cell
+                result[i][j] = new ComplexNumber();
                 for (int k = 0; k < matrixOne.getWidth(); k++) {
-                    result[i][j] = addComplex(result[i][j], multiplyComplex(matrixOne.get(i,k), matrixTwo.get(k,j)));
+                    result[i][j] = addComplex(result[i][j], multiplyComplex(matrixOne.get(i, k), matrixTwo.get(k, j)));
                 }
             }
         }
@@ -109,10 +106,10 @@ public class ComplexObject {
     }
 
     /**
-     * Adds another matrix to this matrix and returns the result as a new matrix.
+     * Adds two matrices and returns the result as a new matrix.
      *
-     * @param matrixOne THe matrix to add with matrixTwo
-     * @param matrixTwo The matrix to add to matrixOne.
+     * @param matrixOne The first matrix.
+     * @param matrixTwo The second matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
@@ -126,7 +123,7 @@ public class ComplexObject {
         ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixOne.getWidth()];
         for (int i = 0; i < matrixOne.getHeight(); i++) {
             for (int j = 0; j < matrixOne.getWidth(); j++) {
-                result[i][j] = addComplex(matrixOne.get(i,j), matrixTwo.get(i,j));
+                result[i][j] = addComplex(matrixOne.get(i, j), matrixTwo.get(i, j));
             }
         }
         return new ComplexMatrix(result);
@@ -146,10 +143,11 @@ public class ComplexObject {
     }
 
     /**
-     * Calculates the tensor product of two input qubits to create the state vector used for two qubit gate application.
-     * @param control the control qubit
-     * @param target the target qubit
-     * @return a ComplexNumber[] with length 4, containing the stateVector resultant from the tensor multiplication
+     * Calculates the tensor product of two input qubits to create the state vector used for two-qubit gate application.
+     *
+     * @param control The control qubit.
+     * @param target  The target qubit.
+     * @return A {@code ComplexNumber[]} with length 4, containing the state vector resultant from the tensor multiplication.
      */
     public ComplexNumber[] deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
         ComplexNumber[] stateVector = new ComplexNumber[4];
@@ -157,46 +155,77 @@ public class ComplexObject {
         stateVector[1] = multiplyComplex(control.get(0, 0), target.get(1, 0));
         stateVector[2] = multiplyComplex(control.get(1, 0), target.get(0, 0));
         stateVector[3] = multiplyComplex(control.get(1, 0), target.get(1, 0));
-        System.out.println("StateVector is: ");
-        for (int i = 0; i < 4; i++) {
-            System.out.println(stateVector[i]);
+        if (DEBUG) {
+            System.out.println("StateVector is: ");
+            for (int i = 0; i < 4; i++) {
+                System.out.println(stateVector[i]);
+            }
         }
         return stateVector;
-
     }
 
-    public ComplexMatrix getTranspose(ComplexMatrix originMatrix){
+    /**
+     * Transposes a given matrix.
+     *
+     * @param originMatrix The matrix to transpose.
+     * @return A new {@code ComplexMatrix} that is the transpose of the original matrix.
+     */
+    public ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
         ComplexMatrix resultMatrix = new ComplexMatrix(0, 0);
         if (height == width) {
             resultMatrix = new ComplexMatrix(height, width);
-            for(int i = 0; i < height; i++){
-                for(int j = 0; j < width; j++){
-                    resultMatrix.set(i, j, originMatrix.get(j,i));
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    resultMatrix.set(i, j, originMatrix.get(j, i));
                 }
             }
         } else {
             resultMatrix = new ComplexMatrix(width, height);
-            for(int i =0; i < width; i++){
-                for(int j = 0; j < height; j++){
-                    resultMatrix.set(i,j,originMatrix.get(j,i));
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    resultMatrix.set(i, j, originMatrix.get(j, i));
                 }
             }
         }
         return resultMatrix;
     }
 
-    public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix){
-        ComplexMatrix resultMatrix = new ComplexMatrix(originMatrix.getHeight(), originMatrix.getWidth());
-        for(int i = 0; i < originMatrix.getHeight(); i++){
-            for(int j = 0; j < originMatrix.getWidth(); j++){
-                resultMatrix.set(i, j, conjugate(originMatrix.get(j,i)));
+    /**
+     * Computes the conjugate transpose (Hermitian transpose) of a given matrix.
+     *
+     * @param originMatrix The matrix to compute the conjugate transpose of.
+     * @return A new {@code ComplexMatrix} that is the conjugate transpose of the original matrix.
+     */
+    public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
+        int height = originMatrix.getHeight();
+        int width = originMatrix.getWidth();
+        ComplexMatrix resultMatrix = new ComplexMatrix(0, 0);
+        if (height == width) {
+            resultMatrix = new ComplexMatrix(height, width);
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
+                }
+            }
+        } else {
+            resultMatrix = new ComplexMatrix(width, height);
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
+                }
             }
         }
         return resultMatrix;
     }
 
+    /**
+     * Computes the conjugate of a complex number.
+     *
+     * @param sampleNumber The complex number to conjugate.
+     * @return The conjugated complex number.
+     */
     private ComplexNumber conjugate(ComplexNumber sampleNumber) {
         return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
     }
