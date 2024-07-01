@@ -2,10 +2,7 @@ package Tests;
 
 import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
-import complexClasses.ComplexObject;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,7 +62,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0)}
         });
 
-        ComplexMatrix result = matrixOne.multiply(matrixOne, matrixTwo);
+        ComplexMatrix result = matrixOne.multiplyMatrix(matrixOne, matrixTwo);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(4, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(10, 0), new ComplexNumber(8, 0)}
@@ -94,7 +91,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0)}
         });
 
-        ComplexMatrix result = matrixOne.add(matrixOne, matrixTwo);
+        ComplexMatrix result = matrixOne.addMatrix(matrixOne, matrixTwo);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(3, 0), new ComplexNumber(2, 0)},
                 {new ComplexNumber(4, 0), new ComplexNumber(6, 0)}

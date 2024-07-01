@@ -91,6 +91,18 @@ public class ComplexQubit extends ComplexObject{
 //        return entangledQubits;
 //    }
 
+    public ComplexQubit getZeroQubit(){
+        ComplexQubit zeroQubit = new ComplexQubit();
+        zeroQubit.setState(new ComplexMatrix(new ComplexNumber[][]{{new ComplexNumber(1)}, {new ComplexNumber()}}));
+        return zeroQubit;
+    }
+
+    public ComplexQubit getOneQubit(){
+        ComplexQubit zeroQubit = new ComplexQubit();
+        zeroQubit.setState(new ComplexMatrix(new ComplexNumber[][]{{new ComplexNumber()}, {new ComplexNumber(1)}}));
+        return zeroQubit;
+    }
+
     public void setState(ComplexMatrix newState) {
         this.state = newState;
     }

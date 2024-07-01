@@ -235,19 +235,23 @@ public class Driver {
         switch (currentGateType) {
             case "PAULI_X" -> {
                 if (DEBUG)System.out.println("Applying PAULI_X");
-                workingQubits[currentQubitID] = ComplexGates.applyPauliX(workingQubits[currentQubitID]);
+                workingQubits[currentQubitID].
+                        setState(ComplexGates.
+                                applyPauliX(workingQubits[currentQubitID].
+                                        getState()));
             }
             case "PAULI_Y" -> {
-                if (DEBUG)System.out.println("Applying PAULI_Y");
-                workingQubits[currentQubitID] = ComplexGates.applyPauliY(workingQubits[currentQubitID]);
+                if (DEBUG) System.out.println("Applying PAULI_Y");
+                workingQubits[currentQubitID].setState(ComplexGates.applyPauliY(workingQubits[currentQubitID].getState()));
             }
             case "PAULI_Z" -> {
                 if (DEBUG)System.out.println("Applying PAULI_Z");
-                workingQubits[currentQubitID] = ComplexGates.applyPauliZ(workingQubits[currentQubitID]);
+                workingQubits[currentQubitID].setState(ComplexGates.applyPauliZ(workingQubits[currentQubitID].getState()));
             }
             case "HADAMARD" -> {
                 if (DEBUG)System.out.println("Applying HADAMARD");
-                workingQubits[currentQubitID] = ComplexGates.applyHadamard(workingQubits[currentQubitID]);
+                workingQubits[currentQubitID].setState(ComplexGates.applyHadamard(workingQubits[currentQubitID].getState()));
+
             }
             case "CNOT" -> {
                 if(DEBUG) System.out.println("Applying CNOT");
@@ -260,16 +264,16 @@ public class Driver {
                         targetQubit = qubit;
                     }
                 }
-                targetQubit = ComplexGates.applyCNOT(controlQubit, targetQubit);
                 for (ComplexQubit qubit : workingQubits) {
                     if (qubit.getQubitID() == targetQubitCNOT) {
-                        qubit = targetQubit;
+                        qubit = ComplexGates.applyCNOT(controlQubit, targetQubit);
+                        System.out.println("Resultant qubit: \n"+qubit);
                     }
                 }
             }
             case "IDENTITY" -> {
                 if (DEBUG)System.out.println("Applying IDENTITY");
-                workingQubits[currentQubitID] = ComplexGates.applyIdentity(workingQubits[currentQubitID]);
+                workingQubits[currentQubitID].setState(ComplexGates.applyIdentity(workingQubits[currentQubitID].getState()));
             }
         }
     }

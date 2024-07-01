@@ -68,13 +68,23 @@ public class ComplexGates extends ComplexObject{
     });
 
     /**
-     * CNOT gate matrix.
+     * CNOT gate matrix, from qubit 0 to 1.
      */
     static final ComplexMatrix CNOT = new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()},
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()}
+    });
+
+    /**
+     * rCNOT gate matrix, from qubit 1 to 0 instead of 0 to 1.
+     */
+    static final ComplexMatrix rCNOT = new ComplexMatrix(new ComplexNumber[][]{
+            {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
+            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()}
     });
 
     /**
@@ -86,12 +96,48 @@ public class ComplexGates extends ComplexObject{
     });
 
     /**
+     * Identity Matrix Getter
+     *
+     * @return the identity matrix
+     */
+    public static ComplexMatrix getIdentity(){
+      return IDENTITY;
+    }
+
+    /**
+     * Pauli_X Matrix Getter
+     *
+     * @return the Pauli_X matrix
+     */
+    public static ComplexMatrix getPauliX(){
+        return PAULI_X;
+    }
+
+    /**
+     * Pauli_Y Matrix Getter
+     *
+     * @return the Pauli_Y matrix
+     */
+    public static ComplexMatrix getPauliY(){
+        return PAULI_Y;
+    }
+
+    /**
+     * Pauli_Z Matrix Getter
+     *
+     * @return the Pauli_Z matrix
+     */
+    public static ComplexMatrix getPauliZ(){
+        return PAULI_Z;
+    }
+
+    /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.
      *
      * @param target The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-X gate.
      */
-    public static ComplexQubit applyPauliX(ComplexQubit target) {
+    public static ComplexMatrix applyPauliX(ComplexMatrix target) {
         return applyGate(PAULI_X, target);
     }
 
@@ -101,7 +147,7 @@ public class ComplexGates extends ComplexObject{
      * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-Z gate.
      */
-    public static ComplexQubit applyPauliZ(ComplexQubit qubit) {
+    public static ComplexMatrix applyPauliZ(ComplexMatrix qubit) {
         return applyGate(PAULI_Z, qubit);
     }
 
@@ -111,7 +157,7 @@ public class ComplexGates extends ComplexObject{
      * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Pauli-Y gate.
      */
-    public static ComplexQubit applyPauliY(ComplexQubit qubit) {
+    public static ComplexMatrix applyPauliY(ComplexMatrix qubit) {
         return applyGate(PAULI_Y, qubit);
     }
 
@@ -121,7 +167,7 @@ public class ComplexGates extends ComplexObject{
      * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Hadamard gate.
      */
-    public static ComplexQubit applyHadamard(ComplexQubit qubit) {
+    public static ComplexMatrix applyHadamard(ComplexMatrix qubit) {
         return applyGate(HADAMARD, qubit);
     }
 
@@ -131,7 +177,7 @@ public class ComplexGates extends ComplexObject{
      * @param qubit The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the Identity gate.
      */
-    public static ComplexQubit applyIdentity(ComplexQubit qubit) {
+    public static ComplexMatrix applyIdentity(ComplexMatrix qubit) {
         return applyGate(IDENTITY, qubit);
     }
 
@@ -142,10 +188,8 @@ public class ComplexGates extends ComplexObject{
      * @param target    The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the gate.
      */
-    private static ComplexQubit applyGate(ComplexMatrix gate, ComplexQubit target) {
-        ComplexMatrix result = gate.multiply(gate, target.getState());
-        target.setState(result);
-        return target;
+    private static ComplexMatrix applyGate(ComplexMatrix gate, ComplexMatrix target) {
+        return gate.multiplyMatrix(gate, target);
     }
 
     /**
@@ -171,14 +215,17 @@ public class ComplexGates extends ComplexObject{
         //to the target qubit so the CNOT functions correctly
         controlState = Qops.measureMat(controlState);
         controlQubit.setState(controlState);
+
         // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
-        ComplexMatrix resultMatrix = CNOT.tensorMultiply(controlState, targetState);
-
-        // Update the target qubit's state with the result
-        targetQubit.setState(resultMatrix);
-
-        return targetQubit;
-    }
+        ComplexMatrix resultMatrix = CNOT.multiplyMatrix(CNOT, CNOT.deriveStateVector(controlState, targetState));
+        System.out.println("Resulting Matrix: \n"+resultMatrix);
+        if(resultMatrix.get(0,0).getReal() == 1.0||
+           resultMatrix.get(2,0).getReal() == 1.0){
+            return new ComplexQubit().getZeroQubit();
+        } else {
+            return new ComplexQubit().getOneQubit();
+        }
+     }
 
     /**
      * Prints the predefined quantum gates and their matrix.
