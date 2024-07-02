@@ -103,6 +103,10 @@ public class ComplexQubit extends ComplexObject{
         return zeroQubit;
     }
 
+    /**
+     * Setter for the state of the qubit
+     * @param newState
+     */
     public void setState(ComplexMatrix newState) {
         this.state = newState;
     }
@@ -128,6 +132,7 @@ public class ComplexQubit extends ComplexObject{
     /**
      * Setter for qubitID
      *
+     * @param qubitID the Qubit unique ID
      */
     public void setQubitID(int qubitID) {
         this.qubitID = qubitID;

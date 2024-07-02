@@ -31,7 +31,7 @@ import java.util.Map;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexGates extends ComplexObject{
+public class ComplexGates extends ComplexObject {
     private static final boolean DEBUG = false;
     private static final double H_FACTOR = 1 / Math.sqrt(2);
 
@@ -39,8 +39,8 @@ public class ComplexGates extends ComplexObject{
      * Pauli-X gate matrix.
      */
     private static final ComplexMatrix PAULI_X = new ComplexMatrix(new ComplexNumber[][]{
-            {new ComplexNumber(), new ComplexNumber(1)},
-            {new ComplexNumber(1), new ComplexNumber()}
+            {new ComplexNumber(0), new ComplexNumber(1)},
+            {new ComplexNumber(1), new ComplexNumber(0)}
     });
 
     /**
@@ -77,15 +77,19 @@ public class ComplexGates extends ComplexObject{
             {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()}
     });
 
-    /**
-     * rCNOT gate matrix, from qubit 1 to 0 instead of 0 to 1.
-     */
-    static final ComplexMatrix rCNOT = new ComplexMatrix(new ComplexNumber[][]{
-            {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
-            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
-            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()},
-            {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()}
-    });
+    public static final ComplexMatrix getCNOT(){
+        return CNOT;
+    }
+//
+//    /**
+//     * rCNOT gate matrix, from qubit 1 to 0 instead of 0 to 1.
+//     */
+//    static final ComplexMatrix rCNOT = new ComplexMatrix(new ComplexNumber[][]{
+//            {new ComplexNumber(1), new ComplexNumber(), new ComplexNumber(), new ComplexNumber()},
+//            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1)},
+//            {new ComplexNumber(), new ComplexNumber(), new ComplexNumber(1), new ComplexNumber()},
+//            {new ComplexNumber(), new ComplexNumber(1), new ComplexNumber(), new ComplexNumber()}
+//    });
 
     /**
      * Identity gate matrix.
@@ -100,8 +104,8 @@ public class ComplexGates extends ComplexObject{
      *
      * @return the identity matrix
      */
-    public static ComplexMatrix getIdentity(){
-      return IDENTITY;
+    public static ComplexMatrix getIdentity() {
+        return IDENTITY;
     }
 
     /**
@@ -109,7 +113,7 @@ public class ComplexGates extends ComplexObject{
      *
      * @return the Pauli_X matrix
      */
-    public static ComplexMatrix getPauliX(){
+    public static ComplexMatrix getPauliX() {
         return PAULI_X;
     }
 
@@ -118,7 +122,7 @@ public class ComplexGates extends ComplexObject{
      *
      * @return the Pauli_Y matrix
      */
-    public static ComplexMatrix getPauliY(){
+    public static ComplexMatrix getPauliY() {
         return PAULI_Y;
     }
 
@@ -127,7 +131,7 @@ public class ComplexGates extends ComplexObject{
      *
      * @return the Pauli_Z matrix
      */
-    public static ComplexMatrix getPauliZ(){
+    public static ComplexMatrix getPauliZ() {
         return PAULI_Z;
     }
 
@@ -184,8 +188,8 @@ public class ComplexGates extends ComplexObject{
     /**
      * Applies a given gate represented by a {@link ComplexMatrix} to a {@link ComplexQubit}.
      *
-     * @param gate The gate matrix to apply.
-     * @param target    The input {@link ComplexQubit}.
+     * @param gate   The gate matrix to apply.
+     * @param target The input {@link ComplexQubit}.
      * @return The resulting {@link ComplexQubit} after applying the gate.
      */
     private static ComplexMatrix applyGate(ComplexMatrix gate, ComplexMatrix target) {
@@ -204,28 +208,64 @@ public class ComplexGates extends ComplexObject{
         // Create a matrix copy representing the control qubit's state
         ComplexMatrix controlState = controlQubit.getState();
         ComplexMatrix targetState = targetQubit.getState();
+        ComplexMatrix CNOT;
+        //resolve the state of the control qubit as 0 or 1 based on probability distribution before applying the CNOT
+        //to the target qubit so the CNOT functions correctly
+//        controlState = Qops.measureMat(controlState);
+//        controlQubit.setState(controlState);
+
+        System.out.println("\nInput states: \nControl: \n" + controlState + " Target: \n" + targetState);
+        ComplexMatrix controlDot = controlQubit.dotProduct(controlState);
+        System.out.println("controlDOT: \n" + controlDot);
+        ComplexMatrix targetDot = targetQubit.dotProduct(targetState);
+        System.out.println("targetDot: \n" + targetDot);
+        ComplexMatrix controlStepOne = controlQubit.tensorMultiply(controlDot, ComplexGates.getIdentity());
+        System.out.println("ControlStepOne Mid Matrix: \n" + controlStepOne);
+        ComplexMatrix targetStepTwo = targetQubit.tensorMultiply(targetDot, ComplexGates.getPauliX());
+        System.out.println("targetStepTwo Mid Matrix: \n" + targetStepTwo);
+        CNOT = controlQubit.addMatrix(targetStepTwo, controlStepOne);
+        if (DEBUG) System.out.println("Resulting Matrix for CX 0,1: \n" + CNOT);
+        System.out.println("Resulting Matrix for CX 0,1: \n" + CNOT);
+
+//        if (controlQubit.getQubitID() < targetQubit.getQubitID()) {
+//            System.out.println("Input states: \nControl: \n" + controlState + " Target: \n" + targetState);
+//            ComplexMatrix controlDot = controlQubit.dotProduct(controlState);
+//            System.out.println("controlDOT: \n" + controlDot);
+//            ComplexMatrix targetDot = targetQubit.dotProduct(targetState);
+//            System.out.println("targetDot: \n" + targetDot);
+//            ComplexMatrix controlStepOne = controlQubit.tensorMultiply(controlDot, ComplexGates.getIdentity());
+//            System.out.println("ControlStepOne Mid Matrix: \n" + controlStepOne);
+//            ComplexMatrix targetStepTwo = targetQubit.tensorMultiply(targetDot, ComplexGates.getPauliX());
+//            System.out.println("targetStepTwo Mid Matrix: \n" + targetStepTwo);
+//            CNOT = controlQubit.addMatrix(targetStepTwo, controlStepOne);
+//            if (DEBUG) System.out.println("Resulting Matrix for CX 0,1: \n" + CNOT);
+//            System.out.println("Resulting Matrix for CX 0,1: \n" + CNOT);
+//        } else {
+//            ComplexMatrix controlDot = controlQubit.dotProduct(controlState);
+//            ComplexMatrix targetDot = targetQubit.dotProduct(targetState);
+//            ComplexMatrix targetStepOne = targetQubit.tensorMultiply(ComplexGates.getPauliX(), targetDot);
+//            ComplexMatrix controlStepTwo = controlQubit.tensorMultiply(ComplexGates.getIdentity(), controlDot);
+//            CNOT = controlQubit.addMatrix(targetStepOne, controlStepTwo);
+//            if (DEBUG) System.out.println("Resulting Matrix for CX 1,0: \n" + CNOT);
+//            System.out.println("Resulting Matrix for CX 1,0: \n" + CNOT);
+//        }
 
         // Ensure dimensions are compatible
-        if ((controlState.getHeight() != 2 || controlState.getWidth() != 1)||
-            (targetState.getHeight() != 2 || targetState.getWidth() != 1)) {
+        if ((controlState.getHeight() != 2 || controlState.getWidth() != 1) ||
+                (targetState.getHeight() != 2 || targetState.getWidth() != 1)) {
             throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
         }
 
-        //resolve the state of the control qubit as 0 or 1 based on probability distribution before applying the CNOT
-        //to the target qubit so the CNOT functions correctly
-        controlState = Qops.measureMat(controlState);
-        controlQubit.setState(controlState);
-
         // Apply the CNOT gate by tensor multiplying control state with CNOT matrix
         ComplexMatrix resultMatrix = CNOT.multiplyMatrix(CNOT, CNOT.deriveStateVector(controlState, targetState));
-        System.out.println("Resulting Matrix: \n"+resultMatrix);
-        if(resultMatrix.get(0,0).getReal() == 1.0||
-           resultMatrix.get(2,0).getReal() == 1.0){
+        System.out.println("Resulting Matrix: \n" + resultMatrix);
+        if (resultMatrix.get(0, 0).getReal() == 1.0 ||
+                resultMatrix.get(2, 0).getReal() == 1.0) {
             return new ComplexQubit().getZeroQubit();
         } else {
             return new ComplexQubit().getOneQubit();
         }
-     }
+    }
 
     /**
      * Prints the predefined quantum gates and their matrix.

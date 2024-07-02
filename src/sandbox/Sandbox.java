@@ -8,6 +8,7 @@ public class Sandbox {
     public static void main(String[] args) {
         ComplexObject coj = new ComplexObject();
         ComplexQubit zeroQubit = new ComplexQubit();
+        zeroQubit.setState(ComplexGates.applyPauliX(zeroQubit.getState()));
         ComplexQubit oneQubit = new ComplexQubit();
 
         oneQubit.setState(ComplexGates.applyPauliX(oneQubit.getState()));
@@ -51,5 +52,7 @@ public class Sandbox {
         System.out.println("Adding zeroDot and oneDot results in: ");
         System.out.println(rStepThree);
 
+        ComplexMatrix finals = coj.multiplyMatrix(rStepThree, rStepThree.deriveStateVector(zeroQubit.getState(), oneQubit.getState()));
+        System.out.println("Resultant Matrix of finals: \n" + finals);
     }
 }

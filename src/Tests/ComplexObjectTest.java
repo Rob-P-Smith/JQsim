@@ -10,7 +10,13 @@ class ComplexObjectTest {
     private static final ComplexNumber ZERO = new ComplexNumber(0, 0);
     private static final ComplexNumber ONE = new ComplexNumber(1, 0);
 
-    //Tests the 4 output conditions of applying a CNOT gate
+    //TODO Write a test for CNOT application for CX 0,1 and CX 1,0
+    @Test
+    void testCNOT(){
+        assertTrue(false, String.valueOf(String.valueOf(false).equals(String.valueOf(true))));
+    }
+
+    //TODO Rewrite this test to test only the Tensor Multiplication Function
     @Test
     void testTensorMultiply() {
         ComplexMatrix control = new ComplexMatrix(2, 1);

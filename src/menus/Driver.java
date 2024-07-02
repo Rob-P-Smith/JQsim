@@ -204,7 +204,7 @@ public class Driver {
         int targetQubitCNOT = -1;
 
         //for each wire get operation i and execute i for each wire
-        //increment i, then execute each wire's i gate again until done
+        //increment i, then execute each wire's 'i' gate again until done
         for (int i = 0; i < workLength; i++) {
             for (QubitWire activeWire : workingQubitWires) {
                 for (ComplexQubit activeQubit : workingQubits) {
