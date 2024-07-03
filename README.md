@@ -6,30 +6,26 @@ complex implementation than the article provides for.
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
 
 ## Phase 1:
-&#x2705; Initial implementation to ensure flexibility for any practical number of sandbox. 	&#x2705;
-
-Implementing Clifford gates 	&#x2705;
+&#x2705; Initial implementation to ensure flexibility for any practical number of sandbox.  
+&#x2705; Implementing Clifford gates 	
 
 ## Phase 2:
-Implementing entanglement functionality via CNOT &#x2705;
+&#x2705; Implementing entanglement functionality via CNOT 
 
 ## Phase 3: 
-Implement a circuit builder to queue gates to apply to each qubit &#x2705;
-
-Finish the Qops class to run the work queue and generate the expectation values &#x2705;
+&#x2705; Implement a circuit builder to queue gates to apply to each qubit   
+&#x2705; Finish the Qops class to run the work queue and generate the expectation values 
 
 ## Phase 4:  ***Currently Working***
-Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences &#x2705;
-
-Rework the wire design to use a single queue for all qubits and maintain order by adding to queue in 
-order the user adds the gates, eliminating the for identity on non-active qubits.
-
-Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates
+&#x2705; Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences  
+&#x274C;Rework the wire design to use a single queue for all qubits and maintain order by adding to queue in 
+order the user adds the gates, eliminating the for identity on non-active qubits.  
+&#x274C;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates
 
 ## Phase 5:
-Convert all outputs to JSON and prepare for front end construction
+&#x274C;Convert all outputs to JSON and prepare for front end construction
 
 ## Phase 6:
-Build the front end (oh boy!)
+&#x274C;Build the front end (oh boy!)
 
-Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values
+&#x274C;Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values
