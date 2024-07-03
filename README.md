@@ -6,7 +6,7 @@ complex implementation than the article provides for.
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
 
 ## Phase 1:
-Initial implementation to ensure flexibility for any practical number of sandbox. 	&#x2705;
+&#x2705; Initial implementation to ensure flexibility for any practical number of sandbox. 	&#x2705;
 
 Implementing Clifford gates 	&#x2705;
 
