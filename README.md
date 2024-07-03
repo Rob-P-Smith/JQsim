@@ -6,20 +6,20 @@ complex implementation than the article provides for.
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
 
 ## Phase 1:
-~~Initial implementation to ensure flexibility for any practical number of sandbox.~~
+Initial implementation to ensure flexibility for any practical number of sandbox. 	&#x2705;
 
-~~Implementing Clifford gates~~
+Implementing Clifford gates 	&#x2705;
 
 ## Phase 2:
-~~Implementing entanglement functionality via CNOT~~
+Implementing entanglement functionality via CNOT &#x2705;
 
 ## Phase 3: 
-~~Implement a circuit builder to queue gates to apply to each qubit~~
+Implement a circuit builder to queue gates to apply to each qubit &#x2705;
 
-~~Finish the Qops class to run the work queue and generate the expectation values~~
+Finish the Qops class to run the work queue and generate the expectation values &#x2705;
 
 ## Phase 4:  ***Currently Working***
-~~Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences~~
+Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences &#x2705;
 
 Rework the wire design to use a single queue for all qubits and maintain order by adding to queue in 
 order the user adds the gates, eliminating the for identity on non-active qubits.
