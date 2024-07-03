@@ -30,7 +30,7 @@ import java.util.Map;
  * @since 25 June 2024
  */
 public class ComplexGates extends ComplexObject {
-    private static final boolean CNOTDEBUG = false;
+    private static final boolean CNOTDEBUG = true;
     private static final boolean DEBUG = false;
     private static final double H_FACTOR = 1 / Math.sqrt(2);
 
@@ -180,30 +180,51 @@ public class ComplexGates extends ComplexObject {
      */
 
     public static void applyCNOT(ComplexQubit controlQubit, ComplexQubit targetQubit) {
-
+        boolean flipped = false;
+        ComplexMatrix controlState, targetState;
+        if (targetQubit.getQubitID() > controlQubit.getQubitID()) {
+            controlState = controlQubit.getState();
+            targetState = targetQubit.getState();
+        } else {
+            flipped = true;
+            targetState = controlQubit.getState();
+            controlState = targetQubit.getState();
+        }
         ComplexObject coj = new ComplexObject();
         ComplexMatrix CNOT = new ComplexMatrix(4, 4), controlProduct;
         ComplexMatrix resultMatrix = new ComplexMatrix(4, 1);
-        ComplexMatrix controlState = controlQubit.getState();
-        ComplexMatrix targetState = targetQubit.getState();
+
         // Ensure dimensions are compatible
         if ((controlState.getHeight() != 2 || controlState.getWidth() != 1) ||
                 (targetState.getHeight() != 2 || targetState.getWidth() != 1)) {
             throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
         }
         ComplexMatrix inputStateVector = coj.deriveStateVector(controlState, targetState);
-        if (CNOTDEBUG) System.out.println("Input State Vecotr: \n" + inputStateVector);
+        if (CNOTDEBUG) System.out.println("Input State Vector: \n" + inputStateVector);
 
-        generateCNOT(CNOT);
+        generateCNOT(flipped, CNOT);
         if (CNOTDEBUG) System.out.println("CNOT is \n" + CNOT);
         resultMatrix = coj.multiplyMatrix(CNOT, inputStateVector);
         if (CNOTDEBUG) System.out.println("Result Matrix is: \n" + resultMatrix);
 
-        controlQubit.setState(deriveControlState(controlState, resultMatrix));
-        targetQubit.setState(deriveTargetState(targetState, resultMatrix));
+        if(!flipped) {
+            controlQubit.setState(deriveControlState(controlState, resultMatrix));
+            targetQubit.setState(deriveTargetState(targetState, resultMatrix));
+        } else {
+            ComplexMatrix cTemp = new ComplexMatrix(controlState.getData());
+            ComplexMatrix tTemp = new ComplexMatrix(targetState.getData());
+            deriveControlState(tTemp, resultMatrix).getData();
+            targetState.setData(tTemp.getData());
+
+            deriveTargetState(cTemp, resultMatrix).getData();
+            controlState.setData(cTemp.getData());
+
+            controlQubit.setState(controlState);
+            targetQubit.setState(targetState);
+        }
     }
 
-    private static void generateCNOT(ComplexMatrix CNOT) {
+    private static void generateCNOT(boolean flipped, ComplexMatrix CNOT) {
         ComplexObject coj = new ComplexObject();
         ComplexMatrix qubitZero = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1)},
@@ -217,18 +238,21 @@ public class ComplexGates extends ComplexObject {
         // the application of the 1000, 0001, 0010, 0100 CNOT gate only applies if you feed it CX 0,1 but the desire
         // output is the flipped version. My version allows either to be supplied in user order and still get the right
         // result. If using the flipped input, you would need to flip control/target to use the above listed CNOT gate.
-
         ComplexMatrix zeroOuterProduct = coj.outerProduct(qubitZero);
         ComplexMatrix oneOuterProduct = coj.outerProduct(qubitOne);
         ComplexMatrix zeroProduct, oneProduct;
 
-        zeroProduct = coj.tensorMultiply(zeroOuterProduct, ComplexGates.getIdentity());
-        oneProduct = coj.tensorMultiply(oneOuterProduct, ComplexGates.getPauliX());
+        if (!flipped) {
+            zeroProduct = coj.tensorMultiply(zeroOuterProduct, ComplexGates.getIdentity());
+            oneProduct = coj.tensorMultiply(oneOuterProduct, ComplexGates.getPauliX());
+        } else {
+            zeroProduct = coj.tensorMultiply(ComplexGates.getPauliX(), oneOuterProduct );
+            oneProduct = coj.tensorMultiply(ComplexGates.getIdentity(), zeroOuterProduct);
+        }
 
         if (CNOTDEBUG) System.out.println("zeroProduct: \n" + zeroProduct);
         if (CNOTDEBUG) System.out.println("oneProduct: \n" + oneProduct);
         ComplexMatrix temp = coj.addMatrix(oneProduct, zeroProduct);
-
         CNOT.setData(temp.getData());
     }
 

@@ -17,7 +17,7 @@ class ComplexObjectTest {
     private static final ComplexNumber ONE = new ComplexNumber(1, 0);
 
     @Test
-    void testCNOT_old() {
+    void testCNOT() {
         ComplexQubit qubitOne = new ComplexQubit();
         ComplexQubit qubitTwo = new ComplexQubit();
         String breaker = ("/////////////////////////////////");
