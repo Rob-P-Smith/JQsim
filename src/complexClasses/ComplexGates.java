@@ -46,16 +46,16 @@ public class ComplexGates extends ComplexObject {
      * Pauli-Z gate matrix.
      */
     private static final ComplexMatrix PAULI_Z = new ComplexMatrix(new ComplexNumber[][]{
-            {new ComplexNumber(1), new ComplexNumber()},
-            {new ComplexNumber(), new ComplexNumber(-1)}
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(-1)}
     });
 
     /**
      * Pauli-Y gate matrix.
      */
     private static final ComplexMatrix PAULI_Y = new ComplexMatrix(new ComplexNumber[][]{
-            {new ComplexNumber(), new ComplexNumber(0, -1)},
-            {new ComplexNumber(0, 1), new ComplexNumber()}
+            {new ComplexNumber(0), new ComplexNumber(0, -1)},
+            {new ComplexNumber(0, 1), new ComplexNumber(0)}
     });
 
     /**
@@ -70,8 +70,18 @@ public class ComplexGates extends ComplexObject {
      * Identity gate matrix.
      */
     private static final ComplexMatrix IDENTITY = new ComplexMatrix(new ComplexNumber[][]{
-            {new ComplexNumber(1), new ComplexNumber()},
-            {new ComplexNumber(), new ComplexNumber(1)}
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(1)}
+    });
+
+    private static final ComplexMatrix SGate = new ComplexMatrix(new ComplexNumber[][]{
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0, 1)}
+    });
+
+    private static final ComplexMatrix TGate = new ComplexMatrix(new ComplexNumber[][]{
+            {},
+            {}
     });
 
     /**
@@ -109,6 +119,12 @@ public class ComplexGates extends ComplexObject {
     public static ComplexMatrix getPauliZ() {
         return PAULI_Z;
     }
+
+    /**
+     * S gate matrix getter
+     * @return the sgate as a complex matrix
+     */
+    public static ComplexMatrix getSGate(){return SGate;}
 
     /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.
@@ -158,6 +174,26 @@ public class ComplexGates extends ComplexObject {
      */
     public static ComplexMatrix applyIdentity(ComplexMatrix qubit) {
         return applyGate(IDENTITY, qubit);
+    }
+
+    /**
+     * Applies the S gate to a {@link ComplexQubit}.
+     * 10
+     * 0i
+     * @param qubit The input {@link ComplexQubit}.
+     * @return The resulting {@link ComplexQubit} after applying the S Gate.
+     */
+    public static ComplexMatrix applySGate(ComplexMatrix qubit) { return applyGate(SGate, qubit);
+    }
+
+    /**
+     * Applies the T gate to a {@link ComplexQubit}.
+     * 10
+     * 0 i(pie/4)
+     * @param qubit The input {@link ComplexQubit}.
+     * @return The resulting {@link ComplexQubit} after applying the T Gate.
+     */
+    public static ComplexMatrix applyTGate(ComplexMatrix qubit) { return applyGate(TGate, qubit);
     }
 
     /**
@@ -443,4 +479,6 @@ public class ComplexGates extends ComplexObject {
             System.out.println(gates.get(gate));
         }
     }
+
+
 }

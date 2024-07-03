@@ -93,14 +93,15 @@ public class ComplexObject {
 
     /**
      * Multiplies two complex numbers.
+     * If the result would come back as 0.9999999999999998 it is changed to 1.0
      *
      * @param aVec The first complex number.
      * @param bVec The second complex number.
      * @return The complex number result of the multiplication.
      */
     private ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
-        double real = aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag();
-        double imag = aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal();
+        double real = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag());
+        double imag = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal());
         if (DEBUG) {
             System.out.println("Real result: " + real);
         }
@@ -108,6 +109,16 @@ public class ComplexObject {
             System.out.println("Imag result: " + imag);
         }
         return new ComplexNumber(real, imag);
+    }
+
+    private double testResultForFloatErrorBuildup(double number){
+        if(number > 0.9999999 && number < 1.0){
+            return 1.0;
+        } else if (number < -0.9999999 && number > -1.0){
+            return -1.0;
+        } else {
+            return number;
+        }
     }
 
     /**
@@ -118,8 +129,8 @@ public class ComplexObject {
      * @return The complex number result of the addition.
      */
     ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
-        double real = aVec.getReal() + bVec.getReal();
-        double imag = aVec.getImag() + bVec.getImag();
+        double real = testResultForFloatErrorBuildup(aVec.getReal() + bVec.getReal());
+        double imag = testResultForFloatErrorBuildup(aVec.getImag() + bVec.getImag());
         return new ComplexNumber(real, imag);
     }
 

@@ -102,7 +102,7 @@ public class Driver {
                     selection = -1;
                 }
                 case 9 -> {
-                    workingQubits = loadSystemSateFromFile(workingQubits);
+                    workingQubits = loadSystemStateFromFile(workingQubits);
                     selection = -1;
                 }
             }
@@ -146,7 +146,10 @@ public class Driver {
                     3. PauliZ
                     4. Hadamard
                     5. CNOT
-                    6. Identity
+                    6. S Gate
+                    7. T Gate
+                    8. NOP
+                    9. Identity
                     
                     0. Back to Main Menu
                     """);
@@ -180,6 +183,21 @@ public class Driver {
                     gateToApply = -1;
                 }
                 case 6 -> {
+                    System.out.println("Case 6");
+                    workingQubitWires[selection].addGate(new String[]{"SGate", "0"});
+                    gateToApply = -1;
+                }
+                case 7 -> {
+                    System.out.println("Case 7");
+                    workingQubitWires[selection].addGate(new String[]{"TGate", "0"});
+                    gateToApply = -1;
+                }
+                case 8 -> {
+                    System.out.println("Case 8");
+                    gateToApply = -1;
+                }
+                case 9 -> {
+                    System.out.println("Case 9");
                     workingQubitWires[selection].addGate(new String[]{"IDENTITY", "0"});
                     gateToApply = -1;
                 }
@@ -275,6 +293,14 @@ public class Driver {
                 if (DEBUG)System.out.println("Applying IDENTITY");
                 workingQubits[currentQubitID].setState(ComplexGates.applyIdentity(workingQubits[currentQubitID].getState()));
             }
+            case "SGate" -> {
+                if(DEBUG) System.out.println("Applying S Gate");
+                workingQubits[currentQubitID].setState(ComplexGates.applySGate(workingQubits[currentQubitID].getState()));
+            }
+            case "TGate" -> {
+                if(DEBUG) System.out.println("Applying T Gate");
+                workingQubits[currentQubitID].setState(ComplexGates.applyTGate(workingQubits[currentQubitID].getState()));
+            }
         }
     }
 
@@ -336,7 +362,7 @@ public class Driver {
      *
      * @param workingQubits The array of working qubits.
      */
-    private static ComplexQubit[] loadSystemSateFromFile(ComplexQubit[] workingQubits) {
+    private static ComplexQubit[] loadSystemStateFromFile(ComplexQubit[] workingQubits) {
         System.out.println("Please provide the file name in the savedStates folder to open: ");
         String[] contents = new File("./savedStates").list();
         System.out.println("savedStates currently contains: \n");

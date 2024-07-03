@@ -317,4 +317,13 @@ class ComplexObjectTest {
         assertEquals(shots, results.get(keys[0]) + results.get(keys[1]));
 
     }
+
+    @Test
+    void testSGate(){
+        // write Sgate test for
+        // H -> S == .707 real and .707 imag
+        // H -> S -> S == .707 real and -.707 imag
+        // H -> S -> S -> H == 1.0
+        assertEquals(true, (String.valueOf(true).equals(String.valueOf(false))));
+    }
 }
