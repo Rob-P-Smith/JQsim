@@ -154,7 +154,7 @@ public class Driver {
                     0. Back to Main Menu
                     """);
             gateToApply = Console.getInt();
-            if (gateToApply > 6) {
+            if (gateToApply > 10) {
                 System.out.println("Please make a valid choice");
                 gateToApply = -1;
             }
@@ -234,7 +234,7 @@ public class Driver {
                             controlQubitCNOT = Integer.parseInt(currentOP[1]);
                             targetQubitCNOT = Integer.parseInt(currentOP[2]);
                         }
-                        if (DEBUG)System.out.println("Dirver, Line 224, got \'" + Arrays.toString(currentOP) + "\' as gate to apply.");
+                        if (DEBUG)System.out.println("Dirver, Line 237, got \'" + Arrays.toString(currentOP) + "\' as gate to apply.");
                         gateExecutor(currentGateType, workingQubits, currentQubitID, controlQubitCNOT, targetQubitCNOT);
                         if(DEBUG) System.out.println("Current OP :"+currentGateType+" working qubit: "+currentQubitID);
                         if(DEBUG) displayQubitStates(workingQubits);
@@ -253,10 +253,7 @@ public class Driver {
         switch (currentGateType) {
             case "PAULI_X" -> {
                 if (DEBUG)System.out.println("Applying PAULI_X");
-                workingQubits[currentQubitID].
-                        setState(ComplexGates.
-                                applyPauliX(workingQubits[currentQubitID].
-                                        getState()));
+                workingQubits[currentQubitID].setState(ComplexGates.applyPauliX(workingQubits[currentQubitID].getState()));
             }
             case "PAULI_Y" -> {
                 if (DEBUG) System.out.println("Applying PAULI_Y");

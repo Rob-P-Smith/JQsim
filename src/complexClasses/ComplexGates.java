@@ -80,9 +80,15 @@ public class ComplexGates extends ComplexObject {
     });
 
     private static final ComplexMatrix TGate = new ComplexMatrix(new ComplexNumber[][]{
-            {},
-            {}
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), getTvalue()}
     });
+
+    private static ComplexNumber getTvalue() {
+        double real = Math.cos(Math.PI / 4);
+        double imag = Math.sin(Math.PI / 4);
+        return new ComplexNumber(real, imag);
+    }
 
     /**
      * Identity Matrix Getter
@@ -125,6 +131,13 @@ public class ComplexGates extends ComplexObject {
      * @return the sgate as a complex matrix
      */
     public static ComplexMatrix getSGate(){return SGate;}
+
+    /**
+     * T gate Matrix getter
+     *
+     * @return the ComplexMatrix from the T gate field
+     */
+    public static ComplexMatrix getTGate(){return TGate;}
 
     /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.
