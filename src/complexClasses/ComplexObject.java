@@ -58,7 +58,9 @@ public class ComplexObject {
             for (int j = 0; j < matrixTwo.getWidth(); j++) {
                 result[i][j] = new ComplexNumber();
                 for (int k = 0; k < matrixOne.getWidth(); k++) {
-                    result[i][j] = addComplexNumbers(result[i][j], multiplyComplexNumbers(matrixOne.get(i, k), matrixTwo.get(k, j)));
+                    result[i][j] = addComplexNumbers(
+                            result[i][j], multiplyComplexNumbers(
+                                    matrixOne.get(i, k), matrixTwo.get(k, j)));
                 }
             }
         }
@@ -126,7 +128,8 @@ public class ComplexObject {
      *
      * @param control The control qubit.
      * @param target  The target qubit.
-     * @return A {@code ComplexNumber[]} with length 4, containing the state vector resultant from the tensor multiplication.
+     * @return A {@code ComplexNumber[]} with length 4,
+     * containing the state vector resultant from the tensor multiplication.
      */
     public ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
         ComplexMatrix stateVector = new ComplexMatrix(4, 1);
@@ -139,11 +142,6 @@ public class ComplexObject {
             }
         }
 
-        //old manual method for only 2 qubits
-//        stateVector.set(0, 0, multiplyComplexNumbers(control.get(0, 0), target.get(0, 0)));
-//        stateVector.set(1, 0, multiplyComplexNumbers(control.get(0, 0), target.get(1, 0)));
-//        stateVector.set(2, 0, multiplyComplexNumbers(control.get(1, 0), target.get(0, 0)));
-//        stateVector.set(3, 0, multiplyComplexNumbers(control.get(1, 0), target.get(1, 0)));
         if (DEBUG) {
             System.out.println("StateVector is: \n"+stateVector);
         }
@@ -154,18 +152,18 @@ public class ComplexObject {
      * Multiplies a vector against it's transpose and returns a matrix that is 2*vector.getHeight() wide and tall
      *
      * @param vector The input vector, usually a qubit state
-     * @return
+     * @return The outer product as matrix
      */
     public ComplexMatrix outerProduct(ComplexMatrix vector) {
         ComplexMatrix transpose = vector.getTranspose(vector);
-        ComplexMatrix dotProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
+        ComplexMatrix outerProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
         for (int i = 0; i < vector.getHeight(); i++) {
             ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
             for (int j = 0; j < vector.getHeight(); j++) {
-                dotProduct.set(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
+                outerProduct.set(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
             }
         }
-        return dotProduct;
+        return outerProduct;
     }
 
     /**
@@ -177,7 +175,7 @@ public class ComplexObject {
     public ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
-        ComplexMatrix resultMatrix = new ComplexMatrix(0, 0);
+        ComplexMatrix resultMatrix;
         if (height == width) {
             resultMatrix = new ComplexMatrix(height, width);
             for (int i = 0; i < height; i++) {
@@ -205,7 +203,7 @@ public class ComplexObject {
     public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
-        ComplexMatrix resultMatrix = new ComplexMatrix(0, 0);
+        ComplexMatrix resultMatrix;
         if (height == width) {
             resultMatrix = new ComplexMatrix(height, width);
             for (int i = 0; i < height; i++) {

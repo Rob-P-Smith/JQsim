@@ -24,9 +24,7 @@ package complexClasses;
 public class ComplexNumber extends ComplexObject {
     private double real; // Real part of the complex number
     private double imag; // Imaginary part of the complex number
-    public static final ComplexNumber ONE = new ComplexNumber(1, 0);
-    public static final ComplexNumber iONE = new ComplexNumber(0, 1);
-    public static final ComplexNumber ZERO = new ComplexNumber(0, 0);
+
 
     /**
      * Constructs a complex number with both real and imaginary parts initialized to 0.0.

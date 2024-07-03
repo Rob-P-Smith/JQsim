@@ -4,7 +4,11 @@ import complexClasses.ComplexGates;
 import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
 import complexClasses.ComplexQubit;
+import measurement.Qops;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -287,5 +291,30 @@ class ComplexObjectTest {
                 assertTrue(expected.get(i, j).getImag() == result.get(i, j).getImag());
             }
         }
+    }
+
+    @Test
+    void probabilitiesTest(){
+        ComplexQubit testBitOne = new ComplexQubit();
+        ComplexQubit testBitTwo = new ComplexQubit();
+        int shots = 1000000;
+        Map<String, Integer> results = new HashMap<>();
+        testBitOne.setState(ComplexGates.applyHadamard(testBitOne.getState()));
+        ComplexGates.applyCNOT(testBitOne, testBitTwo);
+
+        for(int i = 0; i < shots; i++) {
+            ComplexMatrix result = Qops.measureMat(testBitOne.getState());
+            results.put(result.toString(), results.getOrDefault(result.toString(), 0)+1);
+        }
+
+        for(String key : results.keySet()) {
+            double percentage = (double) results.get(key).intValue()*100 /shots;
+            System.out.println("Qubit State: ");
+            System.out.println(key + " occured "+results.get(key)+" times "+ "average of "+percentage+"%");
+        }
+        String[] keys = results.keySet().toArray(new String[0]);
+        assertTrue(keys.length == 2);
+        assertEquals(shots, results.get(keys[0]) + results.get(keys[1]));
+
     }
 }

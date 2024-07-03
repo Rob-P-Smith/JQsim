@@ -1,8 +1,5 @@
 package complexClasses;
 
-import java.util.HashMap;
-import java.util.Map;
-
 //TODO clean up obsolete entangled qubit hashmap if it ends up being superfluous
 /**
  * This class represents a single qubit. It uses ComplexNumbers so that 'i' can be used for qubit alpha and beta values
@@ -18,7 +15,6 @@ public class ComplexQubit extends ComplexObject{
     private static int numQubits = 0;
     private int qubitID;
     private ComplexMatrix state;
-//    private Map<ComplexQubit, ComplexQubit> entangledQubits;//TODO This can probably go away, marked for future removal
 
     /**
      * Default constructor for the qubit class
@@ -66,46 +62,9 @@ public class ComplexQubit extends ComplexObject{
         }
     }
 
-    //TODO This can probably go away, marked for future removal
-//    /**
-//     * Add the provided parameter qubit to this qubit's entangledQubits HashMap and then add this qubit to the parameter
-//     * qubit's entangledQubits HashMap, so they remain synchronized as entangled with each other.
-//     *
-//     * @param otherQubit A valid Qubit to entangle with.
-//     */
-//    public void setEntangledQubit(ComplexQubit otherQubit) {
-//        // Add the other qubit to this qubit's list, and this qubit to the other qubit's list
-//        if (!entangledQubits.containsKey(otherQubit)) {
-//            entangledQubits.put(otherQubit, otherQubit);
-//            otherQubit.entangledQubits.put(this, this);
-//        }
-//    }
-
-    //TODO This can probably go away, marked for future removal
-//    /**
-//     * Getter for the current entanglement map of entangled qubits with this qubit
-//     *
-//     * @return map of all qubit entangled with this qubit
-//     */
-//    public Map<ComplexQubit, ComplexQubit> getEntangledQubit() {
-//        return entangledQubits;
-//    }
-
-    public ComplexQubit getZeroQubit(){
-        ComplexQubit zeroQubit = new ComplexQubit();
-        zeroQubit.setState(new ComplexMatrix(new ComplexNumber[][]{{new ComplexNumber(1)}, {new ComplexNumber()}}));
-        return zeroQubit;
-    }
-
-    public ComplexQubit getOneQubit(){
-        ComplexQubit zeroQubit = new ComplexQubit();
-        zeroQubit.setState(new ComplexMatrix(new ComplexNumber[][]{{new ComplexNumber()}, {new ComplexNumber(1)}}));
-        return zeroQubit;
-    }
-
     /**
      * Setter for the state of the qubit
-     * @param newState
+     * @param newState the new state of this
      */
     public void setState(ComplexMatrix newState) {
         this.state = newState;
@@ -146,30 +105,11 @@ public class ComplexQubit extends ComplexObject{
     @Override
     public String toString() {
         StringBuilder sBuild = new StringBuilder();
-        sBuild.append("Qubit #"+this.qubitID+"\n");
+        sBuild.append("Qubit #").append(this.qubitID).append("\n");
         sBuild.append('α').append("\n");
         sBuild.append('[').append(state.get(0, 0)).append("]\n");
         sBuild.append('β').append("\n");
         sBuild.append('[').append(state.get(1, 0)).append("]");
-        //TODO This can probably go away, marked for future removal
-//        if (entangledQubits != null) {
-//            if (entangledQubits.size() == 1) {
-//                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #");
-//                for (ComplexQubit value : entangledQubits.values()) {
-//                    sBuild.append(value.getQubitID());
-//                }
-//            } else if (entangledQubits.size() > 1) {
-//                sBuild.append("\nQubit #").append(this.qubitID).append(" entangled with Qubit #s: ");
-//                ComplexQubit[] values = entangledQubits.values().toArray(new ComplexQubit[0]);
-//                for (int i = 0; i < values.length; i++) {
-//                    if (i != entangledQubits.size() - 1) {
-//                        sBuild.append(values[i].getQubitID()).append(", ");
-//                    } else {
-//                        sBuild.append(values[i].getQubitID());
-//                    }
-//                }
-//            }
-//        }
         return sBuild.toString();
     }
 

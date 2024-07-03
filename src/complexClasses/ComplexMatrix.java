@@ -109,6 +109,10 @@ public class ComplexMatrix extends ComplexObject {
         return data;
     }
 
+    /**
+     * Sets the value of the matrix data to the new ComplexNumber[][]
+     * @param data the data of this class
+     */
     public void setData(ComplexNumber[][] data) {
         this.data = data;
     }
