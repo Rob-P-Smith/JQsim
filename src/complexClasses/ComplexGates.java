@@ -172,7 +172,9 @@ public class ComplexGates extends ComplexObject {
     }
 
     /**
-     * Applies the CNOT gate to control and target qubits.
+     * Applies the CNOT gate to control and target qubits. Checks for whether the input is CX 0,1 or CX 1,0. If 1,0 it
+     * applies the correct parameter flipping to use the correct CNOT matrix to gain the expected results without
+     * using if/else to solve the problem, but instead using the actual matrix math.
      *
      * @param controlQubit The control qubit.
      * @param targetQubit  The target qubit.
@@ -180,6 +182,11 @@ public class ComplexGates extends ComplexObject {
      */
 
     public static void applyCNOT(ComplexQubit controlQubit, ComplexQubit targetQubit) {
+        // Ensure dimensions are compatible
+        if ((controlQubit.getState().getHeight() != 2 || controlQubit.getState().getWidth() != 1) ||
+                (targetQubit.getState().getHeight() != 2 || targetQubit.getState().getWidth() != 1)) {
+            throw new IllegalArgumentException("Qubit states must be a column vector of size 2x1.");
+        }
         boolean flipped = false;
         ComplexMatrix controlState, targetState;
         if (targetQubit.getQubitID() > controlQubit.getQubitID()) {
@@ -192,13 +199,9 @@ public class ComplexGates extends ComplexObject {
         }
         ComplexObject coj = new ComplexObject();
         ComplexMatrix CNOT = new ComplexMatrix(4, 4), controlProduct;
-        ComplexMatrix resultMatrix = new ComplexMatrix(4, 1);
+        ComplexMatrix resultMatrix;
 
-        // Ensure dimensions are compatible
-        if ((controlState.getHeight() != 2 || controlState.getWidth() != 1) ||
-                (targetState.getHeight() != 2 || targetState.getWidth() != 1)) {
-            throw new IllegalArgumentException("Control qubit state must be a column vector of size 2x1.");
-        }
+
         ComplexMatrix inputStateVector = coj.deriveStateVector(controlState, targetState);
         if (CNOTDEBUG) System.out.println("Input State Vector: \n" + inputStateVector);
 
@@ -207,23 +210,45 @@ public class ComplexGates extends ComplexObject {
         resultMatrix = coj.multiplyMatrix(CNOT, inputStateVector);
         if (CNOTDEBUG) System.out.println("Result Matrix is: \n" + resultMatrix);
 
-        if(!flipped) {
+        if (!flipped) {
             controlQubit.setState(deriveControlState(controlState, resultMatrix));
             targetQubit.setState(deriveTargetState(targetState, resultMatrix));
         } else {
             ComplexMatrix cTemp = new ComplexMatrix(controlState.getData());
             ComplexMatrix tTemp = new ComplexMatrix(targetState.getData());
+
+            //get the qubit status for the target qubit and apply it to the target state, must use temp var to avoid
+            //side effect when deriving the control qubit state
             deriveControlState(tTemp, resultMatrix).getData();
             targetState.setData(tTemp.getData());
-
+            //get the qubit status for the control qubit and apply it to the control state, must temp var to avoid
+            //side effect when deriving the target qubit state
             deriveTargetState(cTemp, resultMatrix).getData();
             controlState.setData(cTemp.getData());
 
+            //set the parameter qubit states to be the state resultant of applying CNOT to them
             controlQubit.setState(controlState);
             targetQubit.setState(targetState);
         }
     }
 
+    /**
+     * This method calculates the correct CNOT gate to use based on whether the input was flipped or not. Using this
+     * is required because the CNOT gate is not the same for CX 0,1 as CX 1,0
+     * If not flipped it uses:
+     * 1000
+     * 0100
+     * 0001
+     * 0010
+     * If flipped it uses:
+     * 1000
+     * 0001
+     * 0010
+     * 0100
+     *
+     * @param flipped whether the target qubit parameter qubitID is greater than the control qubit parameter qubitID
+     * @param CNOT    the 4x4 matrix to apply as CNOT
+     */
     private static void generateCNOT(boolean flipped, ComplexMatrix CNOT) {
         ComplexObject coj = new ComplexObject();
         ComplexMatrix qubitZero = new ComplexMatrix(new ComplexNumber[][]{
@@ -234,10 +259,7 @@ public class ComplexGates extends ComplexObject {
                 {new ComplexNumber()},
                 {new ComplexNumber(1)}
         });
-        //TODO Explainer: Using relocated inputs for CX 1,0 allows the use of the same CNOT gate to all
-        // the application of the 1000, 0001, 0010, 0100 CNOT gate only applies if you feed it CX 0,1 but the desire
-        // output is the flipped version. My version allows either to be supplied in user order and still get the right
-        // result. If using the flipped input, you would need to flip control/target to use the above listed CNOT gate.
+
         ComplexMatrix zeroOuterProduct = coj.outerProduct(qubitZero);
         ComplexMatrix oneOuterProduct = coj.outerProduct(qubitOne);
         ComplexMatrix zeroProduct, oneProduct;
@@ -246,7 +268,7 @@ public class ComplexGates extends ComplexObject {
             zeroProduct = coj.tensorMultiply(zeroOuterProduct, ComplexGates.getIdentity());
             oneProduct = coj.tensorMultiply(oneOuterProduct, ComplexGates.getPauliX());
         } else {
-            zeroProduct = coj.tensorMultiply(ComplexGates.getPauliX(), oneOuterProduct );
+            zeroProduct = coj.tensorMultiply(ComplexGates.getPauliX(), oneOuterProduct);
             oneProduct = coj.tensorMultiply(ComplexGates.getIdentity(), zeroOuterProduct);
         }
 
@@ -254,6 +276,104 @@ public class ComplexGates extends ComplexObject {
         if (CNOTDEBUG) System.out.println("oneProduct: \n" + oneProduct);
         ComplexMatrix temp = coj.addMatrix(oneProduct, zeroProduct);
         CNOT.setData(temp.getData());
+    }
+
+    public static void applyCNOTNOT(ComplexQubit controlQ, ComplexQubit targetOneQ, ComplexQubit targetTwoQ) {
+        // Ensure dimensions are compatible
+        if ((controlQ.getState().getHeight() != 2 || controlQ.getState().getWidth() != 1) ||
+                (targetOneQ.getState().getHeight() != 2 || targetOneQ.getState().getWidth() != 1) ||
+                (targetTwoQ.getState().getHeight() != 2 || targetTwoQ.getState().getWidth() != 1)) {
+            throw new IllegalArgumentException("Qubit states must be a column vector of size 2x1.");
+        }
+        char scenario = 'Z';
+        ComplexMatrix controlState = new ComplexMatrix(2, 1);
+        ComplexMatrix targetOneState = new ComplexMatrix(2, 1);
+        ComplexMatrix targetTwoState = new ComplexMatrix(2, 1);
+        ComplexObject coj = new ComplexObject();
+        getInputOrder(scenario, controlState, targetOneState, targetTwoState, controlQ, targetOneQ, targetTwoQ);
+        if (CNOTDEBUG) System.out.println("Input detected was scenario: " + scenario);
+
+    }
+
+    /**
+     * Detects the state of the ordering of the input qubits for a 3 qubit CNOT with 1 control and 2 targets. Sorts
+     * the order out according to the order provided to ensure matrix application results in correct output.
+     *
+     * @param scenario which scenario it resulted in
+     * @param controlState the matrix of the control qubit state after evaluation of ordering
+     * @param targetOneState the matrix of the targetone qubit state after evaluation of ordering
+     * @param targetTwoState the matrix of the targettwo qubit state after evaluation of ordering
+     * @param controlQ The input control qubit
+     * @param targetOneQ The input target one qubit
+     * @param targetTwoQ The input target two qubit
+     */
+    private static void getInputOrder(char scenario,
+                                      ComplexMatrix controlState,
+                                      ComplexMatrix targetOneState,
+                                      ComplexMatrix targetTwoState,
+                                      ComplexQubit controlQ,
+                                      ComplexQubit targetOneQ,
+                                      ComplexQubit targetTwoQ) {
+
+        //condition where control ID is smallest then targetTwo ID, then targetOne ID aka: C < TWO < ONE
+        if (controlQ.getQubitID() < targetOneQ.getQubitID() &&
+                targetOneQ.getQubitID() > targetTwoQ.getQubitID() &&
+                targetTwoQ.getQubitID() > controlQ.getQubitID()) {
+
+            scenario = 'A';
+            controlState.setData(controlQ.getState().getData());
+            targetOneState.setData(targetTwoQ.getState().getData());
+            targetTwoState.setData(targetOneQ.getState().getData());
+        }
+        //condition where targetTwo ID is smallest, then ControlQ ID, then targetOne ID aka: TWO < C < ONE
+        if (controlQ.getQubitID() > targetTwoQ.getQubitID() &&
+                controlQ.getQubitID() < targetOneQ.getQubitID() &&
+                targetOneQ.getQubitID() > targetTwoQ.getQubitID()) {
+
+            scenario = 'B';
+            controlState.setData(targetTwoQ.getState().getData());
+            targetOneState.setData(controlQ.getState().getData());
+            targetTwoState.setData(targetOneQ.getState().getData());
+        }
+        //condition where TargetOne ID is smallest then Control ID then targetTwo ID aka: ONE < C < TWO
+        if (controlQ.getQubitID() > targetOneQ.getQubitID() &&
+                targetOneQ.getQubitID() < targetTwoQ.getQubitID() &&
+                controlQ.getQubitID() < targetTwoQ.getQubitID()) {
+
+            scenario = 'C';
+            controlState.setData(targetOneQ.getState().getData());
+            targetOneState.setData(controlQ.getState().getData());
+            targetTwoState.setData(targetTwoQ.getState().getData());
+        }
+        //condition where targetTwo ID is smallest, then targetOne ID, then control ID aka: TWO < ONE < C
+        if (controlQ.getQubitID() > targetOneQ.getQubitID() &&
+                targetOneQ.getQubitID() > targetTwoQ.getQubitID() &&
+                controlQ.getQubitID() > targetTwoQ.getQubitID()) {
+
+            scenario = 'D';
+            controlState.setData(targetTwoQ.getState().getData());
+            targetOneState.setData(targetOneQ.getState().getData());
+            targetTwoState.setData(controlQ.getState().getData());
+        }
+        //condition where targetOne ID is smallest, then targetTwo ID, then control ID aka: ONE < TWO < C
+        if (controlQ.getQubitID() > targetTwoQ.getQubitID() &&
+                targetTwoQ.getQubitID() > targetOneQ.getQubitID() &&
+                controlQ.getQubitID() > targetOneQ.getQubitID()) {
+
+            scenario = 'E';
+            controlState.setData(targetOneQ.getState().getData());
+            targetOneState.setData(targetTwoQ.getState().getData());
+            targetTwoState.setData(controlQ.getState().getData());
+        }
+        //condition all order as expected controlID < targetOneID < targetTwoID aka: C < ONE < TWO
+        if (controlQ.getQubitID() < targetOneQ.getQubitID() &&
+            targetOneQ.getQubitID() < targetTwoQ.getQubitID() &&
+            controlQ.getQubitID() < targetTwoQ.getQubitID()) {
+            scenario = 'F';
+            controlState.setData(controlQ.getState().getData());
+            targetOneState.setData(targetOneQ.getState().getData());
+            targetTwoState.setData(targetTwoQ.getState().getData());
+        }
     }
 
     private static ComplexMatrix deriveControlState(ComplexMatrix controlState, ComplexMatrix resultMatrix) {
