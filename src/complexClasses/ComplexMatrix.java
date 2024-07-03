@@ -21,6 +21,9 @@ import java.util.Arrays;
  */
 public class ComplexMatrix extends ComplexObject {
     private static final boolean DEBUG = false;
+
+
+
     private int rows;
     private int cols;
     private ComplexNumber[][] data;
@@ -104,6 +107,10 @@ public class ComplexMatrix extends ComplexObject {
      */
     public ComplexNumber[][] getData() {
         return data;
+    }
+
+    public void setData(ComplexNumber[][] data) {
+        this.data = data;
     }
 
     /**

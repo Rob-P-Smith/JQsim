@@ -172,4 +172,8 @@ public class ComplexQubit extends ComplexObject{
 //        }
         return sBuild.toString();
     }
+
+    public double getReal() {
+        return state.get(0,0).getReal();
+    }
 }

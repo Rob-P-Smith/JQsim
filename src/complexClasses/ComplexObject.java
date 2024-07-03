@@ -115,7 +115,7 @@ public class ComplexObject {
      * @param bVec The second complex number.
      * @return The complex number result of the addition.
      */
-    private ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
+    ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
         double real = aVec.getReal() + bVec.getReal();
         double imag = aVec.getImag() + bVec.getImag();
         return new ComplexNumber(real, imag);
@@ -130,10 +130,20 @@ public class ComplexObject {
      */
     public ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
         ComplexMatrix stateVector = new ComplexMatrix(4, 1);
-        stateVector.set(0, 0, multiplyComplexNumbers(control.get(0, 0), target.get(0, 0)));
-        stateVector.set(1, 0, multiplyComplexNumbers(control.get(0, 0), target.get(1, 0)));
-        stateVector.set(2, 0, multiplyComplexNumbers(control.get(1, 0), target.get(0, 0)));
-        stateVector.set(3, 0, multiplyComplexNumbers(control.get(1, 0), target.get(1, 0)));
+        int numStates = 2; // Number of states for each qubit (|0> and |1>)
+        int index = 0;
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numStates; j++) {
+                stateVector.set(index, 0, multiplyComplexNumbers(control.get(i, 0), target.get(j, 0)));
+                index++;
+            }
+        }
+
+        //old manual method for only 2 qubits
+//        stateVector.set(0, 0, multiplyComplexNumbers(control.get(0, 0), target.get(0, 0)));
+//        stateVector.set(1, 0, multiplyComplexNumbers(control.get(0, 0), target.get(1, 0)));
+//        stateVector.set(2, 0, multiplyComplexNumbers(control.get(1, 0), target.get(0, 0)));
+//        stateVector.set(3, 0, multiplyComplexNumbers(control.get(1, 0), target.get(1, 0)));
         if (DEBUG) {
             System.out.println("StateVector is: \n"+stateVector);
         }
@@ -146,7 +156,7 @@ public class ComplexObject {
      * @param vector The input vector, usually a qubit state
      * @return
      */
-    public ComplexMatrix dotProduct(ComplexMatrix vector) {
+    public ComplexMatrix outerProduct(ComplexMatrix vector) {
         ComplexMatrix transpose = vector.getTranspose(vector);
         ComplexMatrix dotProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
         for (int i = 0; i < vector.getHeight(); i++) {

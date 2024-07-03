@@ -2,8 +2,6 @@ package sandbox;
 
 import complexClasses.*;
 
-import java.util.Random;
-
 public class Sandbox {
     public static void main(String[] args) {
         ComplexObject coj = new ComplexObject();
@@ -14,9 +12,9 @@ public class Sandbox {
         oneQubit.setState(ComplexGates.applyPauliX(oneQubit.getState()));
 
         System.out.println("Deriving the CNOT matrix from a CX of 0,1:");
-        ComplexMatrix zeroDot = coj.dotProduct(zeroQubit.getState());
+        ComplexMatrix zeroDot = coj.outerProduct(zeroQubit.getState());
         System.out.println(zeroQubit + "\ndot Product is: \n" + zeroDot);
-        ComplexMatrix oneDot = coj.dotProduct(oneQubit.getState());
+        ComplexMatrix oneDot = coj.outerProduct(oneQubit.getState());
         System.out.println(oneQubit + "\ndot Product is: \n" + oneDot);
 
 
@@ -35,9 +33,9 @@ public class Sandbox {
         System.out.println("/////////////////////////////////////");
 
         System.out.println("Deriving the CNOT matrix from a CX of 1,0:");
-        ComplexMatrix rZeroDot = coj.dotProduct(zeroQubit.getState());
+        ComplexMatrix rZeroDot = coj.outerProduct(zeroQubit.getState());
         System.out.println(zeroQubit + "\ndot Product is: \n" + zeroDot);
-        ComplexMatrix rOneDot = coj.dotProduct(oneQubit.getState());
+        ComplexMatrix rOneDot = coj.outerProduct(oneQubit.getState());
         System.out.println(oneQubit + "\ndot Product is: \n" + oneDot);
 
         ComplexMatrix rStepOne = coj.tensorMultiply(ComplexGates.getPauliX(), rOneDot);

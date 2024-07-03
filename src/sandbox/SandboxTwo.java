@@ -2,45 +2,32 @@ package sandbox;
 
 import complexClasses.ComplexGates;
 import complexClasses.ComplexMatrix;
+import complexClasses.ComplexObject;
 import complexClasses.ComplexQubit;
 
 public class SandboxTwo {
     public static void main(String[] args) {
+
+        ComplexObject coj = new ComplexObject();
         ComplexQubit one = new ComplexQubit();
-//        one.setState(ComplexGates.applyPauliX(one.getState()));
-        System.out.println(one);
         ComplexQubit two = new ComplexQubit();
-//        two.setState(ComplexGates.applyPauliX(two.getState()));
-        System.out.println("\n"+ two);
+//        one.setState(ComplexGates.applyPauliX(two.getState()));
 
-        ComplexMatrix three = one.getTranspose(one.getState());
-        ComplexMatrix four = one.getTranspose(two.getState());
+        System.out.println(one);
+        System.out.println(two);
 
-        System.out.println("Transpose of one: \n" + three);
-        System.out.println("Transpose of two: \n" + four);
+        System.out.println("\nApplying CNOT 0,1\n");
+        ComplexGates.applyCNOT(two, one);
 
-        ComplexMatrix threeA = one.tensorMultiply(one.getState(), three);
-        ComplexMatrix fourA = one.tensorMultiply(two.getState(), four);
-
-        System.out.println("ThreeA is: \n" + threeA);
-        System.out.println("FourA is: \n" + fourA);
-
-        ComplexMatrix threeB= one.tensorMultiply(threeA, ComplexGates.getIdentity());
-        ComplexMatrix fourB = one.tensorMultiply(fourA, ComplexGates.getPauliX());
-
-        System.out.println("Tensor Product for Three: \n" + threeB);
-        System.out.println("Tensor Product for Four: \n" + fourB);
-
-        ComplexMatrix five = one.tensorMultiply(threeB, fourB);
-//        ComplexMatrix four = one.multiplyMatrix(one.getState(), ComplexGates.getCNOT());
-        System.out.println(five);
-//        ComplexQubit three = ComplexGates.applyCNOT(one, two);
-//        System.out.println("Resulting Target Qubit state: \n" + three);
-
-//        ComplexQubit result = ComplexGates.applyCNOT(one, two);
-//        System.out.println("Result of 00 CNOT application CX 0,1: \n" + result);
+//        System.out.println("Results");
+//        System.out.println(one);
+//        System.out.println(two);
 //
-//        ComplexQubit invertedResult = ComplexGates.applyCNOT(two, one);
-//        System.out.println("Result of 00 CNOT application CX 1,0: \n" + invertedResult);
+//        System.out.println("Applying CNOT 1, 0");
+//        ComplexGates.applyCNOT(two, one);
+//
+//        System.out.println("Results");
+//        System.out.println(one);
+//        System.out.println(two);
     }
 }

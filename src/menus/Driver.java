@@ -266,7 +266,7 @@ public class Driver {
                 }
                 for (ComplexQubit qubit : workingQubits) {
                     if (qubit.getQubitID() == targetQubitCNOT) {
-                        qubit = ComplexGates.applyCNOT(controlQubit, targetQubit);
+                        ComplexGates.applyCNOT(controlQubit, targetQubit);
                         System.out.println("Resultant qubit: \n"+qubit);
                     }
                 }
