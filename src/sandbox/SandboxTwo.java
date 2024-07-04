@@ -1,9 +1,7 @@
 package sandbox;
 
-import complexClasses.ComplexGates;
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexObject;
-import complexClasses.ComplexQubit;
+import complexClasses.*;
+import menus.Console;
 
 public class SandboxTwo {
     public static void main(String[] args) {
@@ -11,23 +9,14 @@ public class SandboxTwo {
         ComplexObject coj = new ComplexObject();
         ComplexQubit one = new ComplexQubit();
         ComplexQubit two = new ComplexQubit();
-//        one.setState(ComplexGates.applyPauliX(two.getState()));
-
-        System.out.println(one);
-        System.out.println(two);
-
-        System.out.println("\nApplying CNOT 0,1\n");
-        ComplexGates.applyCNOT(two, one);
-
-//        System.out.println("Results");
-//        System.out.println(one);
-//        System.out.println(two);
-//
-//        System.out.println("Applying CNOT 1, 0");
-//        ComplexGates.applyCNOT(two, one);
-//
-//        System.out.println("Results");
-//        System.out.println(one);
-//        System.out.println(two);
+        ComplexMatrix systemState = new ComplexMatrix(4,1);
+        systemState.set(2,0, new ComplexNumber(1));
+        System.out.println("System State: \n"+systemState);
+//        ComplexMatrix tempMatrix = coj.tensorMultiply(ComplexGates.getIdentity(), ComplexGates.getPauliX());
+        ComplexMatrix tempMatrix = coj.tensorMultiply(ComplexGates.getPauliX(), ComplexGates.getIdentity());
+        ComplexMatrix applyXtoStart = coj.multiplyMatrix(tempMatrix, systemState);
+//        System.out.println("Identity to X: \n"+tempMatrix);
+        System.out.println("X to Identity: \n"+tempMatrix);
+        System.out.println("applyXtoStart \n"+applyXtoStart);
     }
 }
