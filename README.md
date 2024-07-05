@@ -17,8 +17,8 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 &#x2705; Finish the Qops class to run the work queue and generate the expectation values 
 
 ## Phase 4:  ***Currently Working***
-&#x2705; Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences  
-&#x274C;Rework the wire design to use a single queue for all qubits and maintain order by adding to queue in 
+&#x274C; Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences  
+&#x2705;Rework the wire design to use a single queue for all qubits and maintain order by adding to queue in 
 order the user adds the gates, eliminating the for identity on non-active qubits.  
 &#x274C;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates
 
