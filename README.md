@@ -1,9 +1,15 @@
 # JQsim is a simple quantum simulator code exploration
 
-It is based on the below article conceptually, but it is implemented using Java instead of Racket and is a more
-complex implementation than the article provides for.
-
+The project started off as a system based on the below article conceptually, but it is implemented  
+using Java instead of Racket and is a more complex implementation than the article provides for.  
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
+
+Currently I have shifted from a per qubit state tracker to a single state vector representing  
+the state of the entire system. No measurments are taken along the process, preserving all  
+information until the final measurement, as a real QC does.
+
+Practical upper limit for qubit creation at this point is ~14 qubits, which consums roughly  
+30gb of RAM. This will be an item to address in the future and eliminate the rampant memory consumption.
 
 ## Phase 1:
 &#x2705; Initial implementation to ensure flexibility for any practical number of qubits.  
