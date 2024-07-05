@@ -17,10 +17,10 @@ https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratc
 &#x2705; Finish the Qops class to run the work queue and generate the expectation values 
 
 ## Phase 4:  ***Currently Working***
-&#x274C; Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences  
 &#x2705;Rework the design to use a single state vector for the system representing all qubit states  
 and compose operator matrices based on tensor producting the correct inner products of each qubit state in the  
 state vector of the system.  
+&#x274C; Rework CNOT to be mathmatically correct to CX 0,1 and CX 1,0 differences  
 &#x274C;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates
 
 ## Phase 5:
