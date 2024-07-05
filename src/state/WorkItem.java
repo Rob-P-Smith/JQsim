@@ -12,8 +12,8 @@ public class WorkItem {
     private String operator;
     private int control;
     private int target;
-    private int[] controls;
-    private int[] targets;
+    private Integer[] controls;
+    private Integer[] targets;
     private boolean singleQubit;
 
     /**
@@ -37,7 +37,7 @@ public class WorkItem {
      * @param targets An array of target values.
      * @see #WorkItem(String, int[], int[])
      */
-    public WorkItem(String operator, int[] controls, int[] targets) {
+    public WorkItem(String operator, Integer[] controls, Integer[] targets) {
         this.operator = operator;
         this.controls = controls;
         this.targets = targets;
@@ -88,10 +88,10 @@ public class WorkItem {
      * Gets the array of control values.
      *
      * @return The array of control values.
-     * @see #setControls(int[])
+     * @see #setControls(Integer[])
      * @see #getControl()
      */
-    public int[] getControls() {
+    public Integer[] getControls() {
         return controls;
     }
 
@@ -99,10 +99,10 @@ public class WorkItem {
      * Gets the array of target values.
      *
      * @return The array of target values.
-     * @see #setTargets(int[])
+     * @see #setTargets(Integer[])
      * @see #getTarget()
      */
-    public int[] getTargets() {
+    public Integer[] getTargets() {
         return targets;
     }
 
@@ -121,7 +121,6 @@ public class WorkItem {
      *
      * @param control The new control value.
      * @see #getControl()
-     * @see #setControls(int[])
      */
     public void setControl(int control) {
         this.control = control;
@@ -132,7 +131,6 @@ public class WorkItem {
      *
      * @param target The new target value.
      * @see #getTarget()
-     * @see #setTargets(int[])
      */
     public void setTarget(int target) {
         this.target = target;
@@ -145,7 +143,7 @@ public class WorkItem {
      * @see #getControls()
      * @see #setControl(int)
      */
-    public void setControls(int[] controls) {
+    public void setControls(Integer[] controls) {
         this.controls = controls;
     }
 
@@ -156,7 +154,7 @@ public class WorkItem {
      * @see #getTargets()
      * @see #setTarget(int)
      */
-    public void setTargets(int[] targets) {
+    public void setTargets(Integer[] targets) {
         this.targets = targets;
     }
 
