@@ -35,7 +35,7 @@ public class WorkItem {
      * @param operator The operator string.
      * @param controls An array of control values.
      * @param targets An array of target values.
-     * @see #WorkItem(String, int[], int[])
+     * @see #WorkItem(String, Integer[], Integer[])
      */
     public WorkItem(String operator, Integer[] controls, Integer[] targets) {
         this.operator = operator;
