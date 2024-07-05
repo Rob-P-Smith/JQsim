@@ -6,11 +6,11 @@ complex implementation than the article provides for.
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
 
 ## Phase 1:
-&#x2705; Initial implementation to ensure flexibility for any practical number of sandbox.  
-&#x2705; Implementing Clifford gates 	
+&#x2705; Initial implementation to ensure flexibility for any practical number of qubits.  
+&#x2705; Implement Clifford gates 	
 
 ## Phase 2:
-&#x2705; Implementing entanglement functionality via CNOT 
+&#x2705; Implementing entanglement functionality via CNOT and Hadmard
 
 ## Phase 3: 
 &#x2705; Implement a circuit builder to queue gates to apply to each qubit   
