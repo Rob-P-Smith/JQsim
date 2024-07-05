@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * an iterator that removes items as they are processed.
  */
 public class WorkQueue implements Iterable<WorkItem> {
-    private Queue<WorkItem> gates;
+    private static Queue<WorkItem> gates;
     private final Lock lock = new ReentrantLock();
 
     /**
@@ -58,6 +58,9 @@ public class WorkQueue implements Iterable<WorkItem> {
         }
     }
 
+    public static WorkItem getNextGate(){
+        return gates.poll();
+    }
     /**
      * Returns an iterator over the {@link WorkItem} objects in this queue.
      * The iterator removes items from the queue as they are processed.

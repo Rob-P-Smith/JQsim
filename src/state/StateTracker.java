@@ -7,7 +7,6 @@ import complexClasses.ComplexQubit;
 /**
  * The class tracks the state of the quantum system {@link ComplexQubit}s as a column vector stored in a
  * {@link ComplexMatrix} of nx1 dimensions where n is 2 to the power of the number of {@link ComplexQubit}s.
- *
  * This is used to provide the state vector to multiply by gate matrix operators to determine the system state
  * after applying gates.
  *
@@ -29,7 +28,7 @@ public class StateTracker {
     /**
      * Parameterized constructor initializes the system state using the number of qubits provided as the
      * parameter and sets all qubits to 0 real and 0 imag values.
-     * @param numQubits the number of qubits to setup the system with
+     * @param numQubits the number of qubits to set up the system with
      */
     public StateTracker(int numQubits){
         stateVector = new ComplexMatrix(numQubits, 1);

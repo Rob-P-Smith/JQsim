@@ -3,6 +3,10 @@ package state;
 /**
  * Represents a work item with an operator and associated control and target values.
  * This class can handle both single control/target and multiple controls/targets scenarios.
+ *
+ * @author Robert Smith
+ * @version 0.1
+ * @since 4 July 2024
  */
 public class WorkItem {
     private String operator;
@@ -10,19 +14,19 @@ public class WorkItem {
     private int target;
     private int[] controls;
     private int[] targets;
+    private boolean singleQubit;
 
     /**
      * Constructs a WorkItem with a single control and target.
      *
      * @param operator The operator string.
-     * @param control The control value.
      * @param target The target value.
-     * @see #WorkItem(String, int[], int[])
+     * @see #WorkItem(String, int)
      */
-    public WorkItem(String operator, int control, int target) {
+    public WorkItem(String operator, int target) {
         this.operator = operator;
-        this.control = control;
         this.target = target;
+        this.singleQubit = true;
     }
 
     /**
@@ -31,12 +35,21 @@ public class WorkItem {
      * @param operator The operator string.
      * @param controls An array of control values.
      * @param targets An array of target values.
-     * @see #WorkItem(String, int, int)
+     * @see #WorkItem(String, int[], int[])
      */
     public WorkItem(String operator, int[] controls, int[] targets) {
         this.operator = operator;
         this.controls = controls;
         this.targets = targets;
+        this.singleQubit = false;
+    }
+
+    /**
+     * Gets whether this work item is a single qubit gate.
+     * @return boolean true if single qubit gate, false if not.
+     */
+    public boolean isSingleQubit() {
+        return singleQubit;
     }
 
     /**
@@ -145,5 +158,44 @@ public class WorkItem {
      */
     public void setTargets(int[] targets) {
         this.targets = targets;
+    }
+
+    /**
+     * To string for the work item outputs
+     *
+     * Single-qubit gates in format
+     * operator, Target qubit: qubit#
+     *
+     * Multi-qubit gates in format
+     * operator
+     * Controls: qubit#, qubit#
+     * Targets: qubit#, qubit#
+     *
+     * @return String of the work item
+     */
+    @Override
+    public String toString(){
+        String result;
+        if(this.singleQubit){
+            result = this.operator +", Target qubit: " + this.target;
+        } else {
+            result = this.operator +"\nControls: ";
+            for(int i = 0; i < controls.length; i++){
+                if(i!=controls.length-1) {
+                    result += controls[i] + ", ";
+                } else {
+                    result += controls[i];
+                }
+            }
+            result+="\n Targets: ";
+            for(int i = 0; i < targets.length; i++){
+                if(i!=targets.length-1){
+                    result += targets[i]+", ";
+                } else {
+                    result += targets[i];
+                }
+            }
+        }
+        return result;
     }
 }
