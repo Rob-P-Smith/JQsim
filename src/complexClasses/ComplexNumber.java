@@ -112,7 +112,7 @@ public class ComplexNumber extends ComplexObject {
      * <li>If imag is positive and real is not 0.0, it formats as "real + imagⅈ".</li>
      * <li>If imag is negative and real is not 0.0, it formats as "real - imagⅈ".</li>
      * </ul>
-     * </p>
+     *
      *
      * @return A string representation of the complex number.
      */

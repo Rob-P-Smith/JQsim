@@ -1,4 +1,4 @@
-package fileIO;
+package supportClasses.FileIO;
 
 import complexClasses.ComplexQubit;
 

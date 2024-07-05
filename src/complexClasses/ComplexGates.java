@@ -23,7 +23,7 @@ import java.util.Map;
  * ComplexQubit qubit = new ComplexQubit(new ComplexNumber(1, 0), new ComplexNumber(0, 0)); // Initialize qubit
  * ComplexQubit result = ComplexGates.applyPauliX(qubit); // Apply Pauli-X gate
  * }</pre>
- * </p>
+ *
  *
  * @author Robert Smith
  * @version 0.1
@@ -138,6 +138,14 @@ public class ComplexGates extends ComplexObject {
      * @return the ComplexMatrix from the T gate field
      */
     public static ComplexMatrix getTGate(){return TGate;}
+
+    /**
+     * HADAMARD gate Matrix getter
+     *
+     * @return the ComplexMatrix from the HADAMARD gate field
+     */
+    public static ComplexMatrix getHadamard() {return HADAMARD;}
+
 
     /**
      * Applies the Pauli-X gate to a {@link ComplexQubit}.

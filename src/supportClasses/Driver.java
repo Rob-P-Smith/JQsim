@@ -1,10 +1,10 @@
-package menus;
+package supportClasses;
 
-import fileIO.Reader;
-import fileIO.Writer;
+import supportClasses.FileIO.Reader;
 import measurement.QubitWire;
 import complexClasses.ComplexGates;
 import complexClasses.ComplexQubit;
+import supportClasses.FileIO.Writer;
 
 import java.io.File;
 import java.util.*;

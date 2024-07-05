@@ -22,17 +22,19 @@ public class StateTracker {
      */
     public StateTracker() {
         stateVector = new ComplexMatrix(1, 1);
-        stateVector.set(0, 0, new ComplexNumber(0,0));
+        stateVector.set(0, 0, new ComplexNumber(0, 0));
     }
 
     /**
      * Parameterized constructor initializes the system state using the number of qubits provided as the
      * parameter and sets all qubits to 0 real and 0 imag values.
+     *
      * @param numQubits the number of qubits to set up the system with
      */
-    public StateTracker(int numQubits){
-        stateVector = new ComplexMatrix(numQubits, 1);
-        for(int i = 0; i < numQubits; i++){
+    public StateTracker(int numQubits) {
+        stateVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
+        stateVector.set(0, 0, new ComplexNumber(1, 0));
+        for (int i = 1; i < numQubits; i++) {
             stateVector.set(i, 0, new ComplexNumber(0, 0));
         }
     }
@@ -48,11 +50,16 @@ public class StateTracker {
      * <p>
      * 3 {@link ComplexQubit} as N means the state vector will be 2 to the 3rd power, resulting in a 8x1
      * {@link ComplexMatrix} state vector.
-     *</p>
+     * </p>
+     *
      * @return the current stateVector as a {@link ComplexMatrix} in column vector format.
      */
     public static ComplexMatrix getStateVec() {
         return stateVector;
+    }
+
+    public static int getStateVecSize() {
+        return stateVector.getHeight();
     }
 
     /**
@@ -69,5 +76,47 @@ public class StateTracker {
             System.out.println("Setting new state failed.");
             return false;
         }
+    }
+
+    /**
+     * Converts a quantum state vector represented as a ComplexMatrix to individual qubit probabilities.
+     *
+     * <p>This method uses the class's state vector represented as a ComplexMatrix (which is composed of and calculates\
+     * the probability of each qubit being in the |0⟩ or |1⟩ state. It can handle superposition states and complex
+     * amplitudes.</p>
+     *
+     * <p>The returned ComplexMatrix contains the probabilities for each qubit's |0⟩ and |1⟩ states.
+     * The probabilities are stored in the real part of the ComplexNumber objects, as
+     * probabilities are always real numbers.</p>
+     *
+     * @return A ComplexMatrix as Math.pow(2, numQubits) x 1 of ComplexNumber objects. The first dimension represents
+     * the qubits (indexed from 0 to n-1), and the second dimension represents the |0⟩ and |1⟩ states (indexed 0 and 1
+     * respectively). The real part of each ComplexNumber contains the probability of the qubit being in that state.
+     * @throws IllegalArgumentException If the dimensions of the stateVector are not Nx1, or if N is not a power of 2.
+     */
+    private static ComplexMatrix stateVectorToQubits() {
+        int rows = stateVector.getHeight();
+        int cols = stateVector.getWidth();
+        if (stateVector.getHeight() < 1 || stateVector.getWidth() != 1) {
+            throw new IllegalArgumentException("Incorrect format for state vector is should Math.pow(2, numQ)x1");
+        }
+        int numQubits = (int) (Math.log(rows) / Math.log(2));
+        ComplexMatrix qubitStates = new ComplexMatrix(numQubits, 2);
+        // Initialize qubitStates with zero complex numbers
+        for (int i = 0; i < numQubits; i++) {
+            qubitStates.set(i, 0, new ComplexNumber());
+            qubitStates.set(i, 1, new ComplexNumber());
+        }
+        for (int i = 0; i < rows; i++) {
+            ComplexNumber amplitude = (rows == 1) ? stateVector.get(0, i) : stateVector.get(i, 0);
+            for (int j = 0; j < numQubits; j++) {
+                int bit = (i >> j) & 1;
+                ComplexNumber currentAmplitude = qubitStates.get(numQubits - 1 - j, bit);
+                double newReal = currentAmplitude.getReal() + amplitude.getReal();
+                double newImag = currentAmplitude.getImag() + amplitude.getImag();
+                qubitStates.set(numQubits - 1 - j, bit, new ComplexNumber(newReal, newImag));
+            }
+        }
+        return qubitStates;
     }
 }

@@ -233,6 +233,49 @@ public class ComplexObject {
         return resultMatrix;
     }
 
+    public static String complexMatrixToDiracNotation(ComplexMatrix stateVector) {
+        if (stateVector.getWidth() != 1) {
+            throw new IllegalArgumentException("State vector must be a column vector");
+        }
+
+        int numQubits = (int) (Math.log(stateVector.getHeight()) / Math.log(2));
+        StringBuilder result = new StringBuilder();
+        boolean firstTerm = true;
+
+        for (int i = 0; i < stateVector.getHeight(); i++) {
+            ComplexNumber amplitude = stateVector.get(i, 0);
+            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
+                if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
+                    result.append(" + ");
+                } else if (!firstTerm) {
+                    result.append(" - ");
+                }
+
+                String coeffString = complexToString(amplitude);
+                if (!coeffString.equals("1") && !coeffString.equals("-1")) {
+                    result.append(coeffString);
+                } else if (coeffString.equals("-1") && firstTerm) {
+                    result.append("-");
+                }
+
+                result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩");
+                firstTerm = false;
+            }
+        }
+
+        return result.toString();
+    }
+
+    private static String complexToString(ComplexNumber c) {
+        if (Math.abs(c.getImag()) < 1e-10) {
+            return String.format("%.4f", c.getReal());
+        } else if (Math.abs(c.getReal()) < 1e-10) {
+            return String.format("%.4fi", c.getImag());
+        } else {
+            return String.format("(%.4f + %.4fi)", c.getReal(), c.getImag());
+        }
+    }
+
     /**
      * Computes the conjugate of a complex number.
      *
