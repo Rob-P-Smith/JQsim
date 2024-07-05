@@ -1,3 +1,6 @@
+//TODO: Profile this class using
+// https://bell-sw.com/announcements/2020/07/22/Hunting-down-code-hotspots-with-JDK-Flight-Recorder/
+// and try to reduce memory and cpu usage.
 package measurement;
 
 import complexClasses.ComplexGates;
@@ -82,7 +85,8 @@ public class GateBuilder {
                         " to qubit " + work.getTarget() + "\n" + finalGate);
             }
         }
-
+        //TODO: Remove this and place in the actual measurement when ready, only here for calculation and testing
+        // of this class. Eventually measurement will call GateBuilder.getGate() to get the gate to execute.
         StateTracker.setStateVec(COJ.multiplyMatrix(finalGate, StateTracker.getStateVec()));
     }
 
@@ -223,14 +227,20 @@ public class GateBuilder {
      * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
-        StateTracker systemState = new StateTracker(4);
+        StateTracker systemState = new StateTracker(12);
         WorkQueue workQueue = new WorkQueue();
-        workQueue.addGate(new WorkItem("PAULI_X", 0));
-//        workQueue.addGate(new WorkItem("HADAMARD", 0));
+//        workQueue.addGate(new WorkItem("PAULI_X", 0));
+        workQueue.addGate(new WorkItem("HADAMARD", 0));
+//        workQueue.addGate(new WorkItem("PAULI_Z", 0));
+//        workQueue.addGate(new WorkItem("SGate", 0));
+//        workQueue.addGate(new WorkItem("SGate", 0));
+        workQueue.addGate(new WorkItem("HADAMARD", 0));
 //        workQueue.addGate(new WorkItem("TGate", 0));
-        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
-        workQueue.addGate(new WorkItem("CNOT", new Integer[]{2}, new Integer[]{1}));
-        workQueue.addGate(new WorkItem("CNOT", new Integer[]{1}, new Integer[]{0}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{2}, new Integer[]{1}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{7}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{7}, new Integer[]{2}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{2}, new Integer[]{0}));
 
         System.out.println("System Size: " + (int) (Math.log(StateTracker.getStateVecSize()) / Math.log(2)));
         System.out.println("Work Queue length: " + workQueue.getGates().size());

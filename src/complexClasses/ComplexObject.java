@@ -244,7 +244,7 @@ public class ComplexObject {
 
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
-            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
+            if (amplitude.magnitudeSquared() > 1e-7) {  // Threshold for considering non-zero amplitudes
                 if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
                     result.append(" + ");
                 } else if (!firstTerm) {
@@ -268,11 +268,11 @@ public class ComplexObject {
 
     private static String complexToString(ComplexNumber c) {
         if (Math.abs(c.getImag()) < 1e-10) {
-            return String.format("%.4f", c.getReal());
+            return String.format("%.3f", c.getReal());
         } else if (Math.abs(c.getReal()) < 1e-10) {
-            return String.format("%.4fi", c.getImag());
+            return String.format("%.3fi", c.getImag());
         } else {
-            return String.format("(%.4f + %.4fi)", c.getReal(), c.getImag());
+            return String.format("(%.3f + %.3fi)", c.getReal(), c.getImag());
         }
     }
 
