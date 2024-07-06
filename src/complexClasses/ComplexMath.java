@@ -8,7 +8,7 @@ package complexClasses;
  * @version 0.1
  * @since 29 June 2024
  */
-public class ComplexMath {
+public final class ComplexMath {
     private static final boolean DEBUG = false;
 
     /**

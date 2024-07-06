@@ -12,7 +12,7 @@ import static supportClasses.GreekEnums.*;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexQubit {
+public final class ComplexQubit {
     public static final double ERROR_MARGIN = 0.00001;
     private static int numQubits = 0;
     private int qubitID;

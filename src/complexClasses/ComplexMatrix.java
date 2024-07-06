@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexMatrix {
+public final class ComplexMatrix {
     private static final boolean DEBUG = false;
 
 
