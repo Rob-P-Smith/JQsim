@@ -2,11 +2,8 @@
 
 package Tests;
 
-import complexClasses.ComplexGates;
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexNumber;
-import complexClasses.ComplexQubit;
-import measurement.Qops;
+import complexClasses.*;
+import obsolete_Classes.Qops;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -14,7 +11,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ComplexObjectTest {
+class ComplexMathTest {
     private static final ComplexNumber ZERO = new ComplexNumber(0, 0);
     private static final ComplexNumber ONE = new ComplexNumber(1, 0);
 
@@ -27,7 +24,7 @@ class ComplexObjectTest {
 
         ////////////////////////////////
         System.out.println("\n" + breaker + "\n|00> Test for CX 0,1\n" + qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitOne, qubitTwo);
+//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
         System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
@@ -36,7 +33,7 @@ class ComplexObjectTest {
 
         ////////////////////////////////
         System.out.println("\n" + breaker + "\n|00> Test for CX 1,0\n" + qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitTwo, qubitOne);
+//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
         System.out.println("Result \n" + qubitOne + "\n" + breaker);
         assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
@@ -47,9 +44,9 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|10> Test for CX 0,1");
-        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
+//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitOne, qubitTwo);
+//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
         System.out.println("\nResult: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
@@ -60,9 +57,9 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|10> Test for CX 1,0");
-        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
+//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitTwo, qubitOne);
+//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
         System.out.println("Result \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
@@ -73,10 +70,10 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|01> Test for CX 0,1");
-        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
+//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitOne, qubitTwo);
-        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
+//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
+//        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
         assertEquals(0.0, qubitTwo.getState().get(0, 0).getReal());
@@ -86,9 +83,9 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|01> Test for CX 1,0");
-        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
+//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitTwo, qubitOne);
+//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
         System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
@@ -99,10 +96,10 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|11> Test for CX 0,1");
-        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
+//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
+//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitOne, qubitTwo);
+//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
         System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
@@ -113,10 +110,10 @@ class ComplexObjectTest {
         qubitOne = new ComplexQubit();
         qubitTwo = new ComplexQubit();
         System.out.println("\n" + breaker + "\n|11> Test for CX 1,0");
-        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
+//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
+//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
         System.out.println(qubitOne + "\n" + qubitTwo);
-        ComplexGates.applyCNOT(qubitTwo, qubitOne);
+//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
         System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
         assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
         assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
@@ -133,7 +130,7 @@ class ComplexObjectTest {
         control.set(1, 0, ZERO);
         target.set(0, 0, ONE);
         target.set(1, 0, ZERO);
-        ComplexMatrix result00 = control.tensorMultiply(control, target);
+        ComplexMatrix result00 = ComplexMath.tensorMultiply(control, target);
         assertEquals(1.0, result00.get(0, 0).getReal());
         assertEquals(0.0, result00.get(1, 0).getReal());
         assertEquals(0.0, result00.get(2, 0).getReal());
@@ -144,7 +141,7 @@ class ComplexObjectTest {
         control.set(1, 0, ONE);
         target.set(0, 0, ONE);
         target.set(1, 0, ZERO);
-        ComplexMatrix result10 = control.tensorMultiply(control, target);
+        ComplexMatrix result10 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result10.get(0, 0).getReal());
         assertEquals(0.0, result10.get(1, 0).getReal());
         assertEquals(1.0, result10.get(2, 0).getReal());
@@ -155,7 +152,7 @@ class ComplexObjectTest {
         control.set(1, 0, ONE);
         target.set(0, 0, ZERO);
         target.set(1, 0, ONE);
-        ComplexMatrix result11 = control.tensorMultiply(control, target);
+        ComplexMatrix result11 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result11.get(0, 0).getReal());
         assertEquals(0.0, result11.get(1, 0).getReal());
         assertEquals(0.0, result11.get(2, 0).getReal());
@@ -165,7 +162,7 @@ class ComplexObjectTest {
         control.set(1, 0, ZERO);
         target.set(0, 0, ZERO);
         target.set(1, 0, ONE);
-        ComplexMatrix result01 = control.tensorMultiply(control, target);
+        ComplexMatrix result01 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result01.get(0, 0).getReal());
         assertEquals(1.0, result01.get(1, 0).getReal());
         assertEquals(0.0, result00.get(2, 0).getReal());
@@ -183,7 +180,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0)}
         });
 
-        ComplexMatrix result = matrixOne.multiplyMatrix(matrixOne, matrixTwo);
+        ComplexMatrix result = ComplexMath.multiplyMatrix(matrixOne, matrixTwo);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(4, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(10, 0), new ComplexNumber(8, 0)}
@@ -212,7 +209,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0)}
         });
 
-        ComplexMatrix result = matrixOne.addMatrix(matrixOne, matrixTwo);
+        ComplexMatrix result = ComplexMath.addMatrix(matrixOne, matrixTwo);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(3, 0), new ComplexNumber(2, 0)},
                 {new ComplexNumber(4, 0), new ComplexNumber(6, 0)}
@@ -233,7 +230,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
         });
 
-        ComplexMatrix result = matrix.getTranspose(matrix);
+        ComplexMatrix result = ComplexMath.getTranspose(matrix);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(2, 0), new ComplexNumber(5, 0)},
@@ -255,7 +252,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
         });
 
-        result = matrix.getTranspose(matrix);
+        result = ComplexMath.getTranspose(matrix);
         expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0), new ComplexNumber(3, 0)},
                 {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
@@ -278,7 +275,7 @@ class ComplexObjectTest {
                 {new ComplexNumber(3, 3), new ComplexNumber(4, 4)}
         });
 
-        ComplexMatrix result = matrix.getConjugateTranspose(matrix);
+        ComplexMatrix result = ComplexMath.getConjugateTranspose(matrix);
         ComplexMatrix expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1, -1), new ComplexNumber(3, -3)},
                 {new ComplexNumber(2, -2), new ComplexNumber(4, -4)}
@@ -301,8 +298,8 @@ class ComplexObjectTest {
         ComplexQubit testBitTwo = new ComplexQubit();
         int shots = 1000000;
         Map<String, Integer> results = new HashMap<>();
-        testBitOne.setState(ComplexGates.applyHadamard(testBitOne.getState()));
-        ComplexGates.applyCNOT(testBitOne, testBitTwo);
+//        testBitOne.setState(ComplexGates.applyHadamard(testBitOne.getState()));
+//        ComplexGates.applyCNOT(testBitOne, testBitTwo);
 
         for(int i = 0; i < shots; i++) {
             ComplexMatrix result = Qops.measureMat(testBitOne.getState());

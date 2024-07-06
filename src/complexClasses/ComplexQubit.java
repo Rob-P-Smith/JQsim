@@ -1,6 +1,9 @@
 package complexClasses;
 
 //TODO clean up obsolete entangled qubit hashmap if it ends up being superfluous
+
+import static supportClasses.GreekEnums.*;
+
 /**
  * This class represents a single qubit. It uses ComplexNumbers so that 'i' can be used for qubit alpha and beta values
  * to track probabilities.
@@ -9,7 +12,7 @@ package complexClasses;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexQubit extends ComplexObject{
+public class ComplexQubit {
     public static final double ERROR_MARGIN = 0.00001;
     private static int numQubits = 0;
     private int qubitID;
@@ -105,9 +108,9 @@ public class ComplexQubit extends ComplexObject{
     public String toString() {
         StringBuilder sBuild = new StringBuilder();
         sBuild.append("Qubit #").append(this.qubitID).append("\n");
-        sBuild.append('α').append("\n");
+        sBuild.append(ALPHA.lower()).append("\n");
         sBuild.append('[').append(state.get(0, 0)).append("]\n");
-        sBuild.append('β').append("\n");
+        sBuild.append(BETA.lower()).append("\n");
         sBuild.append('[').append(state.get(1, 0)).append("]");
         return sBuild.toString();
     }

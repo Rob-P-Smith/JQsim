@@ -21,7 +21,7 @@ package complexClasses;
  * @version 0.1
  * @since 25 June 2024
  */
-public class ComplexNumber extends ComplexObject {
+public class ComplexNumber {
     private double real; // Real part of the complex number
     private double imag; // Imaginary part of the complex number
 

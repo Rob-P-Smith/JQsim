@@ -8,7 +8,7 @@ package complexClasses;
  * @version 0.1
  * @since 29 June 2024
  */
-public class ComplexObject {
+public class ComplexMath {
     private static final boolean DEBUG = false;
 
     /**
@@ -18,7 +18,7 @@ public class ComplexObject {
      * @param secondMatrix The second matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
      */
-    public ComplexMatrix tensorMultiply(ComplexMatrix firstMatrix, ComplexMatrix secondMatrix) {
+    public static ComplexMatrix tensorMultiply(ComplexMatrix firstMatrix, ComplexMatrix secondMatrix) {
         int firstHeight = firstMatrix.getHeight();
         int firstWidth = firstMatrix.getWidth();
         int secondHeight = secondMatrix.getHeight();
@@ -46,7 +46,7 @@ public class ComplexObject {
      * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
      * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
      */
-    public ComplexMatrix multiplyMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
+    public static ComplexMatrix multiplyMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
         if (matrixOne.getWidth() != matrixTwo.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication: "
                     + matrixOne.getHeight() + "x" + matrixOne.getWidth()
@@ -75,7 +75,7 @@ public class ComplexObject {
      * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
-    public ComplexMatrix addMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
+    public static ComplexMatrix addMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
         if (matrixOne.getHeight() != matrixTwo.getHeight() || matrixOne.getWidth() != matrixTwo.getWidth()) {
             throw new IllegalArgumentException("Matrix dimensions must be the same for addition: "
                     + matrixOne.getHeight() + "x" + matrixOne.getWidth()
@@ -93,13 +93,13 @@ public class ComplexObject {
 
     /**
      * Multiplies two complex numbers.
-     * If the result would come back as 0.9999999999999998 it is changed to 1.0
+     * If the result came back as 0.9999999999999998 it is changed to 1.0
      *
      * @param aVec The first complex number.
      * @param bVec The second complex number.
      * @return The complex number result of the multiplication.
      */
-    private ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
+    private static ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
         double real = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag());
         double imag = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal());
         if (DEBUG) {
@@ -111,7 +111,7 @@ public class ComplexObject {
         return new ComplexNumber(real, imag);
     }
 
-    private double testResultForFloatErrorBuildup(double number){
+    private static double testResultForFloatErrorBuildup(double number){
         if(number > 0.9999999 && number < 1.0){
             return 1.0;
         } else if (number < -0.9999999 && number > -1.0){
@@ -128,7 +128,7 @@ public class ComplexObject {
      * @param bVec The second complex number.
      * @return The complex number result of the addition.
      */
-    ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
+    public static ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
         double real = testResultForFloatErrorBuildup(aVec.getReal() + bVec.getReal());
         double imag = testResultForFloatErrorBuildup(aVec.getImag() + bVec.getImag());
         return new ComplexNumber(real, imag);
@@ -142,7 +142,7 @@ public class ComplexObject {
      * @return A {@code ComplexNumber[]} with length 4,
      * containing the state vector resultant from the tensor multiplication.
      */
-    public ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
+    public static ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
         ComplexMatrix stateVector = new ComplexMatrix(4, 1);
         int numStates = 2; // Number of states for each qubit (|0> and |1>)
         int index = 0;
@@ -165,8 +165,8 @@ public class ComplexObject {
      * @param vector The input vector, usually a qubit state
      * @return The outer product as matrix
      */
-    public ComplexMatrix outerProduct(ComplexMatrix vector) {
-        ComplexMatrix transpose = vector.getTranspose(vector);
+    public static ComplexMatrix outerProduct(ComplexMatrix vector) {
+        ComplexMatrix transpose = getTranspose(vector);
         ComplexMatrix outerProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
         for (int i = 0; i < vector.getHeight(); i++) {
             ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
@@ -183,7 +183,7 @@ public class ComplexObject {
      * @param originMatrix The matrix to transpose.
      * @return A new {@code ComplexMatrix} that is the transpose of the original matrix.
      */
-    public ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
+    public static ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
         ComplexMatrix resultMatrix;
@@ -211,7 +211,7 @@ public class ComplexObject {
      * @param originMatrix The matrix to compute the conjugate transpose of.
      * @return A new {@code ComplexMatrix} that is the conjugate transpose of the original matrix.
      */
-    public ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
+    public static ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
         ComplexMatrix resultMatrix;
@@ -282,7 +282,7 @@ public class ComplexObject {
      * @param sampleNumber The complex number to conjugate.
      * @return The conjugated complex number.
      */
-    private ComplexNumber conjugate(ComplexNumber sampleNumber) {
+    private static ComplexNumber conjugate(ComplexNumber sampleNumber) {
         return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
     }
 }

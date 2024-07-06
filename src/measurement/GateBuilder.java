@@ -3,15 +3,15 @@
 // and try to reduce memory and cpu usage.
 package measurement;
 
-import complexClasses.ComplexGates;
 import complexClasses.ComplexMatrix;
-import complexClasses.ComplexObject;
+import complexClasses.ComplexMath;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+
+import static complexClasses.ComplexGateEnums.*;
 
 /**
  * The GateBuilder class is responsible for constructing and applying quantum gates
@@ -24,7 +24,6 @@ import java.util.Arrays;
 public class GateBuilder {
     private static ComplexMatrix finalGate;
     private static final boolean DEBUG = false;
-    private static final ComplexObject COJ = new ComplexObject();
 
     /**
      * Constructs a new GateBuilder and initializes the finalGate matrix.
@@ -87,7 +86,7 @@ public class GateBuilder {
         }
         //TODO: Remove this and place in the actual measurement when ready, only here for calculation and testing
         // of this class. Eventually measurement will call GateBuilder.getGate() to get the gate to execute.
-        StateTracker.setStateVec(COJ.multiplyMatrix(finalGate, StateTracker.getStateVec()));
+        StateTracker.setStateVec(ComplexMath.multiplyMatrix(finalGate, StateTracker.getStateVec()));
     }
 
     /**
@@ -103,7 +102,7 @@ public class GateBuilder {
         ComplexMatrix[] operatorSequence = new ComplexMatrix[numQubits];
         for (int i = 0; i < numQubits; i++) {
             if (i != work.getTarget()) {
-                operatorSequence[i] = ComplexGates.getIdentity();
+                operatorSequence[i] = IDENTITY.getMatrix();
             } else {
                 operatorSequence[i] = singleOperator;
             }
@@ -129,13 +128,13 @@ public class GateBuilder {
     private static ComplexMatrix decodeOperator(WorkItem work) {
         ComplexMatrix singleOperator = null;
         switch (work.getOperator()) {
-            case ("PAULI_X"), ("CNOT") -> singleOperator = ComplexGates.getPauliX();
-            case ("PAULI_Y") -> singleOperator = ComplexGates.getPauliY();
-            case ("PAULI_Z") -> singleOperator = ComplexGates.getPauliZ();
-            case ("HADAMARD") -> singleOperator = ComplexGates.getHadamard();
-            case ("SGate") -> singleOperator = ComplexGates.getSGate();
-            case ("TGate") -> singleOperator = ComplexGates.getTGate();
-            case ("IDENTITY") -> singleOperator = ComplexGates.getIdentity();
+            case ("PAULI_X"), ("CNOT") -> singleOperator = PAULI_X.getMatrix();
+            case ("PAULI_Y") -> singleOperator = PAULI_Y.getMatrix();
+            case ("PAULI_Z") -> singleOperator = PAULI_Z.getMatrix();
+            case ("HADAMARD") -> singleOperator = HADAMARD.getMatrix();
+            case ("SGate") -> singleOperator = S_GATE.getMatrix();
+            case ("TGate") -> singleOperator = T_GATE.getMatrix();
+            case ("IDENTITY") -> singleOperator = IDENTITY.getMatrix();
         }
         return singleOperator;
     }
@@ -148,10 +147,10 @@ public class GateBuilder {
     private static void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
         for (int i = operatorSequence.length - 1; i >= 0; i--) {
             if (i == operatorSequence.length - 1) {
-                finalGate = COJ.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
+                finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
                 i--;
             } else {
-                finalGate = COJ.tensorMultiply(finalGate, operatorSequence[i]);
+                finalGate = ComplexMath.tensorMultiply(finalGate, operatorSequence[i]);
             }
         }
     }
@@ -174,7 +173,7 @@ public class GateBuilder {
 
         // Initialize all qubits with identity operators
         for (int i = 0; i < numQubits; i++) {
-            operatorSequence[i] = ComplexGates.getIdentity();
+            operatorSequence[i] = IDENTITY.getMatrix();
         }
 
         // Create the controlled operation
@@ -186,7 +185,7 @@ public class GateBuilder {
                     if ((i & targetMask) != 0) {  // If target qubit is |1⟩
                         operatorSequence[target] = singleOperator;
                     } else {
-                        operatorSequence[target] = ComplexGates.getIdentity();
+                        operatorSequence[target] = IDENTITY.getMatrix();
                     }
                 }
             }
@@ -227,16 +226,16 @@ public class GateBuilder {
      * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
-        StateTracker systemState = new StateTracker(12);
+        StateTracker systemState = new StateTracker(4);
         WorkQueue workQueue = new WorkQueue();
-//        workQueue.addGate(new WorkItem("PAULI_X", 0));
-        workQueue.addGate(new WorkItem("HADAMARD", 0));
+        workQueue.addGate(new WorkItem("PAULI_X", 0));
+//        workQueue.addGate(new WorkItem("HADAMARD", 0));
 //        workQueue.addGate(new WorkItem("PAULI_Z", 0));
 //        workQueue.addGate(new WorkItem("SGate", 0));
 //        workQueue.addGate(new WorkItem("SGate", 0));
-        workQueue.addGate(new WorkItem("HADAMARD", 0));
+//        workQueue.addGate(new WorkItem("HADAMARD", 0));
 //        workQueue.addGate(new WorkItem("TGate", 0));
-//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
+        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{2}, new Integer[]{1}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{7}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{7}, new Integer[]{2}));
@@ -245,12 +244,12 @@ public class GateBuilder {
         System.out.println("System Size: " + (int) (Math.log(StateTracker.getStateVecSize()) / Math.log(2)));
         System.out.println("Work Queue length: " + workQueue.getGates().size());
         System.out.print("Before gate application: ");
-        System.out.println(ComplexObject.complexMatrixToDiracNotation(StateTracker.getStateVec()));
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(StateTracker.getStateVec()));
         System.out.println();
         while (workQueue.hasWork()) {
             System.out.print(workQueue.peek() + " \nResults is: \n");
             calculateGate(workQueue);
-            System.out.println(ComplexObject.complexMatrixToDiracNotation(StateTracker.getStateVec())+"\n");
+            System.out.println(ComplexMath.complexMatrixToDiracNotation(StateTracker.getStateVec())+"\n");
         }
     }
 }
