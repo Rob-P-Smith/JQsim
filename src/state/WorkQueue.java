@@ -62,6 +62,74 @@ public class WorkQueue {
     }
 
     /**
+     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single qubit gates.
+     * @param type The type of gate to use as a string.
+     * @param target The target qubit for the gate.
+     * @see WorkItem
+     */
+    public void addGate(String type, int target) {
+        WorkItem gate = new WorkItem(type, target);
+        lock.lock();
+        try {
+            gates.offer(gate);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single control, dual target gates.
+     * @param type The type of gate to use as a string.
+     * @param control The control qubit for the gate.
+     * @param target The first target qubit for the gate.
+     * @see WorkItem
+     */
+    public void addGate(String type, int control, int target) {
+        WorkItem gate = new WorkItem(type, new Integer[]{control}, new Integer[]{target});
+        lock.lock();
+        try {
+            gates.offer(gate);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single control, dual target gates.
+     * @param type The type of gate to use as a string.
+     * @param control The control qubit for the gate.
+     * @param target The first target qubit for the gate.
+     * @param target2 The second qubit target for this gate.
+     * @see WorkItem
+     */
+    public void addGate(String type, int control, int target, int target2) {
+        WorkItem gate = new WorkItem(type, new Integer[]{control}, new Integer[]{target, target2});
+        lock.lock();
+        try {
+            gates.offer(gate);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for multi control, multi or single target gate.
+     * @param type The type of gate to use as a string.
+     * @param controls The control array of qubits for the gate.
+     * @param targets The target array of qubits for the gate.
+     * @see WorkItem
+     */
+    public void addGate(String type, Integer[] controls, Integer[] targets) {
+        WorkItem gate = new WorkItem(type, controls, targets);
+        lock.lock();
+        try {
+            gates.offer(gate);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
      * Removes and returns the next {@link WorkItem} from the queue in a thread-safe manner.
      * @return The next {@link WorkItem} in the queue, or null if the queue is empty.
      */

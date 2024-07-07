@@ -57,11 +57,27 @@ public enum ComplexGateEnums {
     })),
 
     /**
+     * Si gate matrix.
+     */
+    SI_GATE(new ComplexMatrix(new ComplexNumber[][]{
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0, -1)}
+    })),
+
+    /**
      * T gate matrix.
      */
     T_GATE(new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), getTValue()}
+    })),
+
+    /**
+     * Ti gate matrix.
+     */
+    TI_GATE(new ComplexMatrix(new ComplexNumber[][]{
+        {new ComplexNumber(1), new ComplexNumber(0)},
+        {new ComplexNumber(0), getTIValue()}
     }));
 
     /**
@@ -95,6 +111,17 @@ public enum ComplexGateEnums {
     private static ComplexNumber getTValue() {
         double real = Math.cos(Math.PI / 4);
         double imag = Math.sin(Math.PI / 4);
+        return new ComplexNumber(real, imag);
+    }
+
+    /**
+     * Returns the complex value used in the Ti gate matrix.
+     *
+     * @return the complex value used in the Ti gate matrix
+     */
+    private static ComplexNumber getTIValue() {
+        double real = Math.cos(Math.PI / 4);
+        double imag = -Math.sin(Math.PI / 4);
         return new ComplexNumber(real, imag);
     }
 

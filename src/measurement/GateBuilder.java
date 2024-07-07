@@ -73,10 +73,10 @@ public class GateBuilder {
                 oneControlOneOrManyTargets(work, singleOperator);
             } else if (controlSize > 1 && targetsSize == 1) {
                 System.out.println("Multi Control Single Target hit");
-                buildMultiControlSingleTarget(work);
+                multiControlSingleTarget(work);
             } else if (controlSize > 1 && targetsSize > 1) {
                 System.out.println("Multi Control Multi Target hit");
-                buildMultiControlMultiTarget(work);
+                multiControlMultiTarget(work);
             }
 
             if (DEBUG) {
@@ -129,11 +129,11 @@ public class GateBuilder {
         ComplexMatrix singleOperator = null;
         switch (work.getOperator()) {
             case ("PAULI_X"), ("CNOT") -> singleOperator = PAULI_X.getMatrix();
-            case ("PAULI_Y") -> singleOperator = PAULI_Y.getMatrix();
-            case ("PAULI_Z") -> singleOperator = PAULI_Z.getMatrix();
-            case ("HADAMARD") -> singleOperator = HADAMARD.getMatrix();
-            case ("SGate") -> singleOperator = S_GATE.getMatrix();
-            case ("TGate") -> singleOperator = T_GATE.getMatrix();
+            case ("PAULI_Y"), ("CYNOT") -> singleOperator = PAULI_Y.getMatrix();
+            case ("PAULI_Z"), ("CZNOT") -> singleOperator = PAULI_Z.getMatrix();
+            case ("HADAMARD"), ("CHNOT")-> singleOperator = HADAMARD.getMatrix();
+            case ("SGATE") -> singleOperator = S_GATE.getMatrix();
+            case ("TGATE") -> singleOperator = T_GATE.getMatrix();
             case ("IDENTITY") -> singleOperator = IDENTITY.getMatrix();
         }
         return singleOperator;
@@ -154,7 +154,6 @@ public class GateBuilder {
             }
         }
     }
-
 
     /**
      * Builds the operator matrix for a gate with one control qubit and one or many target qubits.
@@ -201,13 +200,12 @@ public class GateBuilder {
         }
     }
 
-
     /**
      * Builds the operator matrix for a gate with multiple control qubits and a single target qubit.
      *
      * @param work The WorkItem containing the gate information.
      */
-    private static void buildMultiControlSingleTarget(WorkItem work) {
+    private static void multiControlSingleTarget(WorkItem work) {
         // Implementation to be added
     }
 
@@ -216,7 +214,7 @@ public class GateBuilder {
      *
      * @param work The WorkItem containing the gate information.
      */
-    private static void buildMultiControlMultiTarget(WorkItem work) {
+    private static void multiControlMultiTarget(WorkItem work) {
         // Implementation to be added
     }
 
@@ -228,14 +226,19 @@ public class GateBuilder {
     public static void main(String[] args) {
         StateTracker systemState = new StateTracker(4);
         WorkQueue workQueue = new WorkQueue();
-        workQueue.addGate(new WorkItem("PAULI_X", 0));
+        workQueue.addGate("PAULI_X", 0);
+        workQueue.addGate("PAULI_X", 1);
+        workQueue.addGate("TGATE", 1);
+        workQueue.addGate("CZNOT", 0, 1);
+        workQueue.addGate("HADAMARD", 1);
+        workQueue.addGate("CNOT", 0);
 //        workQueue.addGate(new WorkItem("HADAMARD", 0));
 //        workQueue.addGate(new WorkItem("PAULI_Z", 0));
 //        workQueue.addGate(new WorkItem("SGate", 0));
 //        workQueue.addGate(new WorkItem("SGate", 0));
 //        workQueue.addGate(new WorkItem("HADAMARD", 0));
 //        workQueue.addGate(new WorkItem("TGate", 0));
-        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
+//        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{2}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{2}, new Integer[]{1}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{0}, new Integer[]{7}));
 //        workQueue.addGate(new WorkItem("CNOT", new Integer[]{7}, new Integer[]{2}));
@@ -249,6 +252,7 @@ public class GateBuilder {
         while (workQueue.hasWork()) {
             System.out.print(workQueue.peek() + " \nResults is: \n");
             calculateGate(workQueue);
+            System.out.println(StateTracker.getStateVec());
             System.out.println(ComplexMath.complexMatrixToDiracNotation(StateTracker.getStateVec())+"\n");
         }
     }

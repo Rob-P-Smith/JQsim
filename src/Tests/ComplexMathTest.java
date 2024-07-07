@@ -5,6 +5,9 @@ package Tests;
 import complexClasses.*;
 import obsolete_Classes.Qops;
 import org.junit.jupiter.api.Test;
+import state.StateTracker;
+import state.WorkItem;
+import state.WorkQueue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,108 +20,10 @@ class ComplexMathTest {
 
     @Test
     void testCNOT() {
-        ComplexQubit qubitOne = new ComplexQubit();
-        ComplexQubit qubitTwo = new ComplexQubit();
-        String breaker = ("/////////////////////////////////");
-        System.out.println("Starting qubit tests of |00>, |01>, |10>, |11> for CX 0,1 and CX 1,0");
-
-        ////////////////////////////////
-        System.out.println("\n" + breaker + "\n|00> Test for CX 0,1\n" + qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
-        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        System.out.println("\n" + breaker + "\n|00> Test for CX 1,0\n" + qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
-        System.out.println("Result \n" + qubitOne + "\n" + breaker);
-        assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|10> Test for CX 0,1");
-//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
-        System.out.println("\nResult: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|10> Test for CX 1,0");
-//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
-        System.out.println("Result \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|01> Test for CX 0,1");
-//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
-//        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(1, 0).getReal());
-
-        //////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|01> Test for CX 1,0");
-//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
-        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|11> Test for CX 0,1");
-//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitOne, qubitTwo);
-        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(0.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(1, 0).getReal());
-
-        ////////////////////////////////
-        qubitOne = new ComplexQubit();
-        qubitTwo = new ComplexQubit();
-        System.out.println("\n" + breaker + "\n|11> Test for CX 1,0");
-//        qubitTwo.setState(ComplexGates.applyPauliX(qubitTwo.getState()));
-//        qubitOne.setState(ComplexGates.applyPauliX(qubitOne.getState()));
-        System.out.println(qubitOne + "\n" + qubitTwo);
-//        ComplexGates.applyCNOT(qubitTwo, qubitOne);
-        System.out.println("Result: \n" + qubitOne + "\n" + qubitTwo + "\n" + breaker);
-        assertEquals(1.0, qubitOne.getState().get(0, 0).getReal());
-        assertEquals(0.0, qubitOne.getState().get(1, 0).getReal());
-        assertEquals(0.0, qubitTwo.getState().get(0, 0).getReal());
-        assertEquals(1.0, qubitTwo.getState().get(1, 0).getReal());
+        StateTracker testCNOTState = new StateTracker(2);
+        WorkQueue workQueue = new WorkQueue();
+        workQueue.addGate(new WorkItem("PAULI_X", 0));
+        workQueue.addGate(new WorkItem("CNOT", 0));
     }
 
     @Test

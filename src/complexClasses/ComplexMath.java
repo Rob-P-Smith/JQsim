@@ -1,5 +1,7 @@
 package complexClasses;
 
+import static supportClasses.GreekEnums.*;
+
 /**
  * ComplexObject serves as the parent class for other complex classes, providing a single location for linear algebra
  * functions to be collected and giving universal access to those methods on each complex class.
@@ -245,6 +247,10 @@ public final class ComplexMath {
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
             if (amplitude.magnitudeSquared() > 1e-7) {  // Threshold for considering non-zero amplitudes
+                if(firstTerm){
+                    result.append("|"+PSI.lower()+"⟩ = ");
+                }
+
                 if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
                     result.append(" + ");
                 } else if (!firstTerm) {
