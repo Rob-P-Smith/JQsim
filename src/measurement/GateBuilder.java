@@ -38,7 +38,8 @@ public class GateBuilder {
      *
      * @return The ComplexMatrix representing the final gate.
      */
-    public static ComplexMatrix getGate() {
+    public static ComplexMatrix getGate(WorkItem thisGate) {
+        calculateGate(thisGate);
         return finalGate;
     }
 
@@ -52,6 +53,8 @@ public class GateBuilder {
         return finalGate.toString();
     }
 
+
+    //TODO: Remove this when using the front end interface.
     /**
      * Calculates and applies the quantum gate based on the next WorkItem in the queue.
      *
@@ -88,6 +91,40 @@ public class GateBuilder {
         // of this class. Eventually measurement will call GateBuilder.getGate() to get the gate to execute.
         StateTracker.setStateVec(ComplexMath.multiplyMatrix(finalGate, StateTracker.getStateVec()));
     }
+
+    /**
+     * Calculates and applies the quantum gate based on the next WorkItem in the queue.
+     *
+     * @param thisGate The WorkItem containing the gate operation to be applied.
+     */
+    private static void calculateGate(WorkItem thisGate) {
+        ComplexMatrix singleOperator = decodeOperator(thisGate);
+
+        if (thisGate.isSingleQubit()) {
+            buildSingleQubitOperator(thisGate, singleOperator);
+        }
+
+        if (!thisGate.isSingleQubit()) {
+            int controlSize = thisGate.getControls().length;
+            int targetsSize = thisGate.getTargets().length;
+
+            if (controlSize == 1 && targetsSize >= 1) {
+                oneControlOneOrManyTargets(thisGate, singleOperator);
+            } else if (controlSize > 1 && targetsSize == 1) {
+                System.out.println("Multi Control Single Target hit");
+                multiControlSingleTarget(thisGate);
+            } else if (controlSize > 1 && targetsSize > 1) {
+                System.out.println("Multi Control Multi Target hit");
+                multiControlMultiTarget(thisGate);
+            }
+
+            if (DEBUG) {
+                System.out.println("Applying " + thisGate.getOperator() +
+                        " to qubit " + thisGate.getTarget() + "\n" + finalGate);
+            }
+        }
+    }
+
 
     /**
      * Builds the operator matrix for a single-qubit gate.

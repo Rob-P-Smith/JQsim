@@ -160,15 +160,16 @@ public class WorkItem {
 
     /**
      * To string for the work item outputs
-     *
+     *<p><ul>
      * Single-qubit gates in format
      * operator, Target qubit: qubit#
-     *
+     *</ul>
+     * <p>
      * Multi-qubit gates in format
-     * operator
+     * <ul>operator
      * Controls: qubit#, qubit#
      * Targets: qubit#, qubit#
-     *
+     *</ul>
      * @return String of the work item
      */
     @Override
