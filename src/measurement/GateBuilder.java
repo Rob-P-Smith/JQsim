@@ -146,22 +146,6 @@ public class GateBuilder {
     }
 
     /**
-     * Executes the sequence of operators to build the final gate matrix.
-     *
-     * @param operatorSequence An array of ComplexMatrix operators to be applied.
-     */
-    private static void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
-        for (int i = operatorSequence.length - 1; i >= 0; i--) {
-            if (i == operatorSequence.length - 1) {
-                finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
-                i--;
-            } else {
-                finalGate = ComplexMath.tensorMultiply(finalGate, operatorSequence[i]);
-            }
-        }
-    }
-
-    /**
      * Builds the operator matrix for a gate with one control qubit and one or many target qubits.
      * This method applies the single-qubit operator to each target qubit when the control qubit is not |0⟩.
      *
@@ -200,6 +184,8 @@ public class GateBuilder {
             }
         }
 
+        //TODO: Insert the flipped compensation here.
+
         // Update operatorSequence based on the control qubit value
         for (Integer target : targets) {
             if (controlIsNotZero) {
@@ -236,6 +222,22 @@ public class GateBuilder {
      */
     private static void multiControlMultiTarget(WorkItem work) {
         // Implementation to be added
+    }
+
+    /**
+     * Executes the sequence of operators to build the final gate matrix.
+     *
+     * @param operatorSequence An array of ComplexMatrix operators to be applied.
+     */
+    private static void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
+        for (int i = operatorSequence.length - 1; i >= 0; i--) {
+            if (i == operatorSequence.length - 1) {
+                finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
+                i--;
+            } else {
+                finalGate = ComplexMath.tensorMultiply(finalGate, operatorSequence[i]);
+            }
+        }
     }
 
 //    /**
