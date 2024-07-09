@@ -375,6 +375,10 @@ public class jqs {
     // System Results //
     ////////////////////
 
+    public void Measure(int i) {
+
+    }
+
     /**
      * Calculates and returns the expected value of the quantum system.
      */
