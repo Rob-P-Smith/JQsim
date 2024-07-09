@@ -2,17 +2,14 @@
 
 package Tests;
 
-import complexClasses.*;
-import obsolete_Classes.Qops;
+import complexClasses.ComplexMath;
+import complexClasses.ComplexMatrix;
+import complexClasses.ComplexNumber;
+import interpreter.jqs;
 import org.junit.jupiter.api.Test;
-import state.StateTracker;
-import state.WorkItem;
-import state.WorkQueue;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ComplexMathTest {
     private static final ComplexNumber ZERO = new ComplexNumber(0, 0);
@@ -20,10 +17,141 @@ class ComplexMathTest {
 
     @Test
     void testCNOT() {
-        StateTracker testCNOTState = new StateTracker(2);
-        WorkQueue workQueue = new WorkQueue();
-        workQueue.addGate(new WorkItem("PAULI_X", 0));
-        workQueue.addGate(new WorkItem("CNOT", 0));
+        jqs jqs = new jqs();
+        jqs.device(2);
+
+        System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
+        jqs.X(0);
+        jqs.CX(0,1);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == jqs.getStateVec().getHeight()-1){
+                assertTrue(jqs.getStateVec().get(i,0).getReal()!=0.0);
+            } else assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+        }
+
+        System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
+        jqs = new jqs();
+        jqs.device(2);
+        jqs.X(0);
+        jqs.S(0);
+        jqs.CX(0,1);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+            if(i == jqs.getStateVec().getHeight()-1) {
+                assertTrue(jqs.getStateVec().get(i, 0).getImag() != 0.0);
+            }
+        }
+
+        System.out.println("\nTest flipping bit 1 if bit 0 is not 0.0, then flipping bit 2 if 1 is not 0.0");
+        jqs = new jqs();
+        jqs.device(3);
+        jqs.X(0);
+        jqs.CX(0,1);
+        jqs.CX(1,2);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
+            if(i == jqs.getStateVec().getHeight()-1) {
+                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
+            }
+            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
+        }
+
+        System.out.println("\nTest flipping qubit 2 of 4 qubit system based on qubit 0 value being not 0.0");
+        jqs = new jqs();
+        jqs.device(4);
+        jqs.X(0);
+        jqs.CX(0,2);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
+            if(i == jqs.getStateVec().getHeight()-11) {
+                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
+            }
+            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
+        }
+
+        System.out.println("\nTest flipping bits of 10 qubit system 1 at a time based on the previous qubits value being not 0.0");
+        jqs = new jqs();
+        jqs.device(10);
+        jqs.X(0);
+        for(int i = 1; i < 10; i++){
+            jqs.CX(0,i);
+        }
+         jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
+            if(i == jqs.getStateVec().getHeight()-1) {
+                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
+            }
+            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
+        }
+
+        System.out.println("\nTesting flipping qubit 1 and qubit 3 if qubit 0 is not 0.0 using a CGate of CX on Control 0 Target 1 and 3");
+        jqs = new jqs();
+        jqs.device(4);
+        jqs.X(0);
+        jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == 11){
+                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
+            } else {
+                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+            }
+        }
+
+        System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
+        jqs = new jqs();
+        jqs.device(4);
+        jqs.CX(0,1);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == 0){
+                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
+            } else {
+                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+            }
+        }
+
+        System.out.println("\nTesting not flipping qubit target if qubit control is a 0.0");
+        jqs = new jqs();
+        jqs.device(10);
+        jqs.CX(6,2);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == 0){
+                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
+            } else {
+                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+            }
+        }
+
+        System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
+        jqs = new jqs();
+        jqs.device(4);
+        jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == 0){
+                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
+            } else {
+                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+            }
+        }
     }
 
     @Test
@@ -90,10 +218,10 @@ class ComplexMathTest {
                 {new ComplexNumber(4, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(10, 0), new ComplexNumber(8, 0)}
         });
-        System.out.println("MatrixOne: \n" + matrixOne);
-        System.out.println("MatrixTwo: \n" + matrixTwo);
-        System.out.println("Result: \n" + result);
-        System.out.println("Expected: \n" + expected);
+//        System.out.println("MatrixOne: \n" + matrixOne);
+//        System.out.println("MatrixTwo: \n" + matrixTwo);
+//        System.out.println("Result: \n" + result);
+//        System.out.println("Expected: \n" + expected);
 
         for (int i = 0; i < result.getHeight(); i++) {
             for (int j = 0; j < result.getWidth(); j++) {
@@ -142,6 +270,8 @@ class ComplexMathTest {
                 {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
         });
 
+        System.out.println("\nTranspose Test 1");
+        System.out.println("Starting Matrix: \n"+matrix);
         System.out.println("Result \n" + result);
         System.out.println("Expected: \n" + expected);
         for (int i = 0; i < result.getHeight(); i++) {
@@ -163,6 +293,8 @@ class ComplexMathTest {
                 {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
         });
 
+        System.out.println("\nTranspose Test 2");
+        System.out.println("Starting Matrix: \n"+matrix);
         System.out.println("Result \n" + result);
         System.out.println("Expected: \n" + expected);
         for (int i = 0; i < result.getHeight(); i++) {
@@ -186,6 +318,8 @@ class ComplexMathTest {
                 {new ComplexNumber(2, -2), new ComplexNumber(4, -4)}
         });
 
+        System.out.println("\nConjugate Transpose Test");
+        System.out.println("Starting Matrix: \n"+matrix);
         System.out.println("Result: \n" + result);
         System.out.println("Expected: \n" + expected);
 
@@ -195,39 +329,5 @@ class ComplexMathTest {
                 assertTrue(expected.get(i, j).getImag() == result.get(i, j).getImag());
             }
         }
-    }
-
-    @Test
-    void probabilitiesTest(){
-        ComplexQubit testBitOne = new ComplexQubit();
-        ComplexQubit testBitTwo = new ComplexQubit();
-        int shots = 1000000;
-        Map<String, Integer> results = new HashMap<>();
-//        testBitOne.setState(ComplexGates.applyHadamard(testBitOne.getState()));
-//        ComplexGates.applyCNOT(testBitOne, testBitTwo);
-
-        for(int i = 0; i < shots; i++) {
-            ComplexMatrix result = Qops.measureMat(testBitOne.getState());
-            results.put(result.toString(), results.getOrDefault(result.toString(), 0)+1);
-        }
-
-        for(String key : results.keySet()) {
-            double percentage = (double) results.get(key).intValue()*100 /shots;
-            System.out.println("Qubit State: ");
-            System.out.println(key + " occured "+results.get(key)+" times "+ "average of "+percentage+"%");
-        }
-        String[] keys = results.keySet().toArray(new String[0]);
-        assertTrue(keys.length == 2);
-        assertEquals(shots, results.get(keys[0]) + results.get(keys[1]));
-
-    }
-
-    @Test
-    void testSGate(){
-        // write Sgate test for
-        // H -> S == .707 real and .707 imag
-        // H -> S -> S == .707 real and -.707 imag
-        // H -> S -> S -> H == 1.0
-        assertEquals(true, (String.valueOf(true).equals(String.valueOf(false))));
     }
 }

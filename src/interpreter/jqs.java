@@ -1,5 +1,8 @@
 package interpreter;
 
+import complexClasses.ComplexMath;
+import complexClasses.ComplexMatrix;
+import measurement.GateBuilder;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
@@ -26,8 +29,28 @@ import state.WorkQueue;
  * @since 7 July 2024
  */
 public class jqs {
-    private static int numShots = 1024;
-    private static WorkQueue workQueue;
+    private int shots = 1024;
+    private int numQubits;
+    private WorkQueue workQueue;
+    private StateTracker tracker;
+    private GateBuilder gb;
+    private final boolean DEBUG = false;
+
+
+    /**
+     * Reset the system state to zeroed out column vector of the same size as initially declared, replace gate builder
+     * with new empty gate builder, and reset the workQueue to a new empty work queue.
+     *
+     */
+    public void reset() {
+        tracker = new StateTracker(numQubits);
+        gb = new GateBuilder(tracker);
+        workQueue = new WorkQueue();
+    }
+
+    public StateTracker getStateTracker() {
+        return tracker;
+    }
 
     /**
      * Initializes the jqs device with the specified number of qubits and default number of shots.
@@ -35,8 +58,10 @@ public class jqs {
      * @param numberOfQubits The number of qubits for the device.
      */
     public void device(int numberOfQubits) {
+        numQubits = numberOfQubits;
+        tracker = new StateTracker(numQubits);
+        gb = new GateBuilder(tracker);
         workQueue = new WorkQueue();
-        StateTracker tracker = new StateTracker(numberOfQubits);
     }
 
     /**
@@ -46,14 +71,45 @@ public class jqs {
      * @param numShots       The number of shots to run the simulation.
      */
     public void device(int numberOfQubits, int numShots) {
-        jqs.numShots = numShots;
+        shots = numShots;
         workQueue = new WorkQueue();
         StateTracker tracker = new StateTracker(numberOfQubits);
     }
 
-    ///////////////////////////////////
+    public ComplexMatrix getStateVec() {
+        return tracker.getStateVec();
+    }
+
+    ////////////////////////
     // Single Qubit Gates //
-    ///////////////////////////////////
+    ////////////////////////
+
+    /**
+     * Applies the X gate to the specified target qubit.
+     *
+     * @param target The target qubit.
+     */
+    public void X(int target) {
+        workQueue.addGate(new WorkItem("X", target));
+    }
+
+    /**
+     * Applies the Z gate to the specified target qubit.
+     *
+     * @param target The target qubit.
+     */
+    public void Z(int target) {
+        workQueue.addGate(new WorkItem("Z", target));
+    }
+
+    /**
+     * Applies the Y gate to the specified target qubit.
+     *
+     * @param target The target qubit.
+     */
+    public void Y(int target) {
+        workQueue.addGate(new WorkItem("Y", target));
+    }
 
     /**
      * Applies the RZ gate to the specified target qubit.
@@ -112,7 +168,6 @@ public class jqs {
         workQueue.addGate(new WorkItem("Ti", target));
     }
 
-
     /**
      * Applies the IDENTITY gate to the specified target qubit.
      *
@@ -137,12 +192,12 @@ public class jqs {
      * @param target The target qubit.
      */
     public void Si(int target) {
-        workQueue.addGate(new WorkItem("SX", target));
+        workQueue.addGate(new WorkItem("Si", target));
     }
 
-    ///////////////////////////////////
+    //////////////////////
     // Dual Qubit Gates //
-    ///////////////////////////////////
+    //////////////////////
 
     /**
      * Applies the CZ (controlled Z) gate with the specified control and target qubits.
@@ -174,10 +229,10 @@ public class jqs {
      * @param control The control qubit.
      * @param target  The target qubit.
      */
-    public void CNOT(int control, int target) {
+    public void CX(int control, int target) {
         Integer[] controls = {control};
         Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CNOT", controls, targets));
+        workQueue.addGate(new WorkItem("CX", controls, targets));
     }
 
     /**
@@ -228,12 +283,12 @@ public class jqs {
         workQueue.addGate(new WorkItem("CSWAP", controls, targets));
     }
 
-    ///////////////////////////////////
+    ///////////////////////
     // Multi Qubit Gates //
-    ///////////////////////////////////
+    ///////////////////////
 
     /**
-     * Applies the Toffoli (controlled controlled X) gate with the specified control qubits and target qubit.
+     * Applies the Toffoli (controlled, controlled X) gate with the specified control qubits and target qubit.
      *
      * @param controlOne The first control qubit.
      * @param controlTwo The second control qubit.
@@ -242,12 +297,12 @@ public class jqs {
     public void Toffoli(int controlOne, int controlTwo, int target) {
         Integer[] controls = {controlOne, controlTwo};
         Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("Toffoli", controls, targets));
+        workQueue.addGate(new WorkItem("TOFFOLI", controls, targets));
     }
 
     /**
      * Applies a controlled gate with the specified gate name, control qubit, and target qubit.
-     *
+     * TODO: Implement this in the gatebuilder
      * Single control and single target gate
      * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
@@ -263,7 +318,7 @@ public class jqs {
 
     /**
      * Applies a controlled gate with the specified gate name, control qubits, and target qubits.
-     *
+     * TODO: Implement this in the gatebuilder
      * Multi control and multi target, can be a single control or many, and a single target or many.
      * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
@@ -285,7 +340,7 @@ public class jqs {
 
     /**
      * Applies a controlled-controlled gate with the specified gate name, control qubits, and target qubit.
-     *
+     * TODO: Implement this in the gatebuilder
      * Dual control single target gate.
      * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
@@ -300,17 +355,32 @@ public class jqs {
         workQueue.addGate(new WorkItem(gate, controls, targets));
     }
 
-
-    ///////////////////////////////////
+    ////////////////////
     // System Results //
-    ///////////////////////////////////
+    ////////////////////
 
     /**
      * Calculates and returns the expected value of the quantum system.
-     *
-     * @return The expected value.
      */
     public void expval() {
-        // TODO: Implement expval method
+        if (DEBUG)  System.out.println("Initial State: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
+        while(workQueue.hasWork()) {
+            if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
+            if (DEBUG) if(workQueue.peek().isSingleQubit()){
+                System.out.println("Target:" + workQueue.peek().getTarget());
+            } else {
+                for (Integer control : workQueue.peek().getControls()) {
+                    System.out.println("Control: " + control);
+                }
+                for (Integer target : workQueue.peek().getTargets()) {
+                    System.out.println("Target: " + target);
+                }
+            }
+            ComplexMatrix matrix = gb.getGate(workQueue.getNextGate());
+            tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+            if (DEBUG) System.out.println("After Gate: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
+        }
     }
+
+
 }

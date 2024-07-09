@@ -15,7 +15,7 @@ import complexClasses.ComplexQubit;
  * @since 4 July 2024
  */
 public class StateTracker {
-    private static ComplexMatrix stateVector = new ComplexMatrix(0, 0);
+    private ComplexMatrix stateVector = new ComplexMatrix(0, 0);
 
     /**
      * Default constructor initializes the system state using one qubit set to a 0 real and 0 imag value.
@@ -54,11 +54,11 @@ public class StateTracker {
      *
      * @return the current stateVector as a {@link ComplexMatrix} in column vector format.
      */
-    public static ComplexMatrix getStateVec() {
+    public ComplexMatrix getStateVec() {
         return stateVector;
     }
 
-    public static int getStateVecSize() {
+    public int getStateVecSize() {
         return stateVector.getHeight();
     }
 
@@ -68,7 +68,7 @@ public class StateTracker {
      * @param newState the new column vector to assign to the system state
      * @return The boolean true if setting the new stateVector was successful or false if it fails.
      */
-    public static boolean setStateVec(ComplexMatrix newState) {
+    public boolean setStateVec(ComplexMatrix newState) {
         try {
             stateVector.setData(newState.getData());
             return true;
@@ -94,7 +94,7 @@ public class StateTracker {
      * respectively). The real part of each ComplexNumber contains the probability of the qubit being in that state.
      * @throws IllegalArgumentException If the dimensions of the stateVector are not Nx1, or if N is not a power of 2.
      */
-    private static ComplexMatrix stateVectorToQubits() {
+    public ComplexMatrix stateVectorToQubits() {
         int rows = stateVector.getHeight();
         int cols = stateVector.getWidth();
         if (stateVector.getHeight() < 1 || stateVector.getWidth() != 1) {
@@ -107,6 +107,7 @@ public class StateTracker {
             qubitStates.set(i, 0, new ComplexNumber());
             qubitStates.set(i, 1, new ComplexNumber());
         }
+
         for (int i = 0; i < rows; i++) {
             ComplexNumber amplitude = (rows == 1) ? stateVector.get(0, i) : stateVector.get(i, 0);
             for (int j = 0; j < numQubits; j++) {

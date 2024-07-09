@@ -76,8 +76,33 @@ public enum ComplexGateEnums {
      * Ti gate matrix.
      */
     TI_GATE(new ComplexMatrix(new ComplexNumber[][]{
-        {new ComplexNumber(1), new ComplexNumber(0)},
-        {new ComplexNumber(0), getTIValue()}
+            {new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), getTIValue()}
+    })),
+
+    RX_GATE(new ComplexMatrix(new ComplexNumber[][]{
+            {},
+            {}
+    })),
+
+    RY_GATE(new ComplexMatrix(new ComplexNumber[][]{
+            {},
+            {}
+    })),
+
+    RZ_GATE(new ComplexMatrix(new ComplexNumber[][]{
+            {},
+            {}
+    })),
+
+    SWAP(new ComplexMatrix(new ComplexNumber[][]{
+        {},
+        {}
+    })),
+
+    ISWAP(new ComplexMatrix(new ComplexNumber[][]{
+            {},
+            {}
     }));
 
     /**
@@ -126,7 +151,7 @@ public enum ComplexGateEnums {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Nope. Use the getMatrix() method instead";
     }
 }
