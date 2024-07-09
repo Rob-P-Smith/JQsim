@@ -32,6 +32,22 @@ class ComplexMathTest {
             } else assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
         }
 
+        System.out.println("Testing reverse CNOT, flip 1 to 1 if 0 is not 0.0, then flip 2 based on 1, then 0 based on 2");
+        jqs = new jqs();
+        jqs.device(3);
+        jqs.X(0);
+        jqs.CX(0,1);
+        jqs.CX(1,2);
+        jqs.CX(2,0);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
+            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
+            if(i == jqs.getStateVec().getHeight()-2){
+                assertTrue(jqs.getStateVec().get(i,0).getReal()!=0.0);
+            } else assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
+        }
+
         System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
         jqs = new jqs();
         jqs.device(2);

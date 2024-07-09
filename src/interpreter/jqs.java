@@ -36,6 +36,13 @@ public class jqs {
     private GateBuilder gb;
     private final boolean DEBUG = false;
 
+    public jqs(){
+
+    }
+
+    public jqs(int numQubits){
+        device(numQubits);
+    }
 
     /**
      * Reset the system state to zeroed out column vector of the same size as initially declared, replace gate builder
@@ -46,10 +53,6 @@ public class jqs {
         tracker = new StateTracker(numQubits);
         gb = new GateBuilder(tracker);
         workQueue = new WorkQueue();
-    }
-
-    public StateTracker getStateTracker() {
-        return tracker;
     }
 
     /**
@@ -76,6 +79,19 @@ public class jqs {
         StateTracker tracker = new StateTracker(numberOfQubits);
     }
 
+    /**
+     * Returns the StateTracker as tracker, for use in tests only.
+     * TODO: Remove this at some point.
+     * @return tracker, the StateTracker of this instance of jqs
+     */
+    public StateTracker getStateTracker() {
+        return tracker;
+    }
+
+    /**
+     * Returns the state vector from StateTracker.
+     * @return tracker's state vector which is a 2^nqubits x 1 ComplexMatrix.
+     */
     public ComplexMatrix getStateVec() {
         return tracker.getStateVec();
     }
@@ -381,6 +397,4 @@ public class jqs {
             if (DEBUG) System.out.println("After Gate: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
         }
     }
-
-
 }
