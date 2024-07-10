@@ -22,15 +22,10 @@ class ComplexMathTest {
 
         System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
         jqs.X(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == jqs.getStateVec().getHeight()-1){
-                assertTrue(jqs.getStateVec().get(i,0).getReal()!=0.0);
-            } else assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-        }
+        assertEquals("|ψ⟩ = 1.000|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("Testing reverse CNOT, flip 1 to 1 if 0 is not 0.0, then flip 2 based on 1, then 0 based on 2");
         jqs = new jqs();
@@ -41,12 +36,7 @@ class ComplexMathTest {
         jqs.CX(2,0);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == jqs.getStateVec().getHeight()-2){
-                assertTrue(jqs.getStateVec().get(i,0).getReal()!=0.0);
-            } else assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-        }
+        assertEquals("|ψ⟩ = 1.000|110⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
         jqs = new jqs();
@@ -56,12 +46,7 @@ class ComplexMathTest {
         jqs.CX(0,1);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-            if(i == jqs.getStateVec().getHeight()-1) {
-                assertTrue(jqs.getStateVec().get(i, 0).getImag() != 0.0);
-            }
-        }
+        assertEquals("|ψ⟩ = 1.000i|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTest flipping bit 1 if bit 0 is not 0.0, then flipping bit 2 if 1 is not 0.0");
         jqs = new jqs();
@@ -71,12 +56,8 @@ class ComplexMathTest {
         jqs.CX(1,2);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
-            if(i == jqs.getStateVec().getHeight()-1) {
-                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
-            }
-            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
-        }
+        assertEquals("|ψ⟩ = 1.000|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
 
         System.out.println("\nTest flipping qubit 2 of 4 qubit system based on qubit 0 value being not 0.0");
         jqs = new jqs();
@@ -85,12 +66,7 @@ class ComplexMathTest {
         jqs.CX(0,2);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
-            if(i == jqs.getStateVec().getHeight()-11) {
-                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
-            }
-            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
-        }
+        assertEquals("|ψ⟩ = 1.000|0101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTest flipping bits of 10 qubit system 1 at a time based on the previous qubits value being not 0.0");
         jqs = new jqs();
@@ -101,12 +77,7 @@ class ComplexMathTest {
         }
          jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i++){
-            if(i == jqs.getStateVec().getHeight()-1) {
-                assertTrue(jqs.getStateVec().get(i, 0).getReal() != 0.0);
-            }
-            assertTrue(jqs.getStateVec().get(i,0).getImag() == 0.0);
-        }
+        assertEquals("|ψ⟩ = 1.000|1111111111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTesting flipping qubit 1 and qubit 3 if qubit 0 is not 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
@@ -115,14 +86,7 @@ class ComplexMathTest {
         jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == 11){
-                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
-            } else {
-                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-            }
-        }
+        assertEquals("|ψ⟩ = 1.000|1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
         jqs = new jqs();
@@ -130,14 +94,7 @@ class ComplexMathTest {
         jqs.CX(0,1);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == 0){
-                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
-            } else {
-                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-            }
-        }
+        assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTesting not flipping qubit target if qubit control is a 0.0");
         jqs = new jqs();
@@ -145,14 +102,7 @@ class ComplexMathTest {
         jqs.CX(6,2);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == 0){
-                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
-            } else {
-                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-            }
-        }
+        assertEquals("|ψ⟩ = 1.000|0000000000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
@@ -160,14 +110,7 @@ class ComplexMathTest {
         jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        for(int i = 0; i < jqs.getStateVec().getHeight(); i ++){
-            assertEquals(jqs.getStateVec().get(i,0).getImag(), 0.0);
-            if(i == 0){
-                assertTrue(jqs.getStateVec().get(i,0).getReal() != 0.0);
-            } else {
-                assertEquals(jqs.getStateVec().get(i,0).getReal(), 0.0);
-            }
-        }
+        assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
 
     @Test
@@ -346,4 +289,34 @@ class ComplexMathTest {
             }
         }
     }
+
+    @Test
+    void testCircuitOne(){
+        jqs jqs = new jqs(4);
+        jqs.X(0);
+        jqs.CX(0,1);
+        jqs.Z(1);
+        jqs.CX(1,2);
+        jqs.S(2);
+        jqs.S(2);
+        jqs.H(2);
+        jqs.S(2);
+        jqs.expval();
+        assertEquals("|ψ⟩ = 0.707|0011⟩ - -0.707i|0111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+    }
+
+    @Test
+    void testCircuitTwo(){
+        //https://quantum.ibm.com/composer/files/61874091bc455a56c155195a02f0495a2c7829e4e8006c2d23bdff6e9e87da45
+        jqs jqs = new jqs(4);
+        jqs.H(1);
+        jqs.X(0);
+//        jqs.CX(0,1);
+//        jqs.CX(1,2);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        assertEquals("|ψ⟩ = 0.707|0001⟩ + 0.707|0111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
+    }
+
 }
