@@ -251,10 +251,15 @@ public final class ComplexMath {
                     result.append("|"+PSI.lower()+"⟩ = ");
                 }
 
-                if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
-                    result.append(" + ");
-                } else if (!firstTerm) {
-                    result.append(" - ");
+                //old code maybe remove
+//                if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
+//                    result.append(" + ");
+//                } else if (!firstTerm) {
+//                    result.append(" - ");
+//                }
+
+                if(!firstTerm) {
+                    result.append(", ");
                 }
 
                 String coeffString = complexToString(amplitude);
