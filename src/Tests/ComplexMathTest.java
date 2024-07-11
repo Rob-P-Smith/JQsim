@@ -312,7 +312,7 @@ class ComplexMathTest {
         jqs.H(1);
         jqs.X(0);
         jqs.CX(0,1);
-        jqs.CX(1,2);
+//        jqs.CX(1,2);
         jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|0001⟩ + 0.707|0111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));

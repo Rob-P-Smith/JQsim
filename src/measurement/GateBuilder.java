@@ -302,15 +302,24 @@ public class GateBuilder {
 
         ComplexMatrix result = ComplexMath.multiplyMatrix(interimState,systemStateDivergent);
 
-        System.out.println("Resulting interim state vectpr: \n" + result);
-        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result)+"\n");
-        System.out.println("Initial System state: \n" + tracker.getStateVec());
-        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
-        System.out.println("NOW MERGE THEM!");
+//        System.out.println("Resulting interim state vectpr: \n" + result);
+//        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result)+"\n");
+//        System.out.println("Initial System state: \n" + tracker.getStateVec());
+//        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
+//        System.out.println("NOW MERGE THEM!");
 
+        ComplexMatrix tempVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
+        //might need to reverse the below logic for FLIPPED case
         for(int i = 0; i < ((int)Math.pow(2, numQubits)); i++){
-
+            if(i%2==0){
+                tempVector.set(i,0,new ComplexNumber(tracker.getStateVec().get(i,0).getReal(), tracker.getStateVec().get(i, 0).getImag()));
+            } else {
+                tempVector.set(i,0,new ComplexNumber(result.get(i,0).getReal(), result.get(i, 0).getImag()));
+            }
         }
+//        System.out.println("Possible correct vector: \n" + tempVector);
+//        System.out.println("Possible Correct Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tempVector)+"\n");
+        newSystemState.setData(tempVector.getData());
         return newSystemState;
     }
 
