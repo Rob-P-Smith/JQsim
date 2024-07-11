@@ -6,10 +6,14 @@ package measurement;
 import complexClasses.ComplexMath;
 import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
+import interpreter.jqs;
 import state.StateTracker;
 import state.WorkItem;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static complexClasses.ComplexGateEnums.*;
 
@@ -162,6 +166,7 @@ public class GateBuilder {
         if (DEBUG) System.out.println("oneControlOneOrManyTargets hit");
         int numQubits = (int) (Math.log(tracker.getStateVecSize()) / Math.log(2));
         int controlQubit = work.getControls()[0];
+        int targetQubit = work.getTargets()[0];
         boolean flipped = false;
         Integer[] targets = work.getTargets();
         ComplexMatrix[] operatorSequence = new ComplexMatrix[numQubits];
@@ -217,6 +222,9 @@ public class GateBuilder {
             } else if (controlIsZero) {
                 operatorSequence[target] = IDENTITY.getMatrix();
             } else if (controlNotZeroOrOne) {
+                List<Integer> validStateIndexes = new ArrayList<>();
+                List<ComplexMatrix> testStateVectors = new ArrayList<>();
+                List<ComplexMatrix> resultingStateVectors = new ArrayList<>();
 
                 //identify valid basis states for each state vector value that is not real/imag == 0.0
                 //create a complexmatrix state vector temp object with collapsed states
@@ -225,19 +233,31 @@ public class GateBuilder {
                 //construct new state based on possible outcomes that represents their composite
                 //replace tracker.stateVector with constructed statevector
 
-                for(int i = 0; i < tracker.getStateVecSize(); i++) {
-                    if(tracker.getStateVec().get(i,0).getReal() !=0.0 ||
-                       tracker.getStateVec().get(i,0).getImag() !=0.0) {
-
+                for (int i = 0; i < tracker.getStateVecSize(); i++) {
+                    if (tracker.getStateVec().get(i, 0).getReal() != 0.0 ||
+                            tracker.getStateVec().get(i, 0).getImag() != 0.0) {
+                        validStateIndexes.add(i);
+                        ComplexMatrix validPossibility = new ComplexMatrix(tracker.getStateVecSize(), numQubits);
+                        validPossibility.set(i,0, new ComplexNumber(1.0));
+                        testStateVectors.add(validPossibility);
                     }
                 }
 
-                ComplexMatrix[] validBasisStates = new ComplexMatrix[2];
+                for(ComplexMatrix test: testStateVectors){
+                    jqs jqs2 = new jqs();
+                    jqs2.getStateTracker().setStateVec(test);
+                    jqs2.CX(controlQubit, targetQubit);
+                    jqs2.expval();
+                    ComplexMatrix result = new ComplexMatrix(tracker.getStateVecSize(), 1);
+                    resultingStateVectors.add(result);
+                }
+
+
                 ComplexMatrix validStates = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
                 ComplexMatrix controlAsZero = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
                 ComplexMatrix controlAsOne = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-                for(int i = 0; i < tracker.getStateVecSize(); i++) {
-                    if(i == controlQubit) {
+                for (int i = 0; i < tracker.getStateVecSize(); i++) {
+                    if (i == controlQubit) {
                         controlAsOne.set(controlQubit, 0, new ComplexNumber(1.0, 0.0));
                         controlAsZero.set(controlQubit, 0, new ComplexNumber(0.0, 0.0));
                     }
@@ -249,21 +269,21 @@ public class GateBuilder {
 
                 tracker.setStateVec(validStates);
             }
-            }
-
-            ////////////////////
-            //    Execution   //
-            ////////////////////
-
-            executeOperatorSequence(operatorSequence);
-            if (DEBUG) {
-                System.out.println(Arrays.deepToString(operatorSequence));
-                System.out.println("Applying " + work.getOperator() +
-                        " with control " + controlQubit +
-                        " to targets " + Arrays.toString(targets) + "\n" + finalGate);
-            }
-
         }
+
+        ////////////////////
+        //    Execution   //
+        ////////////////////
+
+        executeOperatorSequence(operatorSequence);
+        if (DEBUG) {
+            System.out.println(Arrays.deepToString(operatorSequence));
+            System.out.println("Applying " + work.getOperator() +
+                    " with control " + controlQubit +
+                    " to targets " + Arrays.toString(targets) + "\n" + finalGate);
+        }
+
+    }
 
     /**
      * Builds the operator matrix for a gate with multiple control qubits and a single target qubit.
