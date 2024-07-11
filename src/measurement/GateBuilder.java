@@ -170,10 +170,14 @@ public class GateBuilder {
         boolean flipped = false;
         Integer[] targets = work.getTargets();
         ComplexMatrix[] operatorSequence = new ComplexMatrix[numQubits];
+
         // Initialize all qubits with identity operators
         for (int i = 0; i < numQubits; i++) {
             operatorSequence[i] = IDENTITY.getMatrix();
         }
+
+        // Check if the control and target qubit ids are flipped, if so set flipped = true to handle later
+        // in the execution of gates to ensure the proper form of control operator is applied
         for (Integer target : targets) {
             if (target < controlQubit) {
                 System.out.println("Flipped state identified.");
@@ -186,17 +190,17 @@ public class GateBuilder {
         ////////////////////
 
         // Identify the value of the control qubit
-        boolean controlNotZeroOrOne = false;
-        boolean controlIsOne = false;
-        boolean controlIsZero = false;
+        boolean controlNotZeroOrOne = false;        //used for probabilistic amplitudes
+        boolean controlIsOne = false;               //use for definite flip the target condition
+        boolean controlIsZero = false;              //if control is zero, dont do anything besides identity gate
         int controlIndex = (1 << controlQubit);
 
         for (int i = 0; i < tracker.getStateVecSize(); i++) {
             if ((i & controlIndex) != 0) {
                 ComplexNumber controlValue = tracker.getStateVec().get(i, 0);
-                double controlReal = controlValue.getReal();
-                double controlImag = controlValue.getImag();
-                if (controlReal == 1.0 || controlImag == 1.0) {
+                double controlReal = controlValue.getReal();        // for debugging purposes
+                double controlImag = controlValue.getImag();        // for debugging purposes
+                if (Math.abs(controlReal) == 1.0 || Math.abs(controlImag) == 1.0) {             //absolute value of 1 to account for out of phase conditions where it is -1.0 real or imaginary
                     controlIsOne = true;
                     break;
                 } else if (controlReal == 0.0 && controlImag == 0.0) {
@@ -207,6 +211,11 @@ public class GateBuilder {
             }
         }
 
+        if(controlNotZeroOrOne){
+            controlIsOne = false;
+            controlIsZero = false;
+        }
+
         // implement basis states for the system instead of using matrices to transfer the probabilistic values instead of a matrix which requires a collapse of the superposition but only when
         // required for the correct outcome of the simulation
 
@@ -215,74 +224,30 @@ public class GateBuilder {
 
         for (Integer target : targets) {
             if (controlIsOne) {
-                operatorSequence[target] = PAULI_X.getMatrix();
+                operatorSequence[target] = singleOperator;
 //                if (controlQubit < target) { //TODO Fix to account for flipped states, currently this just doesn't perform the operation if flipped found.
 //                    operatorSequence[target] = PAULI_X.getMatrix();
 //                }
             } else if (controlIsZero) {
                 operatorSequence[target] = IDENTITY.getMatrix();
             } else if (controlNotZeroOrOne) {
-                List<Integer> validStateIndexes = new ArrayList<>();
-                List<ComplexMatrix> testStateVectors = new ArrayList<>();
-                List<ComplexMatrix> resultingStateVectors = new ArrayList<>();
-
-                //identify valid basis states for each state vector value that is not real/imag == 0.0
-                //create a complexmatrix state vector temp object with collapsed states
-                //run operation on each created temp state vector
-                //collect the possible outcomes
-                //construct new state based on possible outcomes that represents their composite
-                //replace tracker.stateVector with constructed statevector
-
-                for (int i = 0; i < tracker.getStateVecSize(); i++) {
-                    if (tracker.getStateVec().get(i, 0).getReal() != 0.0 ||
-                            tracker.getStateVec().get(i, 0).getImag() != 0.0) {
-                        validStateIndexes.add(i);
-                        ComplexMatrix validPossibility = new ComplexMatrix(tracker.getStateVecSize(), numQubits);
-                        validPossibility.set(i,0, new ComplexNumber(1.0));
-                        testStateVectors.add(validPossibility);
-                    }
-                }
-
-                for(ComplexMatrix test: testStateVectors){
-                    jqs jqs2 = new jqs();
-                    jqs2.getStateTracker().setStateVec(test);
-                    jqs2.CX(controlQubit, targetQubit);
-                    jqs2.expval();
-                    ComplexMatrix result = new ComplexMatrix(tracker.getStateVecSize(), 1);
-                    resultingStateVectors.add(result);
-                }
-
-
-                ComplexMatrix validStates = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-                ComplexMatrix controlAsZero = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-                ComplexMatrix controlAsOne = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-                for (int i = 0; i < tracker.getStateVecSize(); i++) {
-                    if (i == controlQubit) {
-                        controlAsOne.set(controlQubit, 0, new ComplexNumber(1.0, 0.0));
-                        controlAsZero.set(controlQubit, 0, new ComplexNumber(0.0, 0.0));
-                    }
-                }
-                //Identify valid basis states if control is 0
-                //Identify valid basis states if control is 1
-
-                //mutate the StateVector to represent the valid possible results without multiplying
-
-                tracker.setStateVec(validStates);
+                //resolve the result of probabilistic control value
+                tracker.setStateVec(resolveControlBranch(controlQubit, targetQubit, numQubits, singleOperator));
             }
+
+            ////////////////////
+            //    Execution   //
+            ////////////////////
+
+            executeOperatorSequence(operatorSequence);
+            if (DEBUG) {
+                System.out.println(Arrays.deepToString(operatorSequence));
+                System.out.println("Applying " + work.getOperator() +
+                        " with control " + controlQubit +
+                        " to targets " + Arrays.toString(targets) + "\n" + finalGate);
+            }
+
         }
-
-        ////////////////////
-        //    Execution   //
-        ////////////////////
-
-        executeOperatorSequence(operatorSequence);
-        if (DEBUG) {
-            System.out.println(Arrays.deepToString(operatorSequence));
-            System.out.println("Applying " + work.getOperator() +
-                    " with control " + controlQubit +
-                    " to targets " + Arrays.toString(targets) + "\n" + finalGate);
-        }
-
     }
 
     /**
@@ -303,12 +268,58 @@ public class GateBuilder {
         // Implementation to be added
     }
 
+    private ComplexMatrix resolveControlBranch(int controlQubit, int targetQubit, int numQubits, ComplexMatrix singleOperator) {
+        ComplexMatrix newSystemState = new ComplexMatrix((int)Math.pow(2, numQubits), 1);
+        ComplexMatrix systemStateDivergent = new ComplexMatrix((int)Math.pow(2, numQubits), 1);
+        ComplexMatrix currentState = tracker.getStateVec();
+        ComplexMatrix[] operatorSequenceDivergent = new ComplexMatrix[numQubits];
+
+        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
+        for (int i = 0; i < ((int)Math.pow(2, numQubits)); i++) {
+            systemStateDivergent.set(i, 0, new ComplexNumber(currentState.get(i, 0).getReal(), currentState.get(i, 0).getImag()));
+        }
+
+        jqs jqs2 = new jqs(numQubits);
+        jqs2.getStateVec().setData(systemStateDivergent.getData());
+
+        for(int i = 0; i < numQubits; i++) {
+            if(i == targetQubit){
+                operatorSequenceDivergent[targetQubit] = singleOperator;
+            } else {
+                operatorSequenceDivergent[i] = IDENTITY.getMatrix();
+            }
+        }
+
+        ComplexMatrix interimState = new ComplexMatrix((int)Math.pow(2, numQubits),(int)Math.pow(2, numQubits));
+        for (int i = operatorSequenceDivergent.length - 1; i >= 0; i--) {
+            if (i == operatorSequenceDivergent.length - 1) {
+                interimState = ComplexMath.tensorMultiply(operatorSequenceDivergent[i], operatorSequenceDivergent[i - 1]);
+                i--;
+            } else {
+                interimState = ComplexMath.tensorMultiply(interimState, operatorSequenceDivergent[i]);
+            }
+        }
+
+        ComplexMatrix result = ComplexMath.multiplyMatrix(interimState,systemStateDivergent);
+
+        System.out.println("Resulting interim state vectpr: \n" + result);
+        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result)+"\n");
+        System.out.println("Initial System state: \n" + tracker.getStateVec());
+        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
+        System.out.println("NOW MERGE THEM!");
+
+        for(int i = 0; i < ((int)Math.pow(2, numQubits)); i++){
+
+        }
+        return newSystemState;
+    }
+
     /**
      * Executes the sequence of operators to build the final gate matrix.
      *
      * @param operatorSequence An array of ComplexMatrix operators to be applied.
      */
-    private void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
+    public void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
         for (int i = operatorSequence.length - 1; i >= 0; i--) {
             if (i == operatorSequence.length - 1) {
                 finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
