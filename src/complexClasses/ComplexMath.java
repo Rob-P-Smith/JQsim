@@ -235,6 +235,11 @@ public final class ComplexMath {
         return resultMatrix;
     }
 
+    /**
+     * Interprets the system state vector into a Dirac notation representation for printing to console.
+     * @param stateVector the current system state vector
+     * @return A string of the dirac notation representation
+     */
     public static String complexMatrixToDiracNotation(ComplexMatrix stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
@@ -246,17 +251,10 @@ public final class ComplexMath {
 
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
-            if (amplitude.magnitudeSquared() > 1e-7) {  // Threshold for considering non-zero amplitudes
+            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
                 if(firstTerm){
                     result.append("|"+PSI.lower()+"⟩ = ");
                 }
-
-                //old code maybe remove
-//                if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
-//                    result.append(" + ");
-//                } else if (!firstTerm) {
-//                    result.append(" - ");
-//                }
 
                 if(!firstTerm) {
                     result.append(", ");

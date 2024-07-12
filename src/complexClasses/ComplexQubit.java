@@ -115,7 +115,19 @@ public final class ComplexQubit {
         return sBuild.toString();
     }
 
+    /**
+     * Gets the real value of the complex number
+     * @return double of the real value
+     */
     public double getReal() {
         return state.get(0,0).getReal();
+    }
+
+    /**
+     * Gets the imaginary value of the complex number
+     * @return double of the imaginary value
+     */
+    public double getImag() {
+        return state.get(0,0).getImag();
     }
 }

@@ -21,9 +21,6 @@ import java.util.Arrays;
  */
 public final class ComplexMatrix {
     private static final boolean DEBUG = false;
-
-
-
     private int rows;
     private int cols;
     private ComplexNumber[][] data;

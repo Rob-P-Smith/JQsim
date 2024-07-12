@@ -36,10 +36,16 @@ public class jqs {
     private GateBuilder gb;
     private final boolean DEBUG = false;
 
+    /**
+     * Default constructor, it's just here, so I don't get fined.
+     */
     public jqs(){
-
     }
 
+    /**
+     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
+     */
     public jqs(int numQubits){
         device(numQubits);
     }
@@ -382,7 +388,7 @@ public class jqs {
     /**
      * Calculates and returns the expected value of the quantum system.
      */
-    public void simulMeasure() {
+    public void getState() {
         if (DEBUG)  System.out.println("Initial State: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
         while(workQueue.hasWork()) {
             if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
