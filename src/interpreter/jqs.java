@@ -382,7 +382,7 @@ public class jqs {
     /**
      * Calculates and returns the expected value of the quantum system.
      */
-    public void expval() {
+    public void simulMeasure() {
         if (DEBUG)  System.out.println("Initial State: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
         while(workQueue.hasWork()) {
             if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
