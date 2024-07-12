@@ -302,11 +302,11 @@ public class GateBuilder {
         ComplexMatrix result = new ComplexMatrix((int)Math.pow(2, numQubits), (int)Math.pow(2, numQubits));
         result = ComplexMath.multiplyMatrix(interimState,systemStateDivergent);
 
-        System.out.println("Resulting interim state vectpr: \n" + result);
-        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result)+"\n");
-        System.out.println("Initial System state: \n" + tracker.getStateVec());
-        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
-        System.out.println("NOW MERGE THEM!");
+//        System.out.println("Resulting interim state vectpr: \n" + result);
+//        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result)+"\n");
+//        System.out.println("Initial System state: \n" + tracker.getStateVec());
+//        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
+//        System.out.println("NOW MERGE THEM!");
 
         ComplexMatrix tempVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
 //        if(controlQubit==1){

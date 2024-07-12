@@ -291,9 +291,40 @@ class ComplexMathTest {
     }
 
     @Test
+    //pics/testCircuitOne.jpg
     void testCircuitOne(){
-        jqs jqs = new jqs(4);
+        jqs jqs = new jqs(3);
         jqs.X(0);
+        jqs.CX(0,1);
+        jqs.Z(1);
+        jqs.CX(1,2);
+        jqs.H(1);
+        jqs.H(2);
+        jqs.S(2);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        assertEquals("|ψ⟩ = -0.500|001⟩, 0.500|011⟩, 0.500i|101⟩, -0.500i|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+    }
+
+    @Test
+    //pics/testCircuitTwo.jpg
+    void testCircuitTwo(){
+        //https://quantum.ibm.com/composer/files/61874091bc455a56c155195a02f0495a2c7829e4e8006c2d23bdff6e9e87da45
+        jqs jqs = new jqs(2);
+        jqs.X(0);
+        jqs.H(0);
+        jqs.CX(0,1);
+        jqs.expval();
+        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        assertEquals("|ψ⟩ = 0.707|00⟩, -0.707|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
+    }
+
+    @Test
+    //pics/testCircuitThree.jpg
+    void testCircuitThree(){
+        jqs jqs = new jqs(3);
+        jqs.H(0);
         jqs.CX(0,1);
         jqs.Z(1);
         jqs.CX(1,2);
@@ -302,21 +333,8 @@ class ComplexMathTest {
         jqs.H(2);
         jqs.S(2);
         jqs.expval();
-        assertEquals("|ψ⟩ = 0.707|0011⟩ - -0.707i|0111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-    }
-
-    @Test
-    void testCircuitTwo(){
-        //https://quantum.ibm.com/composer/files/61874091bc455a56c155195a02f0495a2c7829e4e8006c2d23bdff6e9e87da45
-        jqs jqs = new jqs(4);
-        jqs.H(1);
-        jqs.X(0);
-        jqs.CX(0,1);
-//        jqs.CX(1,2);
-        jqs.expval();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        assertEquals("|ψ⟩ = 0.707|0001⟩ + 0.707|0111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-
+        assertEquals("|ψ⟩ = 0.500|000⟩, 0.500|011⟩, 0.500i|100⟩, -0.500i|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
 
 }
