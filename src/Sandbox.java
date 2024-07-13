@@ -36,23 +36,16 @@ public class Sandbox {
 
         //The magic loop!
         for (int row = 0; row < numRows; row++) {
-            System.out.println("\nRow: " + row);
             for (int qubit = 0; qubit < numQubits; qubit++) {
                 int qubitStep = (int) Math.pow(2, qubit);
                 if ((row & qubitStep) != 0) {
-                    System.out.println("Qubit: " + qubit);
                     if ((state.get(row, 0).getReal()) != 0.0 ||
-                            state.get(row, 0).getImag() != 0.0) {
-                        System.out.println(new ComplexNumber(state.get(row, 0).getReal(), state.get(row, 0).getImag()));
+                         state.get(row, 0).getImag() != 0.0) {
                         qubits[qubit] = new ComplexQubit(new ComplexNumber(0, 0),
                                                          new ComplexNumber(state.get(row, 0).getReal(), state.get(row, 0).getImag()),
                                                          qubit);
                     }
-//                    System.out.println(state.get(row, 0));
-//                        qubits[qubit] = new ComplexQubit(new ComplexNumber(state.get(row, 0).getReal()), new ComplexNumber(state.get(row, 0).getImag()), qubit);
-
                 }
-
             }
         }
 
