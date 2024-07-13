@@ -254,9 +254,7 @@ public final class ComplexMath {
             if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
                 if(firstTerm){
                     result.append("|"+PSI.lower()+"⟩ = ");
-                }
-
-                if(!firstTerm) {
+                }else {
                     result.append(", ");
                 }
 
@@ -291,7 +289,7 @@ public final class ComplexMath {
      * @param sampleNumber The complex number to conjugate.
      * @return The conjugated complex number.
      */
-    private static ComplexNumber conjugate(ComplexNumber sampleNumber) {
+    public static ComplexNumber conjugate(ComplexNumber sampleNumber) {
         return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
     }
 }

@@ -39,21 +39,21 @@ public class jqs {
     /**
      * Default constructor, it's just here, so I don't get fined.
      */
-    public jqs(){
+    public jqs() {
     }
 
     /**
      * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     *
      * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
      */
-    public jqs(int numQubits){
+    public jqs(int numQubits) {
         device(numQubits);
     }
 
     /**
      * Reset the system state to zeroed out column vector of the same size as initially declared, replace gate builder
      * with new empty gate builder, and reset the workQueue to a new empty work queue.
-     *
      */
     public void reset() {
         tracker = new StateTracker(numQubits);
@@ -88,6 +88,7 @@ public class jqs {
     /**
      * Returns the StateTracker as tracker, for use in tests only.
      * TODO: Remove this at some point.
+     *
      * @return tracker, the StateTracker of this instance of jqs
      */
     public StateTracker getStateTracker() {
@@ -96,6 +97,7 @@ public class jqs {
 
     /**
      * Returns the state vector from StateTracker.
+     *
      * @return tracker's state vector which is a 2^nqubits x 1 ComplexMatrix.
      */
     public ComplexMatrix getStateVec() {
@@ -389,10 +391,10 @@ public class jqs {
      * Calculates and returns the expected value of the quantum system.
      */
     public void getState() {
-        if (DEBUG)  System.out.println("Initial State: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
-        while(workQueue.hasWork()) {
+        if (DEBUG) System.out.println("Initial State: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
+        while (workQueue.hasWork()) {
             if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
-            if (DEBUG) if(workQueue.peek().isSingleQubit()){
+            if (DEBUG) if (workQueue.peek().isSingleQubit()) {
                 System.out.println("Target:" + workQueue.peek().getTarget());
             } else {
                 for (Integer control : workQueue.peek().getControls()) {
@@ -402,9 +404,12 @@ public class jqs {
                     System.out.println("Target: " + target);
                 }
             }
+            if (!workQueue.peek().isSingleQubit()) {
+                System.out.println(workQueue.peek());
+            }
             ComplexMatrix matrix = gb.getGate(workQueue.getNextGate());
             tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
-            if (DEBUG) System.out.println("After Gate: "+ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec())+"\n");
+            if (DEBUG) System.out.println("After Gate: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
         }
     }
 }

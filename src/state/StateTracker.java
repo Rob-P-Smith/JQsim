@@ -1,5 +1,6 @@
 package state;
 
+import complexClasses.ComplexMath;
 import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
 import complexClasses.ComplexQubit;
@@ -97,27 +98,30 @@ public class StateTracker {
     public ComplexMatrix stateVectorToQubits() {
         int rows = stateVector.getHeight();
         int cols = stateVector.getWidth();
-        if (stateVector.getHeight() < 1 || stateVector.getWidth() != 1) {
-            throw new IllegalArgumentException("Incorrect format for state vector is should Math.pow(2, numQ)x1");
-        }
-        int numQubits = (int) (Math.log(rows) / Math.log(2));
-        ComplexMatrix qubitStates = new ComplexMatrix(numQubits, 2);
-        // Initialize qubitStates with zero complex numbers
-        for (int i = 0; i < numQubits; i++) {
-            qubitStates.set(i, 0, new ComplexNumber());
-            qubitStates.set(i, 1, new ComplexNumber());
+
+        if (rows < 1 || cols != 1) {
+            throw new IllegalArgumentException("Incorrect format for state vector. It should be Math.pow(2, numQubits) x 1");
         }
 
-        for (int i = 0; i < rows; i++) {
-            ComplexNumber amplitude = (rows == 1) ? stateVector.get(0, i) : stateVector.get(i, 0);
-            for (int j = 0; j < numQubits; j++) {
-                int bit = (i >> j) & 1;
-                ComplexNumber currentAmplitude = qubitStates.get(numQubits - 1 - j, bit);
-                double newReal = currentAmplitude.getReal() + amplitude.getReal();
-                double newImag = currentAmplitude.getImag() + amplitude.getImag();
-                qubitStates.set(numQubits - 1 - j, bit, new ComplexNumber(newReal, newImag));
+        int numQubits = (int) (Math.log(rows) / Math.log(2));
+        ComplexMatrix qubitStates = new ComplexMatrix(numQubits, 2);
+
+        for (int i = 0; i < numQubits; i++) {
+            ComplexNumber zeroState = new ComplexNumber(0, 0);
+            ComplexNumber oneState = new ComplexNumber(0, 0);
+
+            for (int j = 0; j < rows; j++) {
+                if ((j & (1 << i)) == 0) {
+                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                } else {
+                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                }
             }
+
+            qubitStates.set(i, 0, zeroState);
+            qubitStates.set(i, 1, oneState);
         }
+
         return qubitStates;
     }
 }

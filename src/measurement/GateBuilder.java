@@ -27,7 +27,7 @@ import static complexClasses.ComplexGateEnums.*;
  */
 public class GateBuilder {
     private ComplexMatrix finalGate;
-    private static final boolean DEBUG = false;
+    private static boolean DEBUG = false;
     private StateTracker tracker;
 
     /**
@@ -270,71 +270,99 @@ public class GateBuilder {
 
     //TODO finish this, it's ~mostly~ works currently... find the reason the basis states are coming back wrong for circuitTestFour in ComplexMathTest
     private ComplexMatrix resolveControlBranch(int controlQubit, int targetQubit, int numQubits, ComplexMatrix singleOperator) {
-        ComplexMatrix newSystemState = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-        ComplexMatrix systemStateDivergent = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
+        ComplexMatrix newSystemState = new ComplexMatrix(tracker.getStateVecSize(), 1);
+        ComplexMatrix systemStateDivergent = new ComplexMatrix(tracker.getStateVecSize(), 1);
         ComplexMatrix currentState = tracker.getStateVec();
         ComplexMatrix[] operatorSequenceDivergent = new ComplexMatrix[numQubits];
 
-        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
-        for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
-            systemStateDivergent.set(i, 0, new ComplexNumber(currentState.get(i, 0).getReal(), currentState.get(i, 0).getImag()));
-        }
-
-        jqs jqs2 = new jqs(numQubits);
-        jqs2.getStateVec().setData(systemStateDivergent.getData());
-
-        for (int i = 0; i < numQubits; i++) {
-            if (i == targetQubit) {
-                operatorSequenceDivergent[targetQubit] = singleOperator;
-            } else {
-                operatorSequenceDivergent[i] = IDENTITY.getMatrix();
+        int numberSuperpositionQubits = 0;
+        for (int i = 0; i < tracker.getStateVecSize(); i++) {
+            if (tracker.getStateVec().get(i, 0).getReal() > 0.0 && tracker.getStateVec().get(i, 0).getReal() < 1.0 ||
+                    tracker.getStateVec().get(i, 0).getImag() > 0.0 && tracker.getStateVec().get(i, 0).getImag() < 1.0) {
+                numberSuperpositionQubits++;
             }
         }
+        // for each superposition qubit test all possibilities where each other superposition qubit is also tested for both values
+        /**
+         * [1]
+         * [0]
+         * [0]
+         * [0]
+         *
+         * [0]
+         * [1]
+         * [0]
+         * [0]
+         *
+         * [0]
+         * [0]
+         * [1]
+         * [0]
+         *
+         * [0]
+         * [0]
+         * [0]
+         * [1]
+         */
 
-        ComplexMatrix interimState = new ComplexMatrix((int) Math.pow(2, numQubits), (int) Math.pow(2, numQubits));
-        for (int i = operatorSequenceDivergent.length - 1; i >= 0; i--) {
-            if (i == operatorSequenceDivergent.length - 1) {
-                interimState = ComplexMath.tensorMultiply(operatorSequenceDivergent[i], operatorSequenceDivergent[i - 1]);
-                i--;
-            } else {
-                interimState = ComplexMath.tensorMultiply(interimState, operatorSequenceDivergent[i]);
-            }
-        }
-        ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), (int) Math.pow(2, numQubits));
-        result = ComplexMath.multiplyMatrix(interimState, systemStateDivergent);
+        System.out.println(tracker.stateVectorToQubits());
 
-        if (DEBUG) {
-            System.out.println("Resulting interim state vectpr: \n" + result);
-            System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result) + "\n");
-            System.out.println("Initial System state: \n" + tracker.getStateVec());
-            System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
-            System.out.println("NOW MERGE THEM!");
-        }
-        ComplexMatrix tempVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-//        if(controlQubit==1){
-//            for(int i = 0; i < ((int)Math.pow(2, numQubits)); i++){
-//                if(i%2!=0){
-//                    tempVector.set(i,0,new ComplexNumber(tracker.getStateVec().get(i,0).getReal(), tracker.getStateVec().get(i, 0).getImag()));
-//                } else {
-//                    tempVector.set(i,0,new ComplexNumber(result.get(i,0).getReal(), result.get(i, 0).getImag()));
+//        ComplexMatrix[] validBasisStates = new ComplexMatrix[numberSuperpositionQubits];
+//        for (int i = 0; i < numberSuperpositionQubits; i++) {
+//            int currentPostion = (1 << i)-1;
+//            ComplexMatrix validPossibleBasisState = new ComplexMatrix(tracker.getStateVecSize(), 0);
+//            // build a new state where each one is converted to a 0.0 and 1.0 value instead of a probability value
+//            for (int j = 0; j < tracker.getStateVecSize(); j++) {
+//                if (j == 0){
+//                    validPossibleBasisState.set(j, 0, new ComplexNumber(1, 0));
 //                }
 //            }
 //        }
-//        if(controlQubit==0) {
-        //might need to reverse the below logic for FLIPPED case
-        for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
-            if (i % 2 == 0) {
-                tempVector.set(i, 0, new ComplexNumber(tracker.getStateVec().get(i, 0).getReal(), tracker.getStateVec().get(i, 0).getImag()));
-            } else {
-                tempVector.set(i, 0, new ComplexNumber(result.get(i, 0).getReal(), result.get(i, 0).getImag()));
-            }
-        }
+
+
+//        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
+//        for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
+//            systemStateDivergent.set(i, 0, new ComplexNumber(currentState.get(i, 0).getReal(), currentState.get(i, 0).getImag()));
 //        }
-//        System.out.println("Possible correct vector: \n" + tempVector);
-//        System.out.println("Possible Correct Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tempVector)+"\n");
-        newSystemState.setData(tempVector.getData());
+
+//        jqs jqs2 = new jqs(numQubits);
+//        jqs2.getStateVec().setData(systemStateDivergent.getData());
+//
+//        for (int i = 0; i < numQubits; i++) {
+//            if (i == targetQubit) {
+//                operatorSequenceDivergent[targetQubit] = singleOperator;
+//            } else {
+//                operatorSequenceDivergent[i] = IDENTITY.getMatrix();
+//            }
+//        }
+
+//        ComplexMatrix interimState = new ComplexMatrix(tracker.getStateVecSize(), tracker.getStateVecSize());
+//        for (int i = operatorSequenceDivergent.length - 1; i >= 0; i--) {
+//            if (i == operatorSequenceDivergent.length - 1) {
+//                interimState = ComplexMath.tensorMultiply(operatorSequenceDivergent[i], operatorSequenceDivergent[i - 1]);
+//                i--;
+//            } else {
+//                interimState = ComplexMath.tensorMultiply(interimState, operatorSequenceDivergent[i]);
+//            }
+//        }
+
+//        ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), (int) Math.pow(2, numQubits)); // ensures no accidental mutation across a reference
+//        result = ComplexMath.multiplyMatrix(interimState, systemStateDivergent);
+//        DEBUG = false;
+//        if (DEBUG) {
+//            System.out.println("Resulting interim state vectpr: \n" + result);
+//            System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result) + "\n");
+//            System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
+//            System.out.println("Initial System state: \n" + tracker.getStateVec());
+//            System.out.println("NOW MERGE THEM!");
+//        }
+//        DEBUG = false;
+
+//        ComplexMatrix tempVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1); //maybe go away
+
+//        newSystemState.setData(tempVector.getData());
         return newSystemState;
-    }
+}
 
     /**
      * Executes the sequence of operators to build the final gate matrix.

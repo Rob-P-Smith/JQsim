@@ -130,4 +130,8 @@ public final class ComplexQubit {
     public double getImag() {
         return state.get(0,0).getImag();
     }
+
+    public void setQubit(int row, double real, double imag) {
+        state.set(row,0, new ComplexNumber(real, imag));
+    }
 }
