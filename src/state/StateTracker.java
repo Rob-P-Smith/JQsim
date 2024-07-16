@@ -1,6 +1,5 @@
 package state;
 
-import complexClasses.ComplexMath;
 import complexClasses.ComplexMatrix;
 import complexClasses.ComplexNumber;
 import complexClasses.ComplexQubit;

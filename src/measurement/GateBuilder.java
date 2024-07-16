@@ -114,10 +114,12 @@ public class GateBuilder {
                 multiControlMultiTarget(thisGate);
             }
 
+            DEBUG = false;
             if (DEBUG) {
                 System.out.println("Applying " + thisGate.getOperator() +
                         " to qubit " + thisGate.getTarget() + "\n" + finalGate);
             }
+            DEBUG = false;
         }
     }
 
@@ -162,11 +164,11 @@ public class GateBuilder {
         ////////////////////
         // Initialization //
         ////////////////////
-
-        if (DEBUG) System.out.println("oneControlOneOrManyTargets hit");
+//        if (DEBUG)
+        System.out.println("oneControlOneOrManyTargets hit");
         int numQubits = (int) (Math.log(tracker.getStateVecSize()) / Math.log(2));
         int controlQubit = work.getControls()[0];
-        int targetQubit = work.getTargets()[0];
+        int targetQubit = work.getTargets()[0]; // TODO Once single control single target is 100%, remove this and use targets instead.
         boolean flipped = false;
         Integer[] targets = work.getTargets();
         ComplexMatrix[] operatorSequence = new ComplexMatrix[numQubits];
@@ -272,97 +274,75 @@ public class GateBuilder {
     private ComplexMatrix resolveControlBranch(int controlQubit, int targetQubit, int numQubits, ComplexMatrix singleOperator) {
         ComplexMatrix newSystemState = new ComplexMatrix(tracker.getStateVecSize(), 1);
         ComplexMatrix systemStateDivergent = new ComplexMatrix(tracker.getStateVecSize(), 1);
-        ComplexMatrix currentState = tracker.getStateVec();
         ComplexMatrix[] operatorSequenceDivergent = new ComplexMatrix[numQubits];
 
-        int numberSuperpositionQubits = 0;
-        for (int i = 0; i < tracker.getStateVecSize(); i++) {
-            if (tracker.getStateVec().get(i, 0).getReal() > 0.0 && tracker.getStateVec().get(i, 0).getReal() < 1.0 ||
-                    tracker.getStateVec().get(i, 0).getImag() > 0.0 && tracker.getStateVec().get(i, 0).getImag() < 1.0) {
-                numberSuperpositionQubits++;
+        //Get the possible initial states where the control is set to 0, 1, -1, 1i, -1i values accordingly for testing
+        ComplexMatrix[] possibleBasisStates = getViableStates(numQubits);
+        System.out.println("Initial System state: \n" + tracker.getStateVec());
+        System.out.println("Resolving States: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
+        for (ComplexMatrix possibility : possibleBasisStates) {
+            if (possibility != null) {
+                System.out.println(possibility);
             }
         }
-        // for each superposition qubit test all possibilities where each other superposition qubit is also tested for both values
-        /**
-         * [1]
-         * [0]
-         * [0]
-         * [0]
-         *
-         * [0]
-         * [1]
-         * [0]
-         * [0]
-         *
-         * [0]
-         * [0]
-         * [1]
-         * [0]
-         *
-         * [0]
-         * [0]
-         * [0]
-         * [1]
-         */
 
-        System.out.println(tracker.stateVectorToQubits());
+        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
+        ComplexMatrix[] interimState = null;
+        int interimIndex = 0;
+        for (ComplexMatrix possibility : possibleBasisStates) {
+            if (possibility != null) {
+                for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
+                    systemStateDivergent.setData(possibility.getData());
+                }
 
-//        ComplexMatrix[] validBasisStates = new ComplexMatrix[numberSuperpositionQubits];
-//        for (int i = 0; i < numberSuperpositionQubits; i++) {
-//            int currentPostion = (1 << i)-1;
-//            ComplexMatrix validPossibleBasisState = new ComplexMatrix(tracker.getStateVecSize(), 0);
-//            // build a new state where each one is converted to a 0.0 and 1.0 value instead of a probability value
-//            for (int j = 0; j < tracker.getStateVecSize(); j++) {
-//                if (j == 0){
-//                    validPossibleBasisState.set(j, 0, new ComplexNumber(1, 0));
-//                }
-//            }
-//        }
+                jqs jqs2 = new jqs(numQubits);
+                jqs2.getStateVec().setData(systemStateDivergent.getData());
+
+                for (int i = 0; i < numQubits; i++) {
+                    if (i == targetQubit) {
+                        operatorSequenceDivergent[targetQubit] = singleOperator;
+                    } else {
+                        operatorSequenceDivergent[i] = IDENTITY.getMatrix();
+                    }
+                }
+
+                interimState[interimIndex] = new ComplexMatrix(tracker.getStateVecSize(), tracker.getStateVecSize());
+                for (int i = operatorSequenceDivergent.length - 1; i >= 0; i--) {
+                    if (i == operatorSequenceDivergent.length - 1) {
+                        interimState[interimIndex] = ComplexMath.tensorMultiply(operatorSequenceDivergent[i], operatorSequenceDivergent[i - 1]);
+                        i--;
+                    } else {
+                        interimState[interimIndex] = ComplexMath.tensorMultiply(interimState[interimIndex], operatorSequenceDivergent[i]);
+                    }
+                }
+                interimIndex++;
+            }
+        }
+
+        ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), (int) Math.pow(2, numQubits)); // ensures no accidental mutation across a reference
+        //TODO Write the loop to determine the final valid state based on the intermState array of possible states that represents the system AFTER
+        // applying the CNOT gate to it.
+        for(ComplexMatrix interim : interimState){
+            double value = Math.sqrt(1/interimState.length);
+            //loop through a new matrix and copy the entries of 1.0 in the interim state each into the new matrix and apply the value instead of the 1.0
+            // be sure to add the i if required and +/- as required.
+        }
+        result = ComplexMath.multiplyMatrix(interimState, systemStateDivergent);
+        DEBUG = true;
+        if (DEBUG) {
+            System.out.println("Initial System state: \n" + tracker.getStateVec());
+            System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
+            System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result) + "\n");
+            System.out.println("Resulting interim state vector: \n" + result);
 
 
-//        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
-//        for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
-//            systemStateDivergent.set(i, 0, new ComplexNumber(currentState.get(i, 0).getReal(), currentState.get(i, 0).getImag()));
-//        }
+            System.out.println("NOW MERGE THEM!");
+        }
+        DEBUG = false;
+        newSystemState.setData(result.getData());
 
-//        jqs jqs2 = new jqs(numQubits);
-//        jqs2.getStateVec().setData(systemStateDivergent.getData());
-//
-//        for (int i = 0; i < numQubits; i++) {
-//            if (i == targetQubit) {
-//                operatorSequenceDivergent[targetQubit] = singleOperator;
-//            } else {
-//                operatorSequenceDivergent[i] = IDENTITY.getMatrix();
-//            }
-//        }
-
-//        ComplexMatrix interimState = new ComplexMatrix(tracker.getStateVecSize(), tracker.getStateVecSize());
-//        for (int i = operatorSequenceDivergent.length - 1; i >= 0; i--) {
-//            if (i == operatorSequenceDivergent.length - 1) {
-//                interimState = ComplexMath.tensorMultiply(operatorSequenceDivergent[i], operatorSequenceDivergent[i - 1]);
-//                i--;
-//            } else {
-//                interimState = ComplexMath.tensorMultiply(interimState, operatorSequenceDivergent[i]);
-//            }
-//        }
-
-//        ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), (int) Math.pow(2, numQubits)); // ensures no accidental mutation across a reference
-//        result = ComplexMath.multiplyMatrix(interimState, systemStateDivergent);
-//        DEBUG = false;
-//        if (DEBUG) {
-//            System.out.println("Resulting interim state vectpr: \n" + result);
-//            System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result) + "\n");
-//            System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
-//            System.out.println("Initial System state: \n" + tracker.getStateVec());
-//            System.out.println("NOW MERGE THEM!");
-//        }
-//        DEBUG = false;
-
-//        ComplexMatrix tempVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1); //maybe go away
-
-//        newSystemState.setData(tempVector.getData());
         return newSystemState;
-}
+    }
 
     /**
      * Executes the sequence of operators to build the final gate matrix.
@@ -378,5 +358,60 @@ public class GateBuilder {
                 finalGate = ComplexMath.tensorMultiply(finalGate, operatorSequence[i]);
             }
         }
+    }
+
+    //TODO Modify this to copy the non-control values into each possible States ComplexMatrix as well as the adjusted control values so that it can
+    // be used to calculate all possible valid outcome states for each valid initial state for the control probabilities that were adjusted
+    public ComplexMatrix[] getViableStates(int numQubits) {
+        int numRows = tracker.getStateVec().getHeight();
+
+        ComplexMatrix[] possibleStates = new ComplexMatrix[numRows];
+
+        //The magic loop!
+        // This needs to build state vectors that represent both cases of the control qubit, 0 and 1.
+        // Beta probability is found by loop at 'row' when not 0.0 and Alpha is found by 'row-qubitStep'.
+        for (int row = 0; row < numRows; row++) {
+//            System.out.println("\nRow"+row);  //shows which row is currently being checked
+            for (int qubit = 0; qubit < numQubits; qubit++) {
+                int qubitStep = (int) Math.pow(2, qubit);
+                if ((row & qubitStep) != 0 || row == 0) {
+                    double realValue = tracker.getStateVec().get(row, 0).getReal();
+                    double imagValue = tracker.getStateVec().get(row, 0).getImag();
+//                    System.out.println("Qubits: "+qubit); // shows which qubits are checked in a given row for their beta value
+                    if (realValue < 0.0 || imagValue < 0.0) {
+                        if ((tracker.getStateVec().get(row, 0).getReal()) != 0.0) {
+                            possibleStates[row] = new ComplexMatrix(numRows, 1);
+                            possibleStates[row].set(row, 0, new ComplexNumber(-1));
+
+                        }
+                        if (tracker.getStateVec().get(row, 0).getImag() != 0.0) {
+                            possibleStates[row] = new ComplexMatrix(numRows, 1);
+                            possibleStates[row].set(row, 0, new ComplexNumber(0, -1));
+                        }
+                    }
+                    if (realValue > 0.0 || imagValue > 0.0) {
+                        if ((tracker.getStateVec().get(row, 0).getReal()) != 0.0) {
+                            possibleStates[row] = new ComplexMatrix(numRows, 1);
+                            possibleStates[row].set(row, 0, new ComplexNumber(1));
+
+                        }
+                        if (tracker.getStateVec().get(row, 0).getImag() != 0.0) {
+                            possibleStates[row] = new ComplexMatrix(numRows, 1);
+                            possibleStates[row].set(row, 0, new ComplexNumber(0, 1));
+                        }
+                    }
+                }
+            }
+        }
+        if (DEBUG) {
+            for (ComplexMatrix possibility : possibleStates) {
+                if (possibility == null) {
+                    System.out.println("Not a possibility.\n");
+                } else {
+                    System.out.println(possibility);
+                }
+            }
+        }
+        return possibleStates;
     }
 }
