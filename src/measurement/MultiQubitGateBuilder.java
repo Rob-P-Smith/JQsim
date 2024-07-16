@@ -98,7 +98,6 @@ public class MultiQubitGateBuilder {
                 double controlImag = controlValue.getImag();        // for debugging purposes
                 if (Math.abs(controlReal) == 1.0 || Math.abs(controlImag) == 1.0) {             //absolute value of 1 to account for out of phase conditions where it is -1.0 real or imaginary
                     controlIsOne = true;
-                    break;
                 } else if (controlReal == 0.0 && controlImag == 0.0) {
                     controlIsZero = true;
                 } else {
@@ -111,7 +110,6 @@ public class MultiQubitGateBuilder {
                 double targetImag = targetValue.getImag();        // for debugging purposes
                 if (Math.abs(targetReal) == 1.0 || Math.abs(targetImag) == 1.0) {             //absolute value of 1 to account for out of phase conditions where it is -1.0 real or imaginary
                     targetIsOne = true;
-                    break;
                 } else if (targetReal == 0.0 && targetImag == 0.0) {
                     targetIsZero = true;
                 } else {
@@ -131,23 +129,26 @@ public class MultiQubitGateBuilder {
         }
 
         for (Integer target : targets) {
+            targetQubit = target;
             if (controlIsOne && (targetIsOne || targetIsZero)) {
                 operatorSequence[target] = singleOperator;
 //                if (controlQubit < target) { //TODO Fix to account for flipped states, currently this just doesn't perform the operation if flipped found.
 //                    operatorSequence[target] = PAULI_X.getMatrix();
 //                }
-            } else if ((controlIsZero && (targetIsOne || targetIsZero))||(controlIsZero && targetNotZeroOrOne)) {
+            } else if ((controlIsZero && (targetIsOne || targetIsZero)) || (controlIsZero && targetNotZeroOrOne)) {
                 operatorSequence[target] = IDENTITY.getMatrix();
                 //think on if the control is zero and target is not 0 or 1, do we just return identity? I think it should, for now at least...
             } else if (controlIsOne && targetNotZeroOrOne) {
                 System.out.println("Control one target not 0 or 1");
-                gateD.tracker.setStateVec(resolveProbTarget(controlQubit, targetQubit, numQubits, singleOperator));
+                operatorSequence[target] = singleOperator;
+//                gateD.tracker.setStateVec(resolveProbTarget(controlQubit, targetQubit, numQubits, singleOperator));
             } else if (controlNotZeroOrOne && (targetIsOne || targetIsZero)) {
                 System.out.println("Control not 0 or 1, target is 1 or 0");
-                gateD.tracker.setStateVec(resolveProbControl(controlQubit, targetQubit, numQubits, singleOperator));
+                gateD.tracker.setStateVec(resolveProbControl(controlQubit, targetQubit, numQubits, singleOperator, operatorSequence));
             } else {
-                System.out.println("Control not 0 or 1 and  target not 0 or 1");
-                gateD.tracker.setStateVec(resolveProbBoth(controlQubit, targetQubit, numQubits, singleOperator));
+                System.out.println("'ELSE' Control not 0 or 1 and  target not 0 or 1");
+                operatorSequence[target] = singleOperator;
+//                gateD.tracker.setStateVec(resolveProbBoth(controlQubit, targetQubit, numQubits, singleOperator));
             }
             gateD.executeOperatorSequence(operatorSequence);
         }
@@ -158,10 +159,93 @@ public class MultiQubitGateBuilder {
         return result;
     }
 
-    private ComplexMatrix resolveProbControl(int controlQubit, int targetQubit, int numQubits, ComplexMatrix singleOperator) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private ComplexMatrix resolveProbControl(int controlQubit, int targetQubit, int numQubits,
+                                             ComplexMatrix singleOperator, ComplexMatrix[] operatorSequence) {
+        //Apply the control case
         ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
+        operatorSequence[targetQubit] = singleOperator;
+        //Don't apply the control case
+        ComplexMatrix interimApplied = gateD.executeInterimStep(operatorSequence);
+        operatorSequence[targetQubit] = IDENTITY.getMatrix();
+        ComplexMatrix interimNotApplied = gateD.executeInterimStep(operatorSequence);
+
+        //get valid states
+        //to be valid applied, control beta has value, target beta has value
+        //to be valid not applied, control beta has no value, target beta has no value
+//        int testValue = 0 << controlQubit;
+        int targetQubitStep = (int) Math.pow(2, targetQubit);
+        int controlQubitStep = (int) Math.pow(2, controlQubit);
+        System.out.println("Target Step: " + targetQubitStep + ", Control Step: "+controlQubitStep+"\n");
+
+        System.out.println("Checking index for applied: " + (targetQubitStep + controlQubitStep));
+        System.out.println("Turned on value should be at index "+
+                (targetQubitStep + controlQubitStep)+
+                " found: \n" +
+                interimApplied.get((targetQubitStep + controlQubitStep),
+                        0));
+//        System.out.println("Checking index: " +
+//                (targetQubitStep + targetQubitStep - controlQubitStep));
+//        System.out.println("Turned on value 2 should be "+
+//                (targetQubitStep + targetQubitStep-controlQubitStep)+
+//                " found: \n" +
+//                interimApplied.get((targetQubitStep + targetQubitStep - controlQubitStep),
+//                        0));
+//        System.out.println("Turned off value should at index " + (targetQubitStep-controlQubitStep) + " found: \n" + interimNotApplied.get((targetQubitStep - controlQubitStep), 0));
+
+        System.out.println();
+        System.out.println("Interim applied: " + ComplexMath.complexMatrixToDiracNotation(interimApplied));
+        System.out.println();
+
+        System.out.println("Applied State Vector: \n" + interimApplied);
+
+
+        System.out.println("Checking index for not applied: " + (controlQubitStep - controlQubitStep));
+        System.out.println("Turned off value should be at index "+
+                (controlQubitStep - controlQubitStep)+
+                " found: \n" +
+                interimNotApplied.get((controlQubitStep - controlQubitStep),
+                        0));
+
+        System.out.println("\nInterim not Applied: " + ComplexMath.complexMatrixToDiracNotation(interimNotApplied));
+
+        System.out.println("Not Applied State: \n" + interimNotApplied);
+
+        result.set(controlQubitStep-controlQubitStep, 0, interimNotApplied.get(controlQubitStep-controlQubitStep, 0));
+        result.set(targetQubitStep + controlQubitStep, 0, interimApplied.get(targetQubitStep + controlQubitStep, 0));
+        System.out.println("Resulting state vector is: \n" + result);
+
         return result;
     }
+
+
+
+
+
+
+
+
+
+
 
     private ComplexMatrix resolveProbTarget(int controlQubit, int targetQubit, int numQubits, ComplexMatrix singleOperator) {
         ComplexMatrix result = new ComplexMatrix((int) Math.pow(2, numQubits), 1);

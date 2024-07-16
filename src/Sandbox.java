@@ -12,13 +12,13 @@ import interpreter.jqs;
 public class Sandbox {
     public static void main(String[] args) {
         jqs jqs = new jqs(4);
-        jqs.H(0);
+        jqs.X(0);
         jqs.CX(0,1);
+        jqs.H(2);
+        jqs.CX(2,3);
 
         jqs.getState();
-        System.out.println("\nResulting state: ");
-        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        System.out.println(jqs.getStateVec());
+        System.out.println("\nResulting state: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
 }
 
