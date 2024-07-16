@@ -277,9 +277,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void SWAP(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("SWAP", controls, targets));
+        workQueue.addGate("SWAP", control, target);
     }
 
     /**
@@ -289,9 +287,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void ISWAP(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("ISWAP", controls, targets));
+        workQueue.addGate("ISWAP", control, target);
     }
 
     /**
@@ -301,9 +297,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CSWAP(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CSWAP", controls, targets));
+        workQueue.addGate("CSWAP", control, target);
     }
 
     ///////////////////////
@@ -391,23 +385,8 @@ public class jqs {
      */
     public void getState() {
         while (workQueue.hasWork()) {
-//            if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
-//            if (DEBUG) if (workQueue.peek().isSingleQubit()) {
-//                System.out.println("Target:" + workQueue.peek().getTarget());
-//            } else {
-//                for (Integer control : workQueue.peek().getControls()) {
-//                    System.out.println("Control: " + control);
-//                }
-//                for (Integer target : workQueue.peek().getTargets()) {
-//                    System.out.println("Target: " + target);
-//                }
-//            }
-//            if (!workQueue.peek().isSingleQubit()) {
-//                System.out.println(workQueue.peek());
-//            }
             ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
             tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
-//            if (DEBUG) System.out.println("After Gate: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
         }
     }
 }

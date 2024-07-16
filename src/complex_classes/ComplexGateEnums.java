@@ -2,10 +2,10 @@ package complex_classes;
 
 /**
  * Enum representing various quantum gates using complex matrices.
- *
+ * TODO: Figure out how I'm going to deal with the R gates and the user provided theta, pretty sure they can't be ENUMs.
  * @author Robert Smith
  * @version 1.0
- * @since 6 July 2024
+ * @since 16 July 2024
  */
 public enum ComplexGateEnums {
     /**
@@ -80,29 +80,63 @@ public enum ComplexGateEnums {
             {new ComplexNumber(0), getTIValue()}
     })),
 
+    /**
+     * RX(θ) = [
+     * cos(θ/2)   -isin(θ/2)
+     * -isin(θ/2)  cos(θ/2)
+     * ]
+     */
     RX_GATE(new ComplexMatrix(new ComplexNumber[][]{
-            {},
-            {}
+            {new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber()}
     })),
 
+    /**
+     * RY(θ) = [
+     * cos(θ/2)   -sin(θ/2)
+     * sin(θ/2)    cos(θ/2)
+     * ]
+     */
     RY_GATE(new ComplexMatrix(new ComplexNumber[][]{
-            {},
-            {}
+            {new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber()}
     })),
 
+    /**
+     * RZ(θ) = [
+     * e^(-iθ/2)   0
+     * 0           e^(iθ/2)
+     * ]
+     */
     RZ_GATE(new ComplexMatrix(new ComplexNumber[][]{
-            {},
-            {}
+            {new ComplexNumber(), new ComplexNumber()},
+            {new ComplexNumber(), new ComplexNumber()}
     })),
 
+    /**
+     * 1 0 0 0
+     * 0 0 1 0
+     * 0 1 0 0
+     * 0 0 0 1
+     */
     SWAP(new ComplexMatrix(new ComplexNumber[][]{
-        {},
-        {}
+            {new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(1)}
     })),
 
+    /**
+     * 1  0  0  0
+     * 0  0 -i  0
+     * 0 -i  0  0
+     * 0  0  0  1
+     */
     ISWAP(new ComplexMatrix(new ComplexNumber[][]{
-            {},
-            {}
+            {new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0,-1), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0, -1), new ComplexNumber(0), new ComplexNumber(0)},
+            {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(1)}
     }));
 
     /**
@@ -126,6 +160,12 @@ public enum ComplexGateEnums {
      */
     public ComplexMatrix getMatrix() {
         return matrix;
+    }
+
+    private static ComplexNumber getRXTop(double degrees) {
+        double real = Math.cos(degrees / Math.PI / 4);
+        double imag = -Math.sin(degrees / Math.PI / 4);
+        return new ComplexNumber(real, imag);
     }
 
     /**

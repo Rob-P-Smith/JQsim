@@ -264,58 +264,7 @@ public class MultiQubitGateBuilder {
                 targetImag != 0.0 || targetImag != Math.abs(1.0)) {
             return gateD.tracker.getStateVec();
         }
-        //Get the possible initial states where the control is set to 0, 1, -1, 1i, -1i values accordingly for testing
-//        ComplexMatrix[] possibleBasisStates = getViableStates(numQubits);
-//        System.out.println("Initial System state: \n" + tracker.getStateVec());
-//        System.out.println("Resolving States: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
-//        for (ComplexMatrix possibility : possibleBasisStates) {
-//            if (possibility != null) {
-//                System.out.println(possibility);
-//            }
-//        }
 
-//        int controlIndex = (int) Math.pow(2, controlQubit);
-//        int targetIndex = (int) Math.pow(2, targetQubit);
-//        System.out.println("Control index: " + controlIndex);
-//        System.out.println("Target index: " + targetIndex);
-//        for (int i = 0; i < tracker.getStateVecSize(); i++) {
-//            ComplexNumber onTest = tracker.getStateVec().get(i, 0);
-////            System.out.println("\nState Vector Entry Index: " + i);
-//
-//        }
-
-        // copy the actual state vector into a complex matrix and use new objects to avoid passing a reference instead of a value
-//        ComplexMatrix[] interimState = new ComplexMatrix[tracker.getStateVecSize()];
-//        int interimIndex = 0;
-//        for (ComplexMatrix possibility : possibleBasisStates) {
-//            if (possibility != null) {
-//                for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
-//                    systemStateDivergent.setData(possibility.getData());
-//
-//                    jqs jqs2 = new jqs(numQubits);
-//                    jqs2.getStateVec().setData(systemStateDivergent.getData());
-//
-//                    for (int j = 0; j < numQubits; j++) {
-//                        if (j == targetQubit) {
-//                            operatorSequenceDivergent[targetQubit] = singleOperator;
-//                        } else {
-//                            operatorSequenceDivergent[j] = IDENTITY.getMatrix();
-//                        }
-//                    }
-//
-//                    interimState[interimIndex] = new ComplexMatrix(tracker.getStateVecSize(), tracker.getStateVecSize());
-//                    for (int k = operatorSequenceDivergent.length - 1; k >= 0; k--) {
-//                        if (k == operatorSequenceDivergent.length - 1) {
-//                            interimState[interimIndex] = ComplexMath.tensorMultiply(operatorSequenceDivergent[k], operatorSequenceDivergent[k - 1]);
-//                            k--;
-//                        } else {
-//                            interimState[interimIndex] = ComplexMath.tensorMultiply(interimState[interimIndex], operatorSequenceDivergent[k]);
-//                        }
-//                    }
-//                }
-//                interimIndex++;
-//            }
-//        }
 
         //Copy the current system state vector into the divergent state vector for processing
         for (int i = 0; i < ((int) Math.pow(2, numQubits)); i++) {
@@ -436,59 +385,4 @@ public class MultiQubitGateBuilder {
         // Implementation to be added
     }
 
-//    public void printIt(ComplexMatrix result) {
-//        System.out.println("Initial System state: \n" + gateD.tracker.getStateVec());
-//        System.out.println("Original Dirac state: \n" + ComplexMath.complexMatrixToDiracNotation(gateD.tracker.getStateVec()) + "\n");
-//        System.out.println("Resulting Dirac: \n" + ComplexMath.complexMatrixToDiracNotation(result) + "\n");
-//        System.out.println("Resulting interim state vector: \n" + result);
-//
-//
-//        System.out.println("NOW MERGE THEM!");
-//    }
-
-//    //TODO broken AF, remove or rewrite
-//    public ComplexMatrix[] getNonViableStates(int numQubits) {
-//        int numRows = gateD.tracker.getStateVec().getHeight();
-//
-//        ComplexMatrix[] possibleStates = new ComplexMatrix[numRows];
-//
-//        //The magic loop!
-//        // This needs to build state vectors that represent both cases of the control qubit, 0 and 1.
-//        // Beta probability is found by loop at 'row' when not 0.0 and Alpha is found by 'row-qubitStep'.
-//        // Doesnt work, is shit.
-//        for (int row = 0; row < numRows; row++) {
-////            System.out.println("\nRow"+row);  //shows which row is currently being checked
-//            for (int qubit = 0; qubit < numQubits; qubit++) {
-//                int qubitStep = (int) Math.pow(2, qubit);
-//                if ((row & qubitStep) != 0 || row == 0) {
-//                    double realValue = gateD.tracker.getStateVec().get(row, 0).getReal();
-//                    double imagValue = gateD.tracker.getStateVec().get(row, 0).getImag();
-////                    System.out.println("Qubits: "+qubit); // shows which qubits are checked in a given row for their beta value
-//                    if (realValue < 0.0 || imagValue < 0.0) {
-//                        if ((gateD.tracker.getStateVec().get(row, 0).getReal()) != 0.0) {
-//                            possibleStates[row] = new ComplexMatrix(numRows, 1);
-//                            possibleStates[row].set(row, 0, new ComplexNumber(-1));
-//
-//                        }
-//                        if (gateD.tracker.getStateVec().get(row, 0).getImag() != 0.0) {
-//                            possibleStates[row] = new ComplexMatrix(numRows, 1);
-//                            possibleStates[row].set(row, 0, new ComplexNumber(0, -1));
-//                        }
-//                    }
-//                    if (realValue > 0.0 || imagValue > 0.0) {
-//                        if ((gateD.tracker.getStateVec().get(row, 0).getReal()) != 0.0) {
-//                            possibleStates[row] = new ComplexMatrix(numRows, 1);
-//                            possibleStates[row].set(row, 0, new ComplexNumber(1));
-//
-//                        }
-//                        if (gateD.tracker.getStateVec().get(row, 0).getImag() != 0.0) {
-//                            possibleStates[row] = new ComplexMatrix(numRows, 1);
-//                            possibleStates[row].set(row, 0, new ComplexNumber(0, 1));
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return possibleStates;
-//    }
 }
