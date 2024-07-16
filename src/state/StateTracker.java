@@ -1,8 +1,8 @@
 package state;
 
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexNumber;
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
+import complex_classes.ComplexQubit;
 
 /**
  * The class tracks the state of the quantum system {@link ComplexQubit}s as a column vector stored in a

@@ -1,8 +1,8 @@
 package obsolete_Classes;
 
 
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexQubit;
 
 /**
  * This class provides implementations of several quantum gates in complex form,

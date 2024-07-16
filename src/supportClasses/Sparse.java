@@ -1,8 +1,8 @@
 
 package supportClasses;
 
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexNumber;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 
 import java.util.HashMap;
 import java.util.Map;

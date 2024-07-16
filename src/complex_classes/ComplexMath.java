@@ -1,4 +1,4 @@
-package complexClasses;
+package complex_classes;
 
 import static supportClasses.GreekEnums.*;
 
@@ -137,31 +137,6 @@ public final class ComplexMath {
     }
 
     /**
-     * Calculates the tensor product of two input qubits to create the state vector used for two-qubit gate application.
-     *
-     * @param control The control qubit.
-     * @param target  The target qubit.
-     * @return A {@code ComplexNumber[]} with length 4,
-     * containing the state vector resultant from the tensor multiplication.
-     */
-    public static ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
-        ComplexMatrix stateVector = new ComplexMatrix(4, 1);
-        int numStates = 2; // Number of states for each qubit (|0> and |1>)
-        int index = 0;
-        for (int i = 0; i < numStates; i++) {
-            for (int j = 0; j < numStates; j++) {
-                stateVector.set(index, 0, multiplyComplexNumbers(control.get(i, 0), target.get(j, 0)));
-                index++;
-            }
-        }
-
-        if (DEBUG) {
-            System.out.println("StateVector is: \n"+stateVector);
-        }
-        return stateVector;
-    }
-
-    /**
      * Multiplies a vector against it's transpose and returns a matrix that is 2*vector.getHeight() wide and tall
      *
      * @param vector The input vector, usually a qubit state
@@ -253,7 +228,7 @@ public final class ComplexMath {
             ComplexNumber amplitude = stateVector.get(i, 0);
             if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
                 if(firstTerm){
-                    result.append("|"+PSI.lower()+"⟩ = ");
+                    result.append("|").append(PSI.lower()).append("⟩ = ");
                 }else {
                     result.append(", ");
                 }
@@ -273,13 +248,18 @@ public final class ComplexMath {
         return result.toString();
     }
 
-    private static String complexToString(ComplexNumber c) {
-        if (Math.abs(c.getImag()) < 1e-10) {
-            return String.format("%.3f", c.getReal());
-        } else if (Math.abs(c.getReal()) < 1e-10) {
-            return String.format("%.3fi", c.getImag());
+    /**
+     * Converts the complex number to a string in a particular format for use elsewhere
+     * @param compNum the ComplexNumber to convert
+     * @return the string in a special format
+     */
+    public static String complexToString(ComplexNumber compNum) {
+        if (Math.abs(compNum.getImag()) < 1e-10) {
+            return String.format("%.3f", compNum.getReal());
+        } else if (Math.abs(compNum.getReal()) < 1e-10) {
+            return String.format("%.3fi", compNum.getImag());
         } else {
-            return String.format("(%.3f + %.3fi)", c.getReal(), c.getImag());
+            return String.format("(%.3f + %.3fi)", compNum.getReal(), compNum.getImag());
         }
     }
 

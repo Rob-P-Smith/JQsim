@@ -1,8 +1,8 @@
 package interpreter;
 
-import complexClasses.ComplexMath;
-import complexClasses.ComplexMatrix;
-import measurement.GateBuilder;
+import complex_classes.ComplexMath;
+import complex_classes.ComplexMatrix;
+import measurement.GateDirector;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
@@ -33,8 +33,7 @@ public class jqs {
     private int numQubits;
     private WorkQueue workQueue;
     private StateTracker tracker;
-    private GateBuilder gb;
-    private final boolean DEBUG = false;
+    private GateDirector gd;
 
     /**
      * Default constructor, it's just here, so I don't get fined.
@@ -57,7 +56,7 @@ public class jqs {
      */
     public void reset() {
         tracker = new StateTracker(numQubits);
-        gb = new GateBuilder(tracker);
+        gd = new GateDirector(tracker);
         workQueue = new WorkQueue();
     }
 
@@ -69,7 +68,7 @@ public class jqs {
     public void device(int numberOfQubits) {
         numQubits = numberOfQubits;
         tracker = new StateTracker(numQubits);
-        gb = new GateBuilder(tracker);
+        gd = new GateDirector(tracker);
         workQueue = new WorkQueue();
     }
 
@@ -391,25 +390,24 @@ public class jqs {
      * Calculates and returns the expected value of the quantum system.
      */
     public void getState() {
-        if (DEBUG) System.out.println("Initial State: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()));
         while (workQueue.hasWork()) {
-            if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
-            if (DEBUG) if (workQueue.peek().isSingleQubit()) {
-                System.out.println("Target:" + workQueue.peek().getTarget());
-            } else {
-                for (Integer control : workQueue.peek().getControls()) {
-                    System.out.println("Control: " + control);
-                }
-                for (Integer target : workQueue.peek().getTargets()) {
-                    System.out.println("Target: " + target);
-                }
-            }
-            if (!workQueue.peek().isSingleQubit()) {
-                System.out.println(workQueue.peek());
-            }
-            ComplexMatrix matrix = gb.getGate(workQueue.getNextGate());
+//            if (DEBUG) System.out.println("Adding " + workQueue.peek().getOperator());
+//            if (DEBUG) if (workQueue.peek().isSingleQubit()) {
+//                System.out.println("Target:" + workQueue.peek().getTarget());
+//            } else {
+//                for (Integer control : workQueue.peek().getControls()) {
+//                    System.out.println("Control: " + control);
+//                }
+//                for (Integer target : workQueue.peek().getTargets()) {
+//                    System.out.println("Target: " + target);
+//                }
+//            }
+//            if (!workQueue.peek().isSingleQubit()) {
+//                System.out.println(workQueue.peek());
+//            }
+            ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
             tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
-            if (DEBUG) System.out.println("After Gate: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
+//            if (DEBUG) System.out.println("After Gate: " + ComplexMath.complexMatrixToDiracNotation(tracker.getStateVec()) + "\n");
         }
     }
 }

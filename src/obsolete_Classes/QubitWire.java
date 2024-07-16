@@ -1,6 +1,6 @@
 package obsolete_Classes;
 
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexQubit;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

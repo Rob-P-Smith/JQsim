@@ -166,7 +166,7 @@ public class WorkItem {
      *</ul>
      * <p>
      * Multi-qubit gates in format
-     * <ul>operator
+     * <ul>
      * Controls: qubit#, qubit#
      * Targets: qubit#, qubit#
      *</ul>

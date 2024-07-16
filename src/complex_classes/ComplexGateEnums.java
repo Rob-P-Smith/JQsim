@@ -1,4 +1,4 @@
-package complexClasses;
+package complex_classes;
 
 /**
  * Enum representing various quantum gates using complex matrices.

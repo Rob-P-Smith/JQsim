@@ -1,4 +1,4 @@
-package complexClasses;
+package complex_classes;
 
 /**
  * Represents a complex number with real and imaginary parts.

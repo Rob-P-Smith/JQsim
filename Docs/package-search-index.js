@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"complexClasses"},{"l":"measurement"},{"l":"state"},{"l":"supportClasses"},{"l":"supportClasses.FileIO"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"complex_classes"},{"l":"interpreter"},{"l":"measurement"},{"l":"obsolete_Classes"},{"l":"state"},{"l":"supportClasses"},{"l":"supportClasses.FileIO"},{"l":"Tests"}];updateSearchResults();

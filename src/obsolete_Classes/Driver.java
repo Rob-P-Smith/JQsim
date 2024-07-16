@@ -1,6 +1,6 @@
 package obsolete_Classes;
 
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexQubit;
 
 /**
  * The main class that drives the JQsim quantum computing simulation.

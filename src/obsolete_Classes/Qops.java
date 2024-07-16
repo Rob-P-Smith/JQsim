@@ -1,8 +1,7 @@
 package obsolete_Classes;
 
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexNumber;
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 
 import java.util.ArrayList;
 import java.util.List;

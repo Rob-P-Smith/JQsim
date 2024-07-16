@@ -1,6 +1,6 @@
 package supportClasses.FileIO;
 
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexQubit;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -1,4 +1,4 @@
-package complexClasses;
+package complex_classes;
 
 import java.util.Arrays;
 

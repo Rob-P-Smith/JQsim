@@ -2,9 +2,9 @@
 
 package Tests;
 
-import complexClasses.ComplexMath;
-import complexClasses.ComplexMatrix;
-import complexClasses.ComplexNumber;
+import complex_classes.ComplexMath;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 import interpreter.jqs;
 import org.junit.jupiter.api.Test;
 

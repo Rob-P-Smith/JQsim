@@ -1,7 +1,7 @@
 package supportClasses.FileIO;
 
-import complexClasses.ComplexNumber;
-import complexClasses.ComplexQubit;
+import complex_classes.ComplexNumber;
+import complex_classes.ComplexQubit;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

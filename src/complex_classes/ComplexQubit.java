@@ -1,4 +1,4 @@
-package complexClasses;
+package complex_classes;
 
 //TODO clean up obsolete entangled qubit hashmap if it ends up being superfluous
 
