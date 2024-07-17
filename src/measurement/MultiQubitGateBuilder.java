@@ -3,7 +3,9 @@
 // and try to reduce memory and cpu usage.
 package measurement;
 
+import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 import state.WorkItem;
 
 /**
@@ -59,7 +61,7 @@ public class MultiQubitGateBuilder {
                     }
                 }
             }
-            applyMultiQubitGate(work.getOperator(), controlQubits, targetQubits, singleOperator, numQubits);
+            applyMultiQubitGate(work.getOperator(), controlQubits, targetQubits, numQubits);
         } else {
             controlQubit = work.getControl();
             targetQubit = work.getTarget();
@@ -78,27 +80,69 @@ public class MultiQubitGateBuilder {
      * @param numQubits    the number of qubits, not the state vector size
      */
     private void applyDualControlGate(String operator, int controlQubit, int targetQubit, int numQubits) {
+        switch(operator){
+            case "CX" ->{
+                int stateSize = 1 << numQubits;
+                ComplexMatrix newStateVector = new ComplexMatrix(gateD.tracker.getStateVecSize(), 1);
+                for (int i = 0; i < stateSize; i++) {
+                    int controlBit = (i >> controlQubit) & 1;
 
+                    if (controlBit == 1) {
+                        // Flip the target bit
+                        int newState = i ^ (1 << targetQubit);
+                        newStateVector.set(newState, 0, gateD.tracker.get(i, 0));
+                    } else {
+                        // Keep the state as is
+                        newStateVector.set(i, 0, gateD.tracker.get(i, 0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
+            }
+            case "CZ" ->{
+                int stateSize = 1 << numQubits;
+                for (int i = 0; i < stateSize; i++) {
+                    int controlBit = (i >> controlQubit) & 1;
+                    int targetBit = (i >> targetQubit) & 1;
+                    if (controlBit == 1 && targetBit == 1) {
+                        // Apply phase shift of -1
+                        double thisReal = gateD.tracker.getStateVec().get(i,0).getReal();
+                        double thisImag = gateD.tracker.getStateVec().get(i,0).getImag();
+                        gateD.tracker.getStateVec().get(i,0).setReal(-1*thisReal);
+                        gateD.tracker.getStateVec().get(i,0).setImag(-1*thisImag);
+                    }
+                }
+            }
+            case "CY" ->{
+                int stateSize = 1 << numQubits;
+                ComplexMatrix newStateVector = new ComplexMatrix(stateSize, 1);
+                for(int i = 0; i < stateSize; i++){
+                    newStateVector.set(i, 0, new ComplexNumber());
+                }
+                for (int i = 0; i < stateSize; i++) {
+                    int controlBit = (i >> controlQubit) & 1;
+                    int targetBit = (i >> targetQubit) & 1;
 
-        int stateSize = 1 << numQubits;
-        ComplexMatrix newStateVector = new ComplexMatrix(gateD.tracker.getStateVecSize(), 1);
-
-        for (int i = 0; i < stateSize; i++) {
-            int controlBit = (i >> controlQubit) & 1;
-
-            if (controlBit == 1) {
-                // Flip the target bit
-                int newState = i ^ (1 << targetQubit);
-                newStateVector.set(newState, 0, gateD.tracker.get(i, 0));
-            } else {
-                // Keep the state as is
-                newStateVector.set(i, 0, gateD.tracker.get(i, 0));
+                    if (controlBit == 1) {
+                        // Apply Y rotation to target qubit
+                        int flippedState = i ^ (1 << targetQubit);
+                        if (targetBit == 0) {
+                            // |0> -> i|1>
+                            newStateVector.set(flippedState,0,ComplexMath.multiplyComplexNumbers(new ComplexNumber(0,1), gateD.tracker.getStateVec().get(i,0)));
+                        } else {
+                            // |1> -> -i|0>
+                            newStateVector.set(flippedState,0,ComplexMath.multiplyComplexNumbers(new ComplexNumber(0,-1), gateD.tracker.getStateVec().get(i,0)));
+                        }
+                    } else {
+                        // Control qubit is |0>, do nothing
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                    }
+                }
+                gateD.tracker.getStateVec().setData(newStateVector.getData());
             }
         }
-        gateD.tracker.setStateVec(newStateVector);
     }
 
-    private void applyMultiQubitGate(String operator, Integer[] controlQubits, Integer[] targetQubits, ComplexMatrix singleOperator, int numQubits) {
+    private void applyMultiQubitGate(String operator, Integer[] controlQubits, Integer[] targetQubits, int numQubits) {
         int stateSize = 1 << numQubits;
         ComplexMatrix newStateVector = new ComplexMatrix(gateD.tracker.getStateVecSize(), 1);
 

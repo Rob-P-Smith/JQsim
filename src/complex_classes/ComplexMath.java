@@ -101,7 +101,7 @@ public final class ComplexMath {
      * @param bVec The second complex number.
      * @return The complex number result of the multiplication.
      */
-    private static ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
+    public static ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
         double real = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag());
         double imag = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal());
         if (DEBUG) {

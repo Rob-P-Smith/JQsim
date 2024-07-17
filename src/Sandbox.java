@@ -13,11 +13,8 @@ public class Sandbox {
     public static void main(String[] args) {
         jqs jqs = new jqs(3);
         jqs.H(0);
-        jqs.Z(0);
-        jqs.H(1);
-        jqs.S(1);
-        jqs.H(2);
-        jqs.CX(0, 1);
+        jqs.X(1);
+        jqs.CY(1,0);
         jqs.getState();
         System.out.println("\nResulting state: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
