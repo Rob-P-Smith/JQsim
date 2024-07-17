@@ -38,7 +38,7 @@ state vector of the system.
 maintain superposition of the state vector while applying the control gates to prevent collapse until intended.  
 &#x274C;Continue implementing the more complex gates, e.g. RXX, QFT, etc.  
 &#x274C;Implement simulatnious measurment of each qubit and implement measurement of single qubit and cast result into  
-a classical bit.
+a classical bit.  
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
 ## Phase 6:
