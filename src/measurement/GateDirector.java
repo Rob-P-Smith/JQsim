@@ -73,7 +73,7 @@ public class GateDirector {
             sqgb.buildSingleQubitOperator(thisGate, singleOperator);
         } else if (thisGate.isDualTarget() || thisGate.isMultiTarget()){
             MultiQubitGateBuilder mqgb = new MultiQubitGateBuilder(this);
-            mqgb.dualAndMultiGateSetup(thisGate, singleOperator);
+            mqgb.dualAndMultiGateSetup(thisGate);
         }
     }
 
@@ -119,7 +119,6 @@ public class GateDirector {
         builtGate.set(1,1, new ComplexNumber(Math.cos(work.getTheta()), Math.sin(work.getTheta())));
         return builtGate;
     }
-
     /**
      * Construct the matrix for the RX gate based on user provided theta value.
      * @param work the work item that contains the RX gate in the workQueue
@@ -163,6 +162,11 @@ public class GateDirector {
         builtGate.set(1,1,new ComplexNumber(Math.cos(-work.getTheta()/2), -Math.sin(-work.getTheta()/2)));
         return builtGate;
     }
+
+    /**
+     * Overridden toString for this class.
+     * @return A string of the final operator calculated and the system state as a column vector in a ComplexMatrix of 2^n x 1 dimensions.
+     */
     @Override
     public String toString() {
         return "GateDirector{" +

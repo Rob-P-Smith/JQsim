@@ -8,7 +8,6 @@ import state.WorkItem;
 import state.WorkQueue;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * This class provides the user interface for jqsim. The commands are similar to other established
@@ -17,10 +16,11 @@ import java.util.stream.IntStream;
  * The jqs constructor is overloaded, you can provide the number of shots as the 2nd parameter if you
  * desire a different number of shots than the default of 1024.
  * <br><ul>
- * Phi values: as a double.
+ * Theta values: as a double. e.g Math.PI/2 or 1.57079632679 ; both will work as the parameter when calling R gates.
  * Control values: as an integer of which qubit to use as control.
  * Target values: as an integer of which qubit to use as the target.
  * <br>
+ * For dual-qubit gates, just provide the int value for control and target.
  * For multi-qubit gates, provide an array of int for controls and an array of int[] as targets.
  * </ul>
  * <br>This class instantiates a StateTracker which tracks the system vector as the system state as a column vector
@@ -85,16 +85,6 @@ public class jqs {
         shots = numShots;
         workQueue = new WorkQueue();
         StateTracker tracker = new StateTracker(numberOfQubits);
-    }
-
-    /**
-     * Returns the StateTracker as tracker, for use in tests only.
-     * TODO: Remove this at some point.
-     *
-     * @return tracker, the StateTracker of this instance of jqs
-     */
-    public StateTracker getStateTracker() {
-        return tracker;
     }
 
     /**
@@ -175,6 +165,42 @@ public class jqs {
      */
     public void R1(double theta, int target) {
         workQueue.addGate(new WorkItem("R1", target, theta));
+    }
+
+    /**
+     * Applies the RZ gate to the specified target qubit with default PI/4 as theta.
+     *
+     * @param target The target qubit.
+     */
+    public void RZ(int target) {
+        workQueue.addGate(new WorkItem("RZ", target, Math.PI/4));
+    }
+
+    /**
+     * Applies the RY gate to the specified target qubit with default PI/4 for theta.
+     *
+     * @param target The target qubit.
+     */
+    public void RY(int target) {
+        workQueue.addGate(new WorkItem("RY", target, Math.PI/4));
+    }
+
+    /**
+     * Applies the RX gate to the specified target qubit with default PI/4 as theta.
+     *
+     * @param target The target qubit.
+     */
+    public void RX(int target) {
+        workQueue.addGate(new WorkItem("RX", target, Math.PI/4));
+    }
+
+    /**
+     * Applies the R1 gate to the specified target qubit with default PI as theta for full phase flip.
+     *
+     * @param target The target qubit.
+     */
+    public void R1(int target) {
+        workQueue.addGate(new WorkItem("R1", target, Math.PI));
     }
 
     /**
@@ -393,12 +419,17 @@ public class jqs {
         workQueue.addGate(new WorkItem(gate, controlQubits, targetQubits));
     }
 
-    public void Measure(int i) {
+    /**
+     * Will provide a measurement for the system on the specified qubit, not done yet.
+     * TODO: Build this
+     * @param target the qubit to measure
+     */
+    public void measureQubit(int target) {
 
     }
 
     /**
-     * Calculates and returns the expected value of the quantum system.
+     * Calculates the computational basis states of the quantum system, mutates the StateTracker state vector directly.
      */
     public void getState() {
         while (workQueue.hasWork()) {

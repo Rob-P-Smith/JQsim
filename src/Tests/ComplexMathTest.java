@@ -1,5 +1,3 @@
-//TODO Needs a full rewrite to use state vector tracking instead of per qubit tracking
-
 package Tests;
 
 import complex_classes.ComplexMath;
@@ -31,9 +29,9 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(3);
         jqs.X(0);
-        jqs.CX(0,1);
-        jqs.CX(1,2);
-        jqs.CX(2,0);
+        jqs.CX(0, 1);
+        jqs.CX(1, 2);
+        jqs.CX(2, 0);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|110⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -43,7 +41,7 @@ class ComplexMathTest {
         jqs.device(2);
         jqs.X(0);
         jqs.S(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000i|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -52,8 +50,8 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(3);
         jqs.X(0);
-        jqs.CX(0,1);
-        jqs.CX(1,2);
+        jqs.CX(0, 1);
+        jqs.CX(1, 2);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -63,7 +61,7 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(4);
         jqs.X(0);
-        jqs.CX(0,2);
+        jqs.CX(0, 2);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -72,10 +70,10 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(10);
         jqs.X(0);
-        for(int i = 1; i < 10; i++){
-            jqs.CX(0,i);
+        for (int i = 1; i < 10; i++) {
+            jqs.CX(0, i);
         }
-         jqs.getState();
+        jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|1111111111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -83,8 +81,8 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(4);
         jqs.X(0);
-        jqs.CX(0,1);
-        jqs.CX(0,3);
+        jqs.CX(0, 1);
+        jqs.CX(0, 3);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -92,7 +90,7 @@ class ComplexMathTest {
         System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
         jqs = new jqs();
         jqs.device(4);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -100,7 +98,7 @@ class ComplexMathTest {
         System.out.println("\nTesting not flipping qubit target if qubit control is a 0.0");
         jqs = new jqs();
         jqs.device(10);
-        jqs.CX(6,2);
+        jqs.CX(6, 2);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000000000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -108,8 +106,8 @@ class ComplexMathTest {
         System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
         jqs.device(4);
-        jqs.CX(0,1);
-        jqs.CX(0,3);
+        jqs.CX(0, 1);
+        jqs.CX(0, 3);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -179,15 +177,11 @@ class ComplexMathTest {
                 {new ComplexNumber(4, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(10, 0), new ComplexNumber(8, 0)}
         });
-//        System.out.println("MatrixOne: \n" + matrixOne);
-//        System.out.println("MatrixTwo: \n" + matrixTwo);
-//        System.out.println("Result: \n" + result);
-//        System.out.println("Expected: \n" + expected);
 
         for (int i = 0; i < result.getHeight(); i++) {
             for (int j = 0; j < result.getWidth(); j++) {
-                assertTrue(result.get(i, j).getReal() == expected.get(i, j).getReal());
-                assertTrue(result.get(i, j).getImag() == expected.get(i, j).getImag());
+                assertEquals(result.get(i, j).getReal(), expected.get(i, j).getReal());
+                assertEquals(result.get(i, j).getImag(), expected.get(i, j).getImag());
             }
         }
     }
@@ -230,38 +224,30 @@ class ComplexMathTest {
                 {new ComplexNumber(2, 0), new ComplexNumber(5, 0)},
                 {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
         });
-
-        System.out.println("\nTranspose Test 1");
-        System.out.println("Starting Matrix: \n"+matrix);
-        System.out.println("Result \n" + result);
-        System.out.println("Expected: \n" + expected);
-        for (int i = 0; i < result.getHeight(); i++) {
-            for (int j = 0; j < result.getWidth(); j++) {
-                assertTrue(expected.get(i, j).getReal() == result.get(i, j).getReal());
-                assertTrue(expected.get(i, j).getImag() == result.get(i, j).getImag());
-            }
-        }
+        evaluateTransposeResults(1, matrix, result, expected);
 
         matrix = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1, 0), new ComplexNumber(4, 0)},
                 {new ComplexNumber(2, 0), new ComplexNumber(5, 0)},
                 {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
         });
-
         result = ComplexMath.getTranspose(matrix);
         expected = new ComplexMatrix(new ComplexNumber[][]{
                 {new ComplexNumber(1, 0), new ComplexNumber(2, 0), new ComplexNumber(3, 0)},
                 {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
         });
+        evaluateTransposeResults(2, matrix, result, expected);
+    }
 
-        System.out.println("\nTranspose Test 2");
-        System.out.println("Starting Matrix: \n"+matrix);
+    private void evaluateTransposeResults(int testNumber, ComplexMatrix matrix, ComplexMatrix result, ComplexMatrix expected) {
+        System.out.println("\nTranspose Test "+testNumber);
+        System.out.println("Starting Matrix: \n" + matrix);
         System.out.println("Result \n" + result);
         System.out.println("Expected: \n" + expected);
         for (int i = 0; i < result.getHeight(); i++) {
             for (int j = 0; j < result.getWidth(); j++) {
-                assertTrue(expected.get(i, j).getReal() == result.get(i, j).getReal());
-                assertTrue(expected.get(i, j).getImag() == result.get(i, j).getImag());
+                assertEquals(expected.get(i, j).getReal(), result.get(i, j).getReal());
+                assertEquals(expected.get(i, j).getImag(), result.get(i, j).getImag());
             }
         }
     }
@@ -280,7 +266,7 @@ class ComplexMathTest {
         });
 
         System.out.println("\nConjugate Transpose Test");
-        System.out.println("Starting Matrix: \n"+matrix);
+        System.out.println("Starting Matrix: \n" + matrix);
         System.out.println("Result: \n" + result);
         System.out.println("Expected: \n" + expected);
 
@@ -293,13 +279,13 @@ class ComplexMathTest {
     }
 
     @Test
-    //pics/testCircuitOne.jpg
-    void testCircuitOne(){
+        //pics/testCircuitOne.jpg
+    void testCircuitOne() {
         jqs jqs = new jqs(3);
         jqs.X(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.Z(1);
-        jqs.CX(1,2);
+        jqs.CX(1, 2);
         jqs.H(1);
         jqs.H(2);
         jqs.S(2);
@@ -309,13 +295,13 @@ class ComplexMathTest {
     }
 
     @Test
-    //pics/testCircuitTwo.jpg
-    void testCircuitTwo(){
+        //pics/testCircuitTwo.jpg
+    void testCircuitTwo() {
         //https://quantum.ibm.com/composer/files/61874091bc455a56c155195a02f0495a2c7829e4e8006c2d23bdff6e9e87da45
         jqs jqs = new jqs(2);
         jqs.X(0);
         jqs.H(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|00⟩, -0.707|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -323,13 +309,13 @@ class ComplexMathTest {
     }
 
     @Test
-    //pics/testCircuitThree.jpg
-    void testCircuitThree(){
+        //pics/testCircuitThree.jpg
+    void testCircuitThree() {
         jqs jqs = new jqs(3);
         jqs.H(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.Z(1);
-        jqs.CX(1,2);
+        jqs.CX(1, 2);
         jqs.S(2);
         jqs.S(2);
         jqs.H(2);
@@ -340,13 +326,13 @@ class ComplexMathTest {
     }
 
     @Test
-    //pics/testCircuitFour.jpg
-    void testCircuitFour(){
+        //pics/testCircuitFour.jpg
+    void testCircuitFour() {
         jqs jqs = new jqs(3);
         jqs.X(0);
         jqs.H(1);
-        jqs.CX(1,2);
-        jqs.CX(0,1);
+        jqs.CX(1, 2);
+        jqs.CX(0, 1);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|011⟩, 0.707|101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));

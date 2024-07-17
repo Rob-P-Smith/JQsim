@@ -10,6 +10,10 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
+    /**
+     * Main method for testing out quantum circuits while building the simulator.
+     * @param args none needed or accounted for.
+     */
     public static void main(String[] args) {
         jqs jqs = new jqs(3);
         jqs.H(0);
