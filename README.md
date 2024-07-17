@@ -1,5 +1,4 @@
-# JQsim is a *simple* quantum simulator code exploration which is slowly turning into a java based  
-quantum simulation library (eventually).
+# JQsim is a *simple* quantum simulator code exploration which is slowly turning into a java based quantum simulation library (eventually).
 
 The project started off as a system based on the below article conceptually, but it is implemented  
 using Java instead of Racket and is a more complex implementation than the article provides for.  
