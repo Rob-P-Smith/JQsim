@@ -34,8 +34,8 @@ state vector of the system.
 &#x2705;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates.  
 
 ## Phase 5: ***Currently Working***
-&#x2705;Ensure control gates apply correctly across complex system states when multiple control gates are applied and  
-maintain superposition of the state vector while applying the control gates to prevent collapse until intended.  
+&#x2705;Ensure control gates apply correctly across superposition system states when multiple gates are applied, preserving  
+both amplitude and phase of each qubit.    
 &#x274C;Continue implementing the more complex gates, e.g. RXX, QFT, etc.  
 &#x274C;Implement simulatnious measurment of each qubit and implement measurement of single qubit and cast result into  
 a classical bit.  
