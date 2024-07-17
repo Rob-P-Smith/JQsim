@@ -42,7 +42,8 @@ a classical bit.
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
 ## Phase 6:
-&#x274C;Do a careful and thurough code review to clean up and restructure for efficiency and maintainability.  
+&#x274C;Do a careful and thorough code review to clean up and restructure for efficiency and maintainability before freezing to start  
+front end construction.  
 &#x274C;Convert all outputs to JSON and prepare for front end construction.  
 &#x274C;Build the front end (oh boy!)
 
