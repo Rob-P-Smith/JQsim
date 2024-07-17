@@ -15,9 +15,11 @@ public class WorkItem {
     private Integer[] controls;
     private Integer[] targets;
     private boolean singleQubit;
+    private boolean dualQubit;
+    private boolean multiQubit;
 
     /**
-     * Constructs a WorkItem with a single control and target.
+     * Constructs a WorkItem with a single target.
      *
      * @param operator The operator string.
      * @param target The target value.
@@ -27,10 +29,29 @@ public class WorkItem {
         this.operator = operator;
         this.target = target;
         this.singleQubit = true;
+        this.dualQubit = false;
+        this.multiQubit = false;
     }
 
     /**
-     * Constructs a WorkItem with multiple controls and targets.
+     * Constructs a WorkItem with single control and single target.
+     *
+     * @param operator The operator string.
+     * @param control An array of control values.
+     * @param target An array of target values.
+     * @see #WorkItem(String, Integer[], Integer[])
+     */
+    public WorkItem(String operator, int control, int target) {
+        this.operator = operator;
+        this.control = control;
+        this.target = target;
+        this.singleQubit = false;
+        this.dualQubit = true;
+        this.multiQubit = false;
+    }
+
+    /**
+     * Constructs a WorkItem with multiple controls and/or targets.
      *
      * @param operator The operator string.
      * @param controls An array of control values.
@@ -42,14 +63,8 @@ public class WorkItem {
         this.controls = controls;
         this.targets = targets;
         this.singleQubit = false;
-    }
-
-    /**
-     * Gets whether this work item is a single qubit gate.
-     * @return boolean true if single qubit gate, false if not.
-     */
-    public boolean isSingleQubit() {
-        return singleQubit;
+        this.dualQubit = false;
+        this.multiQubit = true;
     }
 
     /**
@@ -104,6 +119,31 @@ public class WorkItem {
      */
     public Integer[] getTargets() {
         return targets;
+    }
+
+
+    /**
+     * Gets whether this work item is a single qubit gate.
+     * @return boolean true if single qubit gate, false if not.
+     */
+    public boolean isSingleTarget() {
+        return singleQubit;
+    }
+
+    /**
+     * Gets whether this work item is a dual qubit gate.
+     * @return boolean true if dual qubit gate, false if not.
+     */
+    public boolean isDualTarget() {
+        return dualQubit;
+    }
+
+    /**
+     * Gets whether this work item is a multi qubit gate.
+     * @return boolean true if multi qubit gate, false if not.
+     */
+    public boolean isMultiTarget() {
+        return multiQubit;
     }
 
     /**

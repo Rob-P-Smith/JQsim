@@ -83,7 +83,8 @@ class ComplexMathTest {
         jqs = new jqs();
         jqs.device(4);
         jqs.X(0);
-        jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
+        jqs.CX(0,1);
+        jqs.CX(0,3);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
@@ -107,7 +108,8 @@ class ComplexMathTest {
         System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
         jqs.device(4);
-        jqs.CGate("CX", new int[]{0}, new int[]{1, 3});
+        jqs.CX(0,1);
+        jqs.CX(0,3);
         jqs.getState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));

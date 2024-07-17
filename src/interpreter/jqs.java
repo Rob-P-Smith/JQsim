@@ -7,6 +7,9 @@ import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 /**
  * This class provides the user interface for jqsim. The commands are similar to other established
  * quantum simulator libraries.
@@ -229,9 +232,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CZ(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CZ", controls, targets));
+        workQueue.addGate(new WorkItem("CZ", control, target));
     }
 
     /**
@@ -241,9 +242,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CY(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CY", controls, targets));
+        workQueue.addGate(new WorkItem("CY", control, target));
     }
 
     /**
@@ -253,9 +252,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CX(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CX", controls, targets));
+        workQueue.addGate(new WorkItem("CX", control, target));
     }
 
     /**
@@ -265,9 +262,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CH(int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("CH", controls, targets));
+        workQueue.addGate(new WorkItem("CH", control, target));
     }
 
     /**
@@ -372,9 +367,21 @@ public class jqs {
         workQueue.addGate(new WorkItem(gate, controls, targets));
     }
 
-    ////////////////////
-    // System Results //
-    ////////////////////
+    /**
+     * Applies a controlled-controlled gate with the specified gate name, control qubits, and target qubits.
+     * TODO: Implement this in the gatebuilder
+     * Multi control Multi target gate.
+     * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
+     *
+     * @param gate       The name of the controlled-controlled gate.
+     * @param controls   The control qubits.
+     * @param targets     The target qubits.
+     */
+    public void CCGate(String gate, int[] controls, int[] targets) {
+        Integer[] controlQubits = Arrays.stream(controls).boxed().toArray( Integer[]::new);
+        Integer[] targetQubits = Arrays.stream(targets).boxed().toArray( Integer[]::new);
+        workQueue.addGate(new WorkItem(gate, controlQubits, targetQubits));
+    }
 
     public void Measure(int i) {
 
@@ -385,8 +392,11 @@ public class jqs {
      */
     public void getState() {
         while (workQueue.hasWork()) {
+            WorkItem nextItem = workQueue.peek();
             ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
-            tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+            if(nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control mutli-qubit gates
+                tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+            }
         }
     }
 }

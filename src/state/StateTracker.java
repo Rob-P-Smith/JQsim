@@ -78,6 +78,10 @@ public class StateTracker {
         }
     }
 
+    public int getQubitCount(){
+        return (int) (Math.log(stateVector.getHeight()) / Math.log(2));
+    }
+
     /**
      * Converts a quantum state vector represented as a ComplexMatrix to individual qubit probabilities.
      *
@@ -116,11 +120,13 @@ public class StateTracker {
                     qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
                 }
             }
-
             qubitStates.set(i, 0, zeroState);
             qubitStates.set(i, 1, oneState);
         }
-
         return qubitStates;
+    }
+
+    public ComplexNumber get(int row, int column) {
+        return stateVector.get(row, column);
     }
 }

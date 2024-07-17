@@ -58,27 +58,6 @@ public class GateDirector {
     }
 
     /**
-     * Executes the sequence of operators to build the interim gate matrix for probabilistic Control gates.
-     *
-     * @param operatorSequence An array of ComplexMatrix operators to be applied.
-     * @return the interim result of applying or not applying the single operator to the target
-     */
-    public ComplexMatrix executeInterimStep(ComplexMatrix[] operatorSequence){
-        ComplexMatrix interimResult;
-        ComplexMatrix interimGate = new ComplexMatrix(this.tracker.getStateVecSize(), this.tracker.getStateVecSize());
-        for (int i = operatorSequence.length-1; i >=0; i--){
-            if(i==operatorSequence.length-1){
-                interimGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i-1]);
-                i--;
-            } else {
-                interimGate = ComplexMath.tensorMultiply(interimGate, operatorSequence[i]);
-            }
-        }
-        interimResult = ComplexMath.multiplyMatrix(interimGate, tracker.getStateVec());
-        return interimResult;
-    }
-
-    /**
      * Calculates and applies the quantum gate based on the next WorkItem in the queue.
      *
      * @param thisGate The WorkItem containing the gate operation to be applied.
@@ -88,25 +67,12 @@ public class GateDirector {
         this.finalGate = new ComplexMatrix(tracker.getStateVec().getHeight(),
                 tracker.getStateVec().getHeight());
 
-        if (thisGate.isSingleQubit()) {
+        if (thisGate.isSingleTarget()) {
             SingleQubitGateBuilder sqgb = new SingleQubitGateBuilder(this);
             sqgb.buildSingleQubitOperator(thisGate, singleOperator);
-        }
-
-        if (!thisGate.isSingleQubit()) {
+        } else if (thisGate.isDualTarget() || thisGate.isMultiTarget()){
             MultiQubitGateBuilder mqgb = new MultiQubitGateBuilder(this);
-            int controlSize = thisGate.getControls().length;
-            int targetsSize = thisGate.getTargets().length;
-
-            if (controlSize == 1 && targetsSize >= 1) {
-                mqgb.oneControlOneOrManyTargetsSetup(thisGate, singleOperator);
-            } else if (controlSize > 1 && targetsSize == 1) {
-                System.out.println("Multi Control Single Target hit");
-                mqgb.multiControlSingleTarget(thisGate);
-            } else if (controlSize > 1 && targetsSize > 1) {
-                System.out.println("Multi Control Multi Target hit");
-                mqgb.multiControlMultiTarget(thisGate);
-            }
+            mqgb.oneControlOneTargetsSetup(thisGate, singleOperator);
         }
     }
 
@@ -145,4 +111,26 @@ public class GateDirector {
                 ", tracker=" + tracker +
                 '}';
     }
+
+    // TODO: Delete if unneeded in the end.
+//    /**
+//     * Executes the sequence of operators to build the interim gate matrix for probabilistic Control gates.
+//     *
+//     * @param operatorSequence An array of ComplexMatrix operators to be applied.
+//     * @return the interim result of applying or not applying the single operator to the target
+//     */
+//    public ComplexMatrix executeInterimStep(ComplexMatrix[] operatorSequence){
+//        ComplexMatrix interimResult;
+//        ComplexMatrix interimGate = new ComplexMatrix(this.tracker.getStateVecSize(), this.tracker.getStateVecSize());
+//        for (int i = operatorSequence.length-1; i >=0; i--){
+//            if(i==operatorSequence.length-1){
+//                interimGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i-1]);
+//                i--;
+//            } else {
+//                interimGate = ComplexMath.tensorMultiply(interimGate, operatorSequence[i]);
+//            }
+//        }
+//        interimResult = ComplexMath.multiplyMatrix(interimGate, tracker.getStateVec());
+//        return interimResult;
+//    }
 }

@@ -26,6 +26,7 @@ public class WorkQueue {
 
     /**
      * Constructs a WorkQueue with an initial {@link WorkItem}.
+     *
      * @param gate The initial {@link WorkItem} to be added to the queue.
      */
     public WorkQueue(WorkItem gate) {
@@ -36,6 +37,7 @@ public class WorkQueue {
     /**
      * Returns a copy of the internal queue of {@link WorkItem} objects.
      * Note: This method provides a thread-safe copy of the queue.
+     *
      * @return A new {@link Queue} containing the {@link WorkItem} objects.
      */
     public Queue<WorkItem> getGates() {
@@ -49,6 +51,7 @@ public class WorkQueue {
 
     /**
      * Adds a new {@link WorkItem} to the queue in a thread-safe manner.
+     *
      * @param gate The {@link WorkItem} to be added to the queue.
      * @see WorkItem
      */
@@ -63,7 +66,8 @@ public class WorkQueue {
 
     /**
      * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single qubit gates.
-     * @param type The type of gate to use as a string.
+     *
+     * @param type   The type of gate to use as a string.
      * @param target The target qubit for the gate.
      * @see WorkItem
      */
@@ -78,14 +82,15 @@ public class WorkQueue {
     }
 
     /**
-     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single control, dual target gates.
-     * @param type The type of gate to use as a string.
+     * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single control, single target gates.
+     *
+     * @param type    The type of gate to use as a string.
      * @param control The control qubit for the gate.
-     * @param target The first target qubit for the gate.
+     * @param target  The target qubit for the gate.
      * @see WorkItem
      */
     public void addGate(String type, int control, int target) {
-        WorkItem gate = new WorkItem(type, new Integer[]{control}, new Integer[]{target});
+        WorkItem gate = new WorkItem(type, control, target);
         lock.lock();
         try {
             gates.offer(gate);
@@ -96,9 +101,10 @@ public class WorkQueue {
 
     /**
      * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for single control, dual target gates.
-     * @param type The type of gate to use as a string.
+     *
+     * @param type    The type of gate to use as a string.
      * @param control The control qubit for the gate.
-     * @param target The first target qubit for the gate.
+     * @param target  The first target qubit for the gate.
      * @param target2 The second qubit target for this gate.
      * @see WorkItem
      */
@@ -114,9 +120,10 @@ public class WorkQueue {
 
     /**
      * Adds a new {@link WorkItem} to the queue in a thread-safe manner, for multi control, multi or single target gate.
-     * @param type The type of gate to use as a string.
+     *
+     * @param type     The type of gate to use as a string.
      * @param controls The control array of qubits for the gate.
-     * @param targets The target array of qubits for the gate.
+     * @param targets  The target array of qubits for the gate.
      * @see WorkItem
      */
     public void addGate(String type, Integer[] controls, Integer[] targets) {
@@ -131,6 +138,7 @@ public class WorkQueue {
 
     /**
      * Removes and returns the next {@link WorkItem} from the queue in a thread-safe manner.
+     *
      * @return The next {@link WorkItem} in the queue, or null if the queue is empty.
      */
     public WorkItem getNextGate() {
@@ -144,6 +152,7 @@ public class WorkQueue {
 
     /**
      * Checks if there are any {@link WorkItem} objects in the queue.
+     *
      * @return true if the queue is not empty, false otherwise.
      */
     public boolean hasWork() {
@@ -154,18 +163,25 @@ public class WorkQueue {
      * Provides peek functionality into the {@link WorkQueue}. It is primarily used for iterating through the work queue
      * while executing the work queue to ensure all work items are executed and execution stops when {@link WorkQueue}
      * is empty.
-     *<br>
+     * <br>
      * Example Use:
      * <p>
- *     while(WorkItem.peek() !=null){
-     *     //business logic here
+     * while(WorkItem.peek() !=null){
+     * //business logic here
      * }
      * </p>
+     *
      * @return a {@link WorkItem} copy of the next {@link WorkItem} in the {@link WorkQueue}. A copy is returned to
      * avoid user attempting to mutate the existing {@link WorkItem} in the {@link WorkQueue} directly.
      */
     public WorkItem peek() {
-        WorkItem nextWork = gates.peek();
-        return nextWork;
+        return gates.peek();
+    }
+
+    @Override
+    public String toString() {
+        return "WorkQueue{" +
+                "gates= " + gates +
+                "}";
     }
 }
