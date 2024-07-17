@@ -24,7 +24,7 @@ matrix operations provide correct outputs.
 
 ## Phase 3: 
 &#x2705; Implement a circuit builder to queue gates to apply to each qubit.   
-&#x2705; ~~Finish the Qops class to run the work queue and generate the expectation values.~~
+&#x2705; ~~Finish the Qops class to run the work queue and generate the expectation values.~~  Removed due to system design change.  
 
 ## Phase 4:  
 &#x2705;Rework the design to use a single state vector for the system representing all qubit states.  
