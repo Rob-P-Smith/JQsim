@@ -140,7 +140,7 @@ public class jqs {
     /**
      * Applies the RZ gate to the specified target qubit.
      *
-     * @param theta    The rotation angle in radians.
+     * @param theta  The rotation angle in radians.
      * @param target The target qubit.
      */
     public void RZ(double theta, int target) {
@@ -150,7 +150,7 @@ public class jqs {
     /**
      * Applies the RX gate to the specified target qubit.
      *
-     * @param theta    The rotation angle in radians.
+     * @param theta  The rotation angle in radians.
      * @param target The target qubit.
      */
     public void RX(double theta, int target) {
@@ -160,11 +160,21 @@ public class jqs {
     /**
      * Applies the RY gate to the specified target qubit.
      *
-     * @param theta    The rotation angle in radians.
+     * @param theta  The rotation angle in radians.
      * @param target The target qubit.
      */
     public void RY(double theta, int target) {
         workQueue.addGate(new WorkItem("RY", target, theta));
+    }
+
+    /**
+     * Applies the R1 gate to the specified target qubit.
+     *
+     * @param theta  The rotation angle in radians.
+     * @param target The target qubit.
+     */
+    public void R1(double theta, int target) {
+        workQueue.addGate(new WorkItem("R1", target, theta));
     }
 
     /**
@@ -373,13 +383,13 @@ public class jqs {
      * Multi control Multi target gate.
      * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
-     * @param gate       The name of the controlled-controlled gate.
-     * @param controls   The control qubits.
-     * @param targets     The target qubits.
+     * @param gate     The name of the controlled-controlled gate.
+     * @param controls The control qubits.
+     * @param targets  The target qubits.
      */
     public void CCGate(String gate, int[] controls, int[] targets) {
-        Integer[] controlQubits = Arrays.stream(controls).boxed().toArray( Integer[]::new);
-        Integer[] targetQubits = Arrays.stream(targets).boxed().toArray( Integer[]::new);
+        Integer[] controlQubits = Arrays.stream(controls).boxed().toArray(Integer[]::new);
+        Integer[] targetQubits = Arrays.stream(targets).boxed().toArray(Integer[]::new);
         workQueue.addGate(new WorkItem(gate, controlQubits, targetQubits));
     }
 
@@ -394,7 +404,7 @@ public class jqs {
         while (workQueue.hasWork()) {
             WorkItem nextItem = workQueue.peek();
             ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
-            if(nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control mutli-qubit gates
+            if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control mutli-qubit gates
                 tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
             }
         }

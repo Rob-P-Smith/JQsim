@@ -99,10 +99,25 @@ public class GateDirector {
             case ("RX") -> singleOperator = buildRXGate(work);
             case ("RY") -> singleOperator = buildRYGate(work);
             case ("RZ") -> singleOperator = buildRZGate(work);
+            case ("R1") -> singleOperator = buildR1Gate(work);
             case ("SWAP"), ("CSWAP") -> singleOperator = SWAP.getMatrix();
             case ("ISWAP") -> singleOperator = ISWAP.getMatrix();
         }
         return singleOperator;
+    }
+
+    /**
+     * Construct the matrix for the R1 gate based on user provided theta value.
+     * @param work the work item that contains the RX gate in the workQueue
+     * @return the complex matrix that is the RX gate operator
+     */
+    private static ComplexMatrix buildR1Gate(WorkItem work) {
+        ComplexMatrix builtGate = new ComplexMatrix(2,2);
+        builtGate.set(0,0, new ComplexNumber(1,0) );
+        builtGate.set(0,1, new ComplexNumber(0,0));
+        builtGate.set(1,0, new ComplexNumber(0,0));
+        builtGate.set(1,1, new ComplexNumber(Math.cos(work.getTheta()), Math.sin(work.getTheta())));
+        return builtGate;
     }
 
     /**
@@ -155,26 +170,4 @@ public class GateDirector {
                 ", tracker=" + tracker +
                 '}';
     }
-
-    // TODO: Delete if unneeded in the end.
-//    /**
-//     * Executes the sequence of operators to build the interim gate matrix for probabilistic Control gates.
-//     *
-//     * @param operatorSequence An array of ComplexMatrix operators to be applied.
-//     * @return the interim result of applying or not applying the single operator to the target
-//     */
-//    public ComplexMatrix executeInterimStep(ComplexMatrix[] operatorSequence){
-//        ComplexMatrix interimResult;
-//        ComplexMatrix interimGate = new ComplexMatrix(this.tracker.getStateVecSize(), this.tracker.getStateVecSize());
-//        for (int i = operatorSequence.length-1; i >=0; i--){
-//            if(i==operatorSequence.length-1){
-//                interimGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i-1]);
-//                i--;
-//            } else {
-//                interimGate = ComplexMath.tensorMultiply(interimGate, operatorSequence[i]);
-//            }
-//        }
-//        interimResult = ComplexMath.multiplyMatrix(interimGate, tracker.getStateVec());
-//        return interimResult;
-//    }
 }
