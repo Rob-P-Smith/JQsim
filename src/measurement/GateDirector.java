@@ -2,6 +2,7 @@ package measurement;
 
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 import state.StateTracker;
 import state.WorkItem;
 
@@ -72,7 +73,7 @@ public class GateDirector {
             sqgb.buildSingleQubitOperator(thisGate, singleOperator);
         } else if (thisGate.isDualTarget() || thisGate.isMultiTarget()){
             MultiQubitGateBuilder mqgb = new MultiQubitGateBuilder(this);
-            mqgb.oneControlOneTargetsSetup(thisGate, singleOperator);
+            mqgb.dualAndMultiGateSetup(thisGate, singleOperator);
         }
     }
 
@@ -95,15 +96,58 @@ public class GateDirector {
             case ("T") -> singleOperator = T_GATE.getMatrix();
             case ("Ti") -> singleOperator = TI_GATE.getMatrix();
             case ("ID") -> singleOperator = IDENTITY.getMatrix();
-            case ("RX") -> singleOperator = RX_GATE.getMatrix();
-            case ("RY") -> singleOperator = RY_GATE.getMatrix();
-            case ("RZ") -> singleOperator = RZ_GATE.getMatrix();
+            case ("RX") -> singleOperator = buildRXGate(work);
+            case ("RY") -> singleOperator = buildRYGate(work);
+            case ("RZ") -> singleOperator = buildRZGate(work);
             case ("SWAP"), ("CSWAP") -> singleOperator = SWAP.getMatrix();
             case ("ISWAP") -> singleOperator = ISWAP.getMatrix();
         }
         return singleOperator;
     }
 
+    /**
+     * Construct the matrix for the RX gate based on user provided theta value.
+     * @param work the work item that contains the RX gate in the workQueue
+     * @return the complex matrix that is the RX gate operator
+     */
+    private static ComplexMatrix buildRXGate(WorkItem work){
+        ComplexMatrix builtGate = new ComplexMatrix(2,2);
+        double cosTheta = Math.cos(work.getTheta()/2);
+        double sinTheta = Math.sin(work.getTheta()/2);
+        builtGate.set(0,0,new ComplexNumber(cosTheta, 0));
+        builtGate.set(0,1, new ComplexNumber(0, -sinTheta));
+        builtGate.set(1,0,new ComplexNumber(0, -sinTheta));
+        builtGate.set(1,1,new ComplexNumber(cosTheta, 0));
+        return builtGate;
+    }
+    /**
+     * Construct the matrix for the RY gate based on user provided theta value.
+     * @param work the work item that contains the RX gate in the workQueue
+     * @return the complex matrix that is the RY gate operator
+     */
+    private static ComplexMatrix buildRYGate(WorkItem work){
+        ComplexMatrix builtGate = new ComplexMatrix(2,2);
+        double cosTheta = Math.cos(work.getTheta()/2);
+        double sinTheta = Math.sin(work.getTheta()/2);
+        builtGate.set(0,0,new ComplexNumber(cosTheta, 0));
+        builtGate.set(0,1, new ComplexNumber(-sinTheta, 0));
+        builtGate.set(1,0,new ComplexNumber(sinTheta,0));
+        builtGate.set(1,1,new ComplexNumber(cosTheta, 0));
+        return builtGate;
+    }
+    /**
+     * Construct the matrix for the RZ gate based on user provided theta value.
+     * @param work the work item that contains the RX gate in the workQueue
+     * @return the complex matrix that is the RZ gate operator
+     */
+    private static ComplexMatrix buildRZGate(WorkItem work){
+        ComplexMatrix builtGate = new ComplexMatrix(2,2);
+        builtGate.set(0,0,new ComplexNumber(Math.cos(-work.getTheta()/2), Math.sin(-work.getTheta()/2)));
+        builtGate.set(0,1, new ComplexNumber(0, 0));
+        builtGate.set(1,0,new ComplexNumber(0, 0));
+        builtGate.set(1,1,new ComplexNumber(Math.cos(-work.getTheta()/2), -Math.sin(-work.getTheta()/2)));
+        return builtGate;
+    }
     @Override
     public String toString() {
         return "GateDirector{" +

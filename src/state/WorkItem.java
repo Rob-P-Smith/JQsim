@@ -14,6 +14,7 @@ public class WorkItem {
     private int target;
     private Integer[] controls;
     private Integer[] targets;
+    private double theta;
     private boolean singleQubit;
     private boolean dualQubit;
     private boolean multiQubit;
@@ -28,6 +29,23 @@ public class WorkItem {
     public WorkItem(String operator, int target) {
         this.operator = operator;
         this.target = target;
+        this.singleQubit = true;
+        this.dualQubit = false;
+        this.multiQubit = false;
+    }
+
+    /**
+     * Constructs a WorkItem with a single target for R gates.
+     *
+     * @param operator The operator string.
+     * @param target The target value.
+     * @param theta The rotation in radians.
+     * @see #WorkItem(String, int)
+     */
+    public WorkItem(String operator, int target, double theta) {
+        this.operator = operator;
+        this.target = target;
+        this.theta = theta;
         this.singleQubit = true;
         this.dualQubit = false;
         this.multiQubit = false;
@@ -236,5 +254,9 @@ public class WorkItem {
             }
         }
         return result;
+    }
+
+    public double getTheta() {
+        return this.theta;
     }
 }

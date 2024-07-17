@@ -140,31 +140,31 @@ public class jqs {
     /**
      * Applies the RZ gate to the specified target qubit.
      *
-     * @param phi    The rotation angle in radians.
+     * @param theta    The rotation angle in radians.
      * @param target The target qubit.
      */
-    public void RZ(double phi, int target) {
-        workQueue.addGate(new WorkItem("RZ", target));
+    public void RZ(double theta, int target) {
+        workQueue.addGate(new WorkItem("RZ", target, theta));
     }
 
     /**
      * Applies the RX gate to the specified target qubit.
      *
-     * @param phi    The rotation angle in radians.
+     * @param theta    The rotation angle in radians.
      * @param target The target qubit.
      */
-    public void RX(double phi, int target) {
-        workQueue.addGate(new WorkItem("RX", target));
+    public void RX(double theta, int target) {
+        workQueue.addGate(new WorkItem("RX", target, theta));
     }
 
     /**
      * Applies the RY gate to the specified target qubit.
      *
-     * @param phi    The rotation angle in radians.
+     * @param theta    The rotation angle in radians.
      * @param target The target qubit.
      */
-    public void RY(double phi, int target) {
-        workQueue.addGate(new WorkItem("RY", target));
+    public void RY(double theta, int target) {
+        workQueue.addGate(new WorkItem("RY", target, theta));
     }
 
     /**
