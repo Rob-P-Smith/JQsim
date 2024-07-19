@@ -12,14 +12,19 @@ import interpreter.jqs;
 public class Sandbox {
     /**
      * Main method for testing out quantum circuits while building the simulator.
+     *
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        jqs jqs = new jqs(3);
-        jqs.H(0);
-        jqs.S(0);
-        jqs.H(1);
-        jqs.getState();
+        jqs jqs = new jqs(4);
+//        jqs.X(0);
+//        jqs.H(1);
+//        jqs.CX(1, 2);
+//        jqs.CX(0, 1);
+//        jqs.H(0);
+//        jqs.H(1);
+        jqs.listGates();
+//        jqs.getState();
         System.out.println("\nResulting state: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
 }

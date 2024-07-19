@@ -87,7 +87,7 @@ public class GateDirector {
         ComplexMatrix singleOperator = null;
         String worker = work.getOperator();
         switch (worker) {
-            case ("X"), ("CX"), ("TOFFOLI") -> singleOperator = PAULI_X.getMatrix();
+            case ("X"), ("CX"), ("CXX"), ("TOFFOLI") -> singleOperator = PAULI_X.getMatrix();
             case ("Y"), ("CY") -> singleOperator = PAULI_Y.getMatrix();
             case ("Z"), ("CZ") -> singleOperator = PAULI_Z.getMatrix();
             case ("H"), ("CH") -> singleOperator = HADAMARD.getMatrix();

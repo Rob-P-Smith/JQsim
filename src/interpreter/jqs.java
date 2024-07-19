@@ -37,6 +37,7 @@ public class jqs {
     private WorkQueue workQueue;
     private StateTracker tracker;
     private GateDirector gd;
+    private static final String[] GATES = {"X", "Z", "Y", "RX", "RZ", "RY", "S", "Si", "T", "Ti", "CX", "TOF", "CXX"};
 
     /**
      * Default constructor, it's just here, so I don't get fined.
@@ -94,6 +95,12 @@ public class jqs {
      */
     public ComplexMatrix getStateVec() {
         return tracker.getStateVec();
+    }
+
+    public void listGates() {
+        for(String gate : GATES){
+            System.out.println(gate);
+        }
     }
 
     ////////////////////////
@@ -342,10 +349,23 @@ public class jqs {
      * @param controlTwo The second control qubit.
      * @param target     The target qubit.
      */
-    public void Toffoli(int controlOne, int controlTwo, int target) {
+    public void TOF(int controlOne, int controlTwo, int target) {
         Integer[] controls = {controlOne, controlTwo};
         Integer[] targets = {target};
         workQueue.addGate(new WorkItem("TOFFOLI", controls, targets));
+    }
+
+    /**
+     * Applies the CXX gate where a single control determines the state of two target bits if control is 1.
+     *
+     * @param control The control qubit.
+     * @param targetOne The first target qubit.
+     * @param targetTwo The second target qubit.
+     */
+    public void CXX(int control, int targetOne, int targetTwo){
+        Integer [] controls = {control};
+        Integer [] targets = {targetOne, targetTwo};
+        workQueue.addGate(new WorkItem("CXX", controls, targets));
     }
 
     /**
@@ -435,7 +455,7 @@ public class jqs {
         while (workQueue.hasWork()) {
             WorkItem nextItem = workQueue.peek();
             ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
-            if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control mutli-qubit gates
+            if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control multi-qubit gates
                 tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
             }
         }
