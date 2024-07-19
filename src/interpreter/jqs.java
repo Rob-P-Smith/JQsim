@@ -2,12 +2,14 @@ package interpreter;
 
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 import measurement.GateDirector;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * This class provides the user interface for jqsim. The commands are similar to other established
@@ -98,7 +100,7 @@ public class jqs {
     }
 
     public void listGates() {
-        for(String gate : GATES){
+        for (String gate : GATES) {
             System.out.println(gate);
         }
     }
@@ -180,7 +182,7 @@ public class jqs {
      * @param target The target qubit.
      */
     public void RZ(int target) {
-        workQueue.addGate(new WorkItem("RZ", target, Math.PI/4));
+        workQueue.addGate(new WorkItem("RZ", target, Math.PI / 4));
     }
 
     /**
@@ -189,7 +191,7 @@ public class jqs {
      * @param target The target qubit.
      */
     public void RY(int target) {
-        workQueue.addGate(new WorkItem("RY", target, Math.PI/4));
+        workQueue.addGate(new WorkItem("RY", target, Math.PI / 4));
     }
 
     /**
@@ -198,7 +200,7 @@ public class jqs {
      * @param target The target qubit.
      */
     public void RX(int target) {
-        workQueue.addGate(new WorkItem("RX", target, Math.PI/4));
+        workQueue.addGate(new WorkItem("RX", target, Math.PI / 4));
     }
 
     /**
@@ -358,13 +360,13 @@ public class jqs {
     /**
      * Applies the CXX gate where a single control determines the state of two target bits if control is 1.
      *
-     * @param control The control qubit.
+     * @param control   The control qubit.
      * @param targetOne The first target qubit.
      * @param targetTwo The second target qubit.
      */
-    public void CXX(int control, int targetOne, int targetTwo){
-        Integer [] controls = {control};
-        Integer [] targets = {targetOne, targetTwo};
+    public void CXX(int control, int targetOne, int targetTwo) {
+        Integer[] controls = {control};
+        Integer[] targets = {targetOne, targetTwo};
         workQueue.addGate(new WorkItem("CXX", controls, targets));
     }
 
@@ -441,11 +443,51 @@ public class jqs {
 
     /**
      * Will provide a measurement for the system on the specified qubit, not done yet.
-     * TODO: Build this
+     *
      * @param target the qubit to measure
      */
-    public void measureQubit(int target) {
+    public int measureQubit(int target) {
+        Random random = new Random();
+        if (target < 0 || target >= numQubits) {
+            throw new IllegalArgumentException("Invalid qubit index");
+        }
 
+        int stateSize = tracker.getStateVecSize();
+        double probability0 = 0;
+
+        // Calculate probability of measuring |0>
+        for (int i = 0; i < stateSize; i++) {
+            if ((i & (1 << target)) == 0) {
+                probability0 += tracker.get(i,0).magnitudeSquared();
+            }
+        }
+
+        // Perform measurement
+        int result = (random.nextDouble(0.0, 1.00000000001) < probability0) ? 0 : 1;
+
+        // Update state vector based on measurement result
+        double normalizationFactor = 0;
+        for (int i = 0; i < stateSize; i++) {
+            boolean keepState = (result == 0 && (i & (1 << target)) == 0) ||
+                    (result == 1 && (i & (1 << target)) != 0);
+            if (keepState) {
+                normalizationFactor += tracker.get(i,0).magnitudeSquared();
+            } else {
+                tracker.getStateVec().set(i,0,new ComplexNumber());
+            }
+        }
+
+        // Normalize the remaining states
+        normalizationFactor = Math.sqrt(normalizationFactor);
+        for (int i = 0; i < stateSize; i++) {
+            if (tracker.get(i,0).getReal()!=0.0 || tracker.get(i,0).getImag()!=0.0) {
+                double denominator = normalizationFactor * normalizationFactor;
+                double newReal = (tracker.get(i,0).getReal() * normalizationFactor) / denominator;
+                double newImag = (tracker.get(i,0).getImag() * normalizationFactor) / denominator;
+                tracker.getStateVec().set(i, 0, new ComplexNumber(newReal,newImag));
+            }
+        }
+        return result;
     }
 
     /**
