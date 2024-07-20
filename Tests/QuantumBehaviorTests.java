@@ -14,7 +14,7 @@ public class QuantumBehaviorTests {
         System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
         jqs.X(0);
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -25,7 +25,7 @@ public class QuantumBehaviorTests {
         jqs.CX(0, 1);
         jqs.CX(1, 2);
         jqs.CX(2, 0);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|110⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -35,7 +35,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.S(0);
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000i|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -45,7 +45,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.CX(0, 1);
         jqs.CX(1, 2);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -55,7 +55,7 @@ public class QuantumBehaviorTests {
         jqs.device(4);
         jqs.X(0);
         jqs.CX(0, 2);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -66,7 +66,7 @@ public class QuantumBehaviorTests {
         for (int i = 1; i < 10; i++) {
             jqs.CX(0, i);
         }
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|1111111111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -76,7 +76,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.CX(0, 1);
         jqs.CX(0, 3);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -84,7 +84,7 @@ public class QuantumBehaviorTests {
         jqs = new jqs();
         jqs.device(4);
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -92,7 +92,7 @@ public class QuantumBehaviorTests {
         jqs = new jqs();
         jqs.device(10);
         jqs.CX(6, 2);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000000000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -101,7 +101,7 @@ public class QuantumBehaviorTests {
         jqs.device(4);
         jqs.CX(0, 1);
         jqs.CX(0, 3);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 1.000|0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
@@ -114,7 +114,7 @@ public class QuantumBehaviorTests {
         jqs.X(1);
         //test state that doesn't have kickback
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
 //        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|001⟩, 0.707|010⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -123,9 +123,14 @@ public class QuantumBehaviorTests {
         jqs2.H(0);
         jqs2.X(1);
         jqs2.CZ(0, 1);
-        jqs2.getState();
+        jqs2.getComputationalState();
 //        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|010⟩, -0.707|011⟩", ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
+    }
+
+    @Test
+    public void testQuantumTeleportation(){
+
     }
 
     @Test
@@ -139,7 +144,7 @@ public class QuantumBehaviorTests {
         jqs.H(1);
         jqs.H(2);
         jqs.S(2);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = -0.500|001⟩, 0.500|011⟩, 0.500i|101⟩, -0.500i|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
@@ -152,7 +157,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.H(0);
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|00⟩, -0.707|11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
@@ -170,7 +175,7 @@ public class QuantumBehaviorTests {
         jqs.S(2);
         jqs.H(2);
         jqs.S(2);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.500|000⟩, 0.500|011⟩, 0.500i|100⟩, -0.500i|111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
@@ -183,7 +188,7 @@ public class QuantumBehaviorTests {
         jqs.H(1);
         jqs.CX(1, 2);
         jqs.CX(0, 1);
-        jqs.getState();
+        jqs.getComputationalState();
         System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = 0.707|011⟩, 0.707|101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }

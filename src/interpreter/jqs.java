@@ -9,6 +9,8 @@ import state.WorkItem;
 import state.WorkQueue;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -34,12 +36,19 @@ import java.util.Random;
  * @since 7 July 2024
  */
 public class jqs {
-    private int shots = 1024;
+    private int shots = 3;
     private int numQubits;
     private WorkQueue workQueue;
     private StateTracker tracker;
     private GateDirector gd;
-    private static final String[] GATES = {"X", "Z", "Y", "RX", "RZ", "RY", "S", "Si", "T", "Ti", "CX", "TOF", "CXX"};
+    private static final String[] GATES = {
+            "M", "X", "Z", "Y",
+            "RX", "RZ", "RY", "R1",
+            "S", "Si", "T", "Ti",
+            "ID", "H",
+            "CZ", "CY", "CX", "CH",
+            "TOF", "CXX", "CGate", "CCGate",
+            "SWAP", "ISWAP", "CSWAP", };
 
     /**
      * Default constructor, it's just here, so I don't get fined.
@@ -108,6 +117,14 @@ public class jqs {
     ////////////////////////
     // Single Qubit Gates //
     ////////////////////////
+
+    /** Applies the measureQubit function to the target qubit by adding it to the workQueue instead of measuring is immediately.
+     *
+     * @param target the target qubit to measure
+     */
+    public void M(int target){
+        measureQubit(target);
+    }
 
     /**
      * Applies the X gate to the specified target qubit.
@@ -222,6 +239,15 @@ public class jqs {
     }
 
     /**
+     * Applies the Si gate to the specified target qubit (S INVERSE).
+     *
+     * @param target The target qubit.
+     */
+    public void Si(int target) {
+        workQueue.addGate(new WorkItem("Si", target));
+    }
+
+    /**
      * Applies the T gate to the specified target qubit.
      *
      * @param target The target qubit.
@@ -255,15 +281,6 @@ public class jqs {
      */
     public void H(int target) {
         workQueue.addGate(new WorkItem("H", target));
-    }
-
-    /**
-     * Applies the Si gate to the specified target qubit (S INVERSE).
-     *
-     * @param target The target qubit.
-     */
-    public void Si(int target) {
-        workQueue.addGate(new WorkItem("Si", target));
     }
 
     //////////////////////
@@ -458,7 +475,7 @@ public class jqs {
         // Calculate probability of measuring |0>
         for (int i = 0; i < stateSize; i++) {
             if ((i & (1 << target)) == 0) {
-                probability0 += tracker.get(i,0).magnitudeSquared();
+                probability0 += tracker.get(i, 0).magnitudeSquared();
             }
         }
 
@@ -471,20 +488,20 @@ public class jqs {
             boolean keepState = (result == 0 && (i & (1 << target)) == 0) ||
                     (result == 1 && (i & (1 << target)) != 0);
             if (keepState) {
-                normalizationFactor += tracker.get(i,0).magnitudeSquared();
+                normalizationFactor += tracker.get(i, 0).magnitudeSquared();
             } else {
-                tracker.getStateVec().set(i,0,new ComplexNumber());
+                tracker.getStateVec().set(i, 0, new ComplexNumber());
             }
         }
 
         // Normalize the remaining states
         normalizationFactor = Math.sqrt(normalizationFactor);
         for (int i = 0; i < stateSize; i++) {
-            if (tracker.get(i,0).getReal()!=0.0 || tracker.get(i,0).getImag()!=0.0) {
+            if (tracker.get(i, 0).getReal() != 0.0 || tracker.get(i, 0).getImag() != 0.0) {
                 double denominator = normalizationFactor * normalizationFactor;
-                double newReal = (tracker.get(i,0).getReal() * normalizationFactor) / denominator;
-                double newImag = (tracker.get(i,0).getImag() * normalizationFactor) / denominator;
-                tracker.getStateVec().set(i, 0, new ComplexNumber(newReal,newImag));
+                double newReal = (tracker.get(i, 0).getReal() * normalizationFactor) / denominator;
+                double newImag = (tracker.get(i, 0).getImag() * normalizationFactor) / denominator;
+                tracker.getStateVec().set(i, 0, new ComplexNumber(newReal, newImag));
             }
         }
         return result;
@@ -493,7 +510,7 @@ public class jqs {
     /**
      * Calculates the computational basis states of the quantum system, mutates the StateTracker state vector directly.
      */
-    public void getState() {
+    public void getComputationalState() {
         while (workQueue.hasWork()) {
             WorkItem nextItem = workQueue.peek();
             ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
@@ -501,5 +518,62 @@ public class jqs {
                 tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
             }
         }
+    }
+
+    /**
+     * Overriden toString() to print the Dirac notation of the current state vector.
+     *
+     * @return the String representation of the current system state vector in Dirac notation.
+     */
+    @Override
+    public String toString() {
+        return ComplexMath.complexMatrixToDiracNotation(this.getStateVec());
+    }
+
+    /**
+     * Runs the simulation 'shots' number of times ands returns the probabilities of each possible resulting state.
+     *
+     * @return the probabilities of each state in a String
+     */
+    public void simulate() {
+        WorkQueue workCopy = (WorkQueue)workQueue.makeClone();
+        StateTracker stateClone = (StateTracker)tracker.makeClone();
+        Map<String, Integer> resultsMap = new HashMap<>();
+        String probabilities = "";
+
+        for (int i = 0; i < shots; i++) {
+            while (workQueue.hasWork()) {
+                WorkItem nextItem = workQueue.peek();
+                ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
+                if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control multi-qubit gates
+                    tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+                }
+            }
+            resultsMap.put(this.toString(), resultsMap.getOrDefault(this.toString(), 0) + 1);
+            if(i < shots-2) {
+                this.tracker = stateClone;
+                this.workQueue = workCopy;
+            }
+        }
+        Map<String, Double> incidentMap = new HashMap<>();
+        for (String key : resultsMap.keySet()) {
+            double value = resultsMap.get(key)/(shots*1.0);
+
+            incidentMap.put(key, value);
+        }
+        double perIncident = 1.0 / shots;
+        double total = 0.0;
+        for (String key : incidentMap.keySet()) {
+            double chance = incidentMap.get(key)*perIncident * shots;
+            String chanceString = String.format("%.3f", chance);
+            total+= chance;
+            probabilities += "\n" + key + ": " + chanceString + "%";
+        }
+        probabilities+="\nSum of raw probability values: "+total;
+        System.out.println(probabilities);
+    }
+
+    public void setState(ComplexMatrix startingState) {
+        tracker.setStateVec(startingState);
     }
 }

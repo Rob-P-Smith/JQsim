@@ -35,6 +35,22 @@ public class WorkQueue {
     }
 
     /**
+     * Constructor for copying the WorkQueue to a new WorkQueue
+     * @param gates the list of gates to copy into the new WorkQueue
+     */
+    public WorkQueue(Queue<WorkItem> gates){
+        this.gates = gates;
+    }
+
+    /**
+     * Create and return a new WorkQueue that is a copy of the original WorkQueue
+     * @return WorkQueue copy of this
+     */
+    public WorkQueue makeClone(){
+     return new WorkQueue(this.getGates());
+    }
+
+    /**
      * Returns a copy of the internal queue of {@link WorkItem} objects.
      * Note: This method provides a thread-safe copy of the queue.
      *

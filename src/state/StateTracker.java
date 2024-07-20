@@ -39,6 +39,14 @@ public class StateTracker {
         }
     }
 
+    public StateTracker(ComplexMatrix matrix){
+        this.stateVector = matrix;
+    }
+
+    public StateTracker makeClone(){
+        return new StateTracker(this.getStateVec());
+    }
+
     /**
      * Getter for the current stateVector as a column vector in a {@link ComplexMatrix}  of n,1 where n is
      * 2 to the power of N, where is N is the number of {@link ComplexQubit} in the system.

@@ -1,7 +1,9 @@
-import complex_classes.ComplexMath;
+import complex_classes.ComplexMatrix;
+import complex_classes.ComplexNumber;
 import interpreter.jqs;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Just a class for debugging things while building the program.
@@ -12,29 +14,49 @@ import java.util.*;
  */
 
 public class Sandbox {
+    private static int shots = 10000;
     /**
      * Main method for testing out quantum circuits while building the simulator.
      *
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        quantumKickback();
+        quantumTeleportation();
+        System.out.println("Test Simulate");
+        testingSimulate();
+    }
+    public static void testingSimulate(){
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.H(1);
+        jqs.CX(1, 2);
+        jqs.CX(0, 1);
+        jqs.H(0);
+        jqs.M(0);
+        jqs.CX(1,2);
+        jqs.CZ(0, 2);
+        jqs.M(2);
+        jqs.simulate();
     }
 
-    public static void quantumKickback(){
-        jqs jqs = new jqs(3);
-        jqs jqs2 = new jqs(3);
+    public static void quantumTeleportation() {
+        jqs jqs = new jqs(4);
+
+        jqs.X(0);
+        jqs.H(1);
+        jqs.CX(1, 2);
+        jqs.CX(0, 1);
         jqs.H(0);
-        jqs.X(1);
-        //test initial state that doesn't have kickback
-        jqs.CX(0,1);
-        jqs.getState();
-        System.out.println("Final Outcome: "+ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        //test that kickback occurs on control qubit
-        jqs2.H(0);
-        jqs2.X(1);
-        jqs2.CZ(0,1);
-        jqs2.getState();
-        System.out.println("Final Outcome: "+ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
+        jqs.getComputationalState();
+        System.out.println("Before measurements: " + jqs);
+        jqs.measureQubit(0);
+        System.out.println("After measuring qubit 0: " + jqs);
+        jqs.measureQubit(1);
+        System.out.println("After measuring qubit 1: " + jqs);
+        jqs.CX(1, 2);
+        jqs.CZ(0, 2);
+        jqs.getComputationalState();
+        jqs.M(2);
+        System.out.println("Final teleported value of: " + jqs);
     }
 }
