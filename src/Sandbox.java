@@ -18,19 +18,23 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
+        quantumKickback();
+    }
+
+    public static void quantumKickback(){
         jqs jqs = new jqs(3);
-        jqs.X(0);
-        jqs.H(1);
-        jqs.CX(1,2);
-        jqs.CX(0,1);
+        jqs jqs2 = new jqs(3);
         jqs.H(0);
+        jqs.X(1);
+        //test initial state that doesn't have kickback
+        jqs.CX(0,1);
         jqs.getState();
-        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
-        jqs.measureQubit(0);
-        jqs.measureQubit(1);
-        jqs.CX(1,2);
-        jqs.getState();
-        jqs.measureQubit(2);
         System.out.println("Final Outcome: "+ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+        //test that kickback occurs on control qubit
+        jqs2.H(0);
+        jqs2.X(1);
+        jqs2.CZ(0,1);
+        jqs2.getState();
+        System.out.println("Final Outcome: "+ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
     }
 }
