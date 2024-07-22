@@ -136,6 +136,50 @@ be used instead. simulate() will calculate and print out all valid basis states 
 </ol>  
 
 # Dual Qubit Gates  
+<ol>
+
+<li><b>Controlled X</b></li>  
+<ul>
+<li> CX, or CNOT, is invoked with jqs.CX(c,t) where c is the control qubit, and t is target qubit.</li>
+<li>Control and Target can be inverted in ordering of the qubit assignment, e.g. CX 0,1 or CX 1,0, and the simulator will account for it correctly.</li>
+</ul>
+<br>
+
+<li><b>Controlled X,X</b></li>  
+<ul>
+<li>CXX, is a control with two targets can can be invoked with jqs.CXX(c,t1,t2) where c is control, t1 is the first target and t2 is the second target.</li>
+<li>Qubit assignment order is accounted for across all known cases, e.g. CXX(0,1,2), CXX(1,0,2) etc</li>
+</ul>
+<br>
+
+<li><b>Constructed Controlled X</b></li>
+<ul>
+<li>The constructed controlled gate provides an interface for applying a control to any number of gates in a single step.</li>
+<li> CCX can be invoked using jqs.CCX(c, t[]) where c is the control qubit and t[] is an array of integers where each element is a target qubit.</li>
+</ul>
+
+<li><b>Controlled Z</b></li>  
+<ul>
+<li> 
+</li>
+</ul>
+<br>
+
+<li><b>Controlled Y</b></li>  
+<ul>
+<li> 
+</li>
+</ul>
+<br>
+
+<li><b>Toffoli Gate</b></li>
+<ul>
+<li>
+</li>
+</ul>
+<br>
+
+</ol>
 
 # Multi Qubit Gates
 # About  
@@ -157,29 +201,22 @@ matrix operations provide correct outputs.
 
 # Progress
 
-## Phase 1:
+## Phase 1 - 4:
 &#x2705; Initial implementation to ensure flexibility for any practical number of qubits.  
 &#x2705; Implement Clifford gates. 	
-
-## Phase 2:
-&#x2705; Implementing entanglement functionality via CNOT and Hadmard.
-
-## Phase 3: 
+&#x2705; Implementing entanglement functionality via CNOT and Hadmard.  
 &#x2705; Implement a circuit builder to queue gates to apply to each qubit.   
 &#x2705; ~~Finish the Qops class to run the work queue and generate the expectation values.~~  Removed due to system design change.  
-
-## Phase 4:  
 &#x2705;Rework the design to use a single state vector for the system representing all qubit states.  
 and compose operator matrices based on the tensor product of the correct inner products of each qubit state in the  
 state vector of the system.  
 &#x2705; Rework CNOT to be mathematically correct to CX 0,1 and CX 1,0 differences.  
 &#x2705;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates.  
-
 ## Phase 5: 
 &#x2705;Ensure control gates apply correctly across superposition system states when multiple gates are applied, preserving  
-both amplitude and phase of each qubit.
-&#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
-a classical bit. ***Currently Working***  
+both amplitude and phase of each qubit.  
+***Currently Working*** &#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
+a classical bit.  
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
 ## Phase 6:
@@ -194,4 +231,10 @@ front end construction.
 &#x274C;Build the front end (oh boy!)  
 
 # Issues  
+<ol>
+<li>The current critical bug is the jqs.M() method triggering a string error during the WorkQueue execution and requires debugging to slightly
+adjust the way jqs is handling jqs.M() and stop it from treating it like an unassigned gate type value in the decoder switch.
+<li>
+</li>
+</ol>
 
