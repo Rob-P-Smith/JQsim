@@ -36,7 +36,7 @@ import java.util.Random;
  * @since 7 July 2024
  */
 public class jqs {
-    private int shots = 1000;
+    private int shots = 1001;
     private int numQubits;
     private WorkQueue workQueue;
     private StateTracker tracker;
@@ -539,40 +539,53 @@ public class jqs {
         WorkQueue workCopy = workQueue.makeClone();
         StateTracker stateClone = tracker.makeClone();
         Map<String, Integer> resultsMap = new HashMap<>();
-        String probabilities = "";
+
 
         for (int i = 0; i < shots; i++) {
             while (workQueue.hasWork()) {
-                GateDirector gdd = new GateDirector(this.tracker);
+               GateDirector gdd = new GateDirector(this.tracker);
                 WorkItem nextItem = workQueue.peek();
                 ComplexMatrix matrix = gdd.getGate(workQueue.getNextGate());
-                if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control multi-qubit gates
+                if (nextItem.isSingleTarget()) {
                     tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
                 }
             }
-            resultsMap.put(this.toString(), resultsMap.getOrDefault(this.toString(), 0) + 1);
-            if(i < shots) {
-                this.tracker = stateClone.makeClone();
-                this.workQueue = workCopy.makeClone();
+            // Need to insert the determined state resulting from the collapse into the resultsMap not the long form dirac or
+            // short form dirac possible results, but a concrete result.
+            String[] viableStates = getViableStatesProbabilities();
+            for(String state : viableStates){
+                resultsMap.put(state, resultsMap.getOrDefault(state, 0)+1);
             }
         }
+        aggregateResults(resultsMap);
+    }
+
+    public void setState(ComplexMatrix startingState) {
+        tracker.setStateVec(startingState);
+    }
+
+    private String[] getViableStatesProbabilities(){
+        String states = ComplexMath.complexMatrixToBasisStates(this.tracker.getStateVec());
+        return states.split("\\$");
+    }
+
+    private void aggregateResults(Map<String, Integer> resultsMap){
         Map<String, Double> incidentMap = new HashMap<>();
+        String probabilities = "";
         for (String key : resultsMap.keySet()) {
             double value = resultsMap.get(key)/(shots*1.0);
             incidentMap.put(key, value);
         }
+
         double perIncident = 1.0 / shots;
         double total = 0.0;
         for (String key : incidentMap.keySet()) {
-            double chance = incidentMap.get(key)*perIncident * shots;
+            double chance = incidentMap.get(key)*perIncident*shots;
             String chanceString = String.format("%.3f", chance);
             total+= chance;
-            probabilities += "\n" + key + ": " + chanceString + "%";
+            probabilities += "\n" + key + ": " + chanceString;
         }
         probabilities+="\nSum of raw probability values: "+total;
         System.out.println(probabilities);
-    }
-    public void setState(ComplexMatrix startingState) {
-        tracker.setStateVec(startingState);
     }
 }

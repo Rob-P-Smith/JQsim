@@ -1,3 +1,4 @@
+import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
 import interpreter.jqs;
@@ -21,24 +22,23 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        simpleDemo();
-//        quantumTeleportation();
-//        System.out.println("Test Simulate");
-//        testingSimulate();
         smallTest();
+//        simpleDemo();
     }
 
     public static void simpleDemo(){
         jqs jqs = new jqs(2);
+
         jqs.X(0);
         jqs.H(1);
         jqs.getComputationalState();
         System.out.println(jqs);
+        System.out.println(ComplexMath.complexMatrixToBasisStates(jqs.getStateVec()));
     }
 
     public static void testingSimulate(){
         jqs jqs = new jqs(3);
-        jqs.X(0);
+
         jqs.H(1);
         jqs.CX(1, 2);
         jqs.CX(0, 1);
@@ -52,9 +52,11 @@ public class Sandbox {
 
     public static void smallTest(){
         jqs jqs = new jqs(2);
+
         jqs.H(0);
         jqs.CX(0,1);
         jqs.simulate();
+//        System.out.println(ComplexMath.complexMatrixToBasisStates(jqs.getStateVec()));
     }
 
     public static void quantumTeleportation() {

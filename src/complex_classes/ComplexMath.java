@@ -249,6 +249,29 @@ public final class ComplexMath {
     }
 
     /**
+     * Interprets the system state vector into a Dirac notation representation for printing to console.
+     * @param stateVector the current system state vector
+     * @return A string of the dirac notation representation
+     */
+    public static String complexMatrixToBasisStates(ComplexMatrix stateVector) {
+        if (stateVector.getWidth() != 1) {
+            throw new IllegalArgumentException("State vector must be a column vector");
+        }
+
+        int numQubits = (int) (Math.log(stateVector.getHeight()) / Math.log(2));
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < stateVector.getHeight(); i++) {
+            ComplexNumber amplitude = stateVector.get(i, 0);
+            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
+                result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩").append('$');
+            }
+        }
+
+        return result.toString();
+    }
+
+    /**
      * Converts the complex number to a string in a particular format for use elsewhere
      * @param compNum the ComplexNumber to convert
      * @return the string in a special format
