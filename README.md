@@ -89,25 +89,25 @@ be used instead. simulate() will calculate and print out all valid basis states 
 <br>  
 <li><b>Rotation X</b></li>
    <ul>
-     <li>The RX gate is invoked with jqs.RX(t, n) t is theta in radians (double) and n is the target qubit.</li>
+     <li>The RX gate is invoked with jqs.RX(t, n) where t is theta in radians (double) and n is the target qubit.</li>
      <li>The RX gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
 <br>  
 <li><b>Rotation Y</b></li> 
   <ul>
-     <li>The RY gate is invoked with jqs.RY(t, n) t is theta in radians (double) and n is the target qubit.</li>
+     <li>The RY gate is invoked with jqs.RY(t, n) where t is theta in radians (double) and n is the target qubit.</li>
          <li>The RY gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
 <br>  
 <li><b>Rotation Z</b></li>
   <ul>
-     <li>The RZ gate is invoked with jqs.RZ(t, n) t is theta in radians (double) and n is the target qubit.</li>
+     <li>The RZ gate is invoked with jqs.RZ(t, n) where t is theta in radians (double) and n is the target qubit.</li>
          <li>The RZ gate has a default theta of PI/4, and can be invoked with jqs.RZ(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
 <br>  
 <li><b>Rotation Phase</b></li>
   <ul>
-    <li>The Rotation Phase gate can be invoked with jqs.R1(n) where n is the target qubit.</li>
+    <li>The Rotation Phase gate can be invoked with jqs.R1(t, n) where t is theta in radians (double) n is the target qubit.</li>
          <li>The R1 gate has a default theta of PI, and can be invoked with jqs.R1(n) where n is the target qubit for the PI default theta.</li>
   </ul>
 <br>
@@ -175,21 +175,23 @@ state vector of the system.
 &#x2705; Rework CNOT to be mathematically correct to CX 0,1 and CX 1,0 differences.  
 &#x2705;Expand gate functionality by implementing phase shifts, rotation gates, and composed gates from other gates.  
 
-## Phase 5: ***Currently Working***
+## Phase 5: 
 &#x2705;Ensure control gates apply correctly across superposition system states when multiple gates are applied, preserving  
-both amplitude and phase of each qubit.    
-&#x274C;Continue implementing the more complex gates, e.g. RXX, QFT, etc.  
-&#x274C;Implement simulatnious measurment of each qubit and implement measurement of single qubit and cast result into  
-a classical bit.  
+both amplitude and phase of each qubit.
+&#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
+a classical bit. ***Currently Working***  
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
 ## Phase 6:
+&#x274C;Complete use documentation and build error reporting structure for users to submit incorrect results or unexpected outcomes.  
+&#x274C;Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values.  
 &#x274C;Do a careful and thorough code review to clean up and restructure for efficiency and maintainability before freezing to start  
 front end construction.  
-&#x274C;Convert all outputs to JSON and prepare for front end construction.  
-&#x274C;Build the front end (oh boy!)
 
-&#x274C;Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values.  
+## Phase X (aka indeterminately far into the future tasks): 
+&#x274C;Continue implementing the more complex gates, e.g. RXX, QFT, etc.  
+&#x274C;Convert all outputs to JSON in preparation for front end construction.  
+&#x274C;Build the front end (oh boy!)  
 
 # Issues  
 
