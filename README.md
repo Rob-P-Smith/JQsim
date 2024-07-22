@@ -37,7 +37,7 @@ This will display the current system state in Dirac notation, like this:
 For more complex circuits, the measure(n) or M(n) function options exist where n is the target qubit to measure. If the amplitude is not 0.0 or 1.0
 measure or M will probabilistically determine the value and set the state vector value to the appropriate value based on that determination. This is a single
 'shot' determination. Useful in cases like quantum teleportation, where the goal is to transfer the value to the ancillary qubit and that behavior can be observed 
-by setting up a system with
+by setting up a system with  
 **jqs jqs = new jqs(3);**  
 **jqs.X(0);**  
 **jqs.H(1);**  
@@ -50,7 +50,7 @@ by setting up a system with
 **jqs.CZ(0,2);**
 **jqs.measure(2);**  
 
-When using this the output for the system state if a user prints it will be one of these four states with equal probability:  
+When using this the output for the system state if a user prints it will be one of these four states with equal probabilities based on the amplitudes of 0.500 for each:  
 |ψ⟩100  
 |ψ⟩101  
 |ψ⟩110  
@@ -63,11 +63,20 @@ Single qubit gates available are:
 <ul>
   <li>Hadmard Gate</li>
   <ul>
-    <li>The H gate is invoked with </li>
+    <li>The H gate is invoked with jqs.H(n) where n is the target qubit.</li>
   </ul>
   <li>Pauli-X</li>
+  <ul>
+     <li>The X gate is invoked with jqs.X(n) where n is the target qubit.</li>
+    <\ul>
   <li>Pauli-Y</li>
+      <ul>
+     <li>The Y gate is invoked with jqs.Y(n) where n is the target qubit.</li>
+    <\ul>
   <li>Puali-Z</li>
+        <ul>
+     <li>The Z gate is invoked with jqs.Z(n) where n is the target qubit.</li>
+    <\ul>
   <li>Rotation X</li>
   <li>Rotation Y</li>
   <li>Rotation Z</li>
