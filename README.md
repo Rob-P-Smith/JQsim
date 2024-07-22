@@ -38,6 +38,7 @@ For more complex circuits, the measure(n) or M(n) function options exist where n
 measure or M will probabilistically determine the value and set the state vector value to the appropriate value based on that determination. This is a single
 'shot' determination. Useful in cases like quantum teleportation, where the goal is to transfer the value to the ancillary qubit and that behavior can be observed 
 by setting up a system with  
+
 **jqs jqs = new jqs(3);**  
 **jqs.X(0);**  
 **jqs.H(1);**  
@@ -51,6 +52,7 @@ by setting up a system with
 **jqs.measure(2);**  
 
 When using this the output for the system state if a user prints it will be one of these four states with equal probabilities based on the amplitudes of 0.500 for each:  
+
 |ψ⟩100  
 |ψ⟩101  
 |ψ⟩110  
@@ -61,32 +63,34 @@ be used instead. simulate() will calculate and print out all valid basis states 
 
 Single qubit gates available are:  
 <ol>
-  <li>Hadmard Gate</li>
+  <li><b>Hadmard Gate</b></li>
   <ul>
     <li>The H gate is invoked with jqs.H(n) where n is the target qubit.</li>
   </ul>
-  <li>Pauli-X</li>
+  <li>Pauli-X</b></li>
   <ul>
      <li>The X gate is invoked with jqs.X(n) where n is the target qubit.</li>
-  </ul>ul>
-  <li>Pauli-Y</li>
+  </ul>
+  <li>Pauli-Y</b></li>
       <ul>
      <li>The Y gate is invoked with jqs.Y(n) where n is the target qubit.</li>
-      </ul>ul>
-  <li>Puali-Z</li>
+      </ul>
+  <li>Puali-Z</b></li>
         <ul>
      <li>The Z gate is invoked with jqs.Z(n) where n is the target qubit.</li>
         </ul>
-  <li>Rotation X</li>
+  <li>Rotation X</b></li>
    <ul>
      <li>The RX gate is invoked with jqs.RX(t, n) t is theta in radians (double) and n is the target qubit.</li>
      <li>The RX gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
-  <li>Rotation Y</li> <ul>
+  <li>Rotation Y</b></li> 
+  <ul>
      <li>The RY gate is invoked with jqs.RY(t, n) t is theta in radians (double) and n is the target qubit.</li>
          <li>The RY gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
-  <li>Rotation Z</li> <ul>
+  <li>Rotation Z</b></li>
+  <ul>
      <li>The RZ gate is invoked with jqs.RZ(t, n) t is theta in radians (double) and n is the target qubit.</li>
          <li>The RZ gate has a default theta of PI/4, and can be invoked with jqs.RZ(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
@@ -109,7 +113,7 @@ Single qubit gates available are:
   </ul>
   <li>Phase Gate Ti</li>
    <ul>
-    <li></li>The Ti gate can be invoked with jqs.Ti(n) where n is target qubit.</li>
+    <li>The Ti gate can be invoked with jqs.Ti(n) where n is target qubit.</li>
   </ul>
   <li>Identity</li>
   <ul>
