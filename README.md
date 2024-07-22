@@ -3,6 +3,7 @@
 [1. About](#about)  
 [2. Progress](#progress)  
 [3. Use](#use)  
+[4. Known Issues(#issues)
 
 # About  
 
@@ -58,4 +59,77 @@ front end construction.
 &#x274C;Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values.
 
 # Use  
+JQsim uses a layered abstraction to present the user with a simply syntax, inspired by the popular Qiskit syntax.  
+Similar to Qiskit, JQsim requires a setup line at the head of the users file for example:  
+
+**jqs jqs = new jqs(n); n = number of qubits in system**  
+
+This will setup the backend and build a state vector with the MSB set to 1, while all other values are set to 0, e.g. a zero initialized 
+quantum state vector.  
+
+Following instantiation and setup above, the user can add gates intuitively by using the syntax:  
+
+**<your_jqs_object_name>.<gate_abbreviation>(target);**  
+
+Example Pauli-X on the above targeting qubit 0 and Hadmard on qubit 1:  
+
+**jqs.X(0);**  
+**jqs.H(1);**  
+
+This does not execute any calculation, as that is left to the user to pick whawt type of calculation is done.  
+getComputationalState() - This method simply calculates the current state vector values. It has no return. To print your system computational basis states
+a user would need to invoke a connsole print, e.g.:  
+
+**jqs.getComputationalState();**
+**System.out.println(jqs);**  
+
+This will display the current system state in Dirac notation, like this:  
+
+**|ψ⟩ = 0.707|01⟩, 0.707|11⟩**  
+
+For more complex circuits, the measure(n) or M(n) function options exist where n is the target qubit to measure. If the amplitude is not 0.0 or 1.0
+measure or M will probabilistically determine the value and set the state vector value to the appropriate value based on that determination. This is a single
+'shot' determination. Useful in cases like quantum teleportation, where the goal is to transfer the value to the ancillary qubit and that behavior can be observed 
+by setting up a system with
+**jqs jqs = new jqs(3);**  
+**jqs.X(0);**  
+**jqs.H(1);**  
+**jqs.CX(1,2);**  
+**jqs.H(0);**  
+**jqs.CX(0,1);**  
+**jqs.measure(0);**  
+**jqs.measure(1);**  
+**jqs.CX(1,2);**  
+**jqs.CZ(0,2);**
+**jqs.measure(2);**  
+
+When using this the output for the system state if a user prints it will be one of these four states with equal probability:  
+|ψ⟩100  
+|ψ⟩101  
+|ψ⟩110  
+|ψ⟩111  
+
+This measure function is akin to Qiskit's measure function, but only show a single determined output state. To get the probabilities for each state, the simulate() method should
+be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occuring.  
+
+Single qubit gates available are:  
+<ul>
+  <li>Hadmard Gate</li>
+  <ul>
+    <li>The H gate is invoked with </li>
+  </ul>
+  <li>Pauli-X</li>
+  <li>Pauli-Y</li>
+  <li>Puali-Z</li>
+  <li>Rotation X</li>
+  <li>Rotation Y</li>
+  <li>Rotation Z</li>
+  <li>Rotation Phase</li>
+  <li>Phase Gate S</li>
+  <li>Phase Gate Si</li>
+  <li>Phase Gate T</li>
+  <li>Phase Gate Ti</li>
+  <li>Identity</li>
+</ul>
+# Issues  
 
