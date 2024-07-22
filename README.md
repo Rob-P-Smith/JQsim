@@ -56,10 +56,10 @@ by setting up a system with
 
 When using this the output for the system state if a user prints it will be one of these four states with equal probabilities based on the amplitudes of 0.500 for each:  
 
-|ψ⟩100  
-|ψ⟩101  
-|ψ⟩110  
-|ψ⟩111  
+**|ψ⟩100**  
+**|ψ⟩101**  
+**|ψ⟩110**  
+**|ψ⟩111**  
 
 This measure function is akin to Qiskit's measure function, but only show a single determined output state. To get the probabilities for each state, the simulate() method should
 be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occuring.  
