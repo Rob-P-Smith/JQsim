@@ -60,7 +60,7 @@ This measure function is akin to Qiskit's measure function, but only show a sing
 be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occuring.  
 
 Single qubit gates available are:  
-<ul>
+<ol>
   <li>Hadmard Gate</li>
   <ul>
     <li>The H gate is invoked with jqs.H(n) where n is the target qubit.</li>
@@ -86,7 +86,7 @@ Single qubit gates available are:
   <li>Phase Gate T</li>
   <li>Phase Gate Ti</li>
   <li>Identity</li>
-</ul>  
+</ol>  
 
 # About  
 
