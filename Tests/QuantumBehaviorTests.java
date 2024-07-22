@@ -130,7 +130,16 @@ public class QuantumBehaviorTests {
 
     @Test
     public void testQuantumTeleportation(){
-
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.H(1);
+        jqs.CX(1,2);
+        jqs.H(0);
+        jqs.CX(0,1);
+        jqs.measureQubit(0);
+        jqs.measureQubit(1);
+        jqs.CX(1,2);
+        jqs.CZ(0,2); jqs.measureQubit(2);
     }
 
     @Test

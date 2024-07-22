@@ -3,6 +3,9 @@
 [1. About](#about)  
 [2. Progress](#progress)  
 [3. Use](#use)  
+[4. Single Qubit Gates](#single_qubit_gates)  
+[5. Dual Qubit Gates](#dual_qubit_gates)  
+[6. Multi Qubit Gates](#multi_qubit_gates)  
 [4. Known Issues](#issues)
 
 # Use  
@@ -61,67 +64,80 @@ When using this the output for the system state if a user prints it will be one 
 This measure function is akin to Qiskit's measure function, but only show a single determined output state. To get the probabilities for each state, the simulate() method should
 be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occuring.  
 
-Single qubit gates available are:  
+# Single Qubit Gates
+
 <ol>
   <li><b>Hadmard Gate</b></li>
   <ul>
     <li>The H gate is invoked with jqs.H(n) where n is the target qubit.</li>
   </ul>
-  <li>Pauli-X</b></li>
+<br>
+  <li><b>Pauli-X</b></li>
   <ul>
      <li>The X gate is invoked with jqs.X(n) where n is the target qubit.</li>
   </ul>
-  <li>Pauli-Y</b></li>
+<br>  
+<li><b>Pauli-Y</b></li>
       <ul>
      <li>The Y gate is invoked with jqs.Y(n) where n is the target qubit.</li>
       </ul>
-  <li>Puali-Z</b></li>
+<br>  
+<li><b>Puali-Z</b></li>
         <ul>
      <li>The Z gate is invoked with jqs.Z(n) where n is the target qubit.</li>
         </ul>
-  <li>Rotation X</b></li>
+<br>  
+<li><b>Rotation X</b></li>
    <ul>
      <li>The RX gate is invoked with jqs.RX(t, n) t is theta in radians (double) and n is the target qubit.</li>
      <li>The RX gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
-  <li>Rotation Y</b></li> 
+<br>  
+<li><b>Rotation Y</b></li> 
   <ul>
      <li>The RY gate is invoked with jqs.RY(t, n) t is theta in radians (double) and n is the target qubit.</li>
          <li>The RY gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
-  <li>Rotation Z</b></li>
+<br>  
+<li><b>Rotation Z</b></li>
   <ul>
      <li>The RZ gate is invoked with jqs.RZ(t, n) t is theta in radians (double) and n is the target qubit.</li>
          <li>The RZ gate has a default theta of PI/4, and can be invoked with jqs.RZ(n) where n is the target qubit for the PI/4 default theta.</li>
         </ul>
-  <li>Rotation Phase</li>
+<br>  
+<li><b>Rotation Phase</b></li>
   <ul>
     <li>The Rotation Phase gate can be invoked with jqs.R1(n) where n is the target qubit.</li>
          <li>The R1 gate has a default theta of PI, and can be invoked with jqs.R1(n) where n is the target qubit for the PI default theta.</li>
   </ul>
-  <li>Phase Gate S</li>
+<br>
+  <li><b>Phase Gate S</b></li>
   <ul>
     <li>The S gate can be invoked with jqs.S(n) where n is target qubit.</li>
   </ul>
-  <li>Inverse Phase Gate S</li>
+<br>
+  <li><b>Inverse Phase Gate S</b></li>
   <ul>
     <li>The Si gate can be invoked with jqs.Si(n) where n is target qubit.</li>
-  </ul>
-  <li>Phase Gate T</li>
+  </ul><br>
+  <li><b>Phase Gate T</b></li>
    <ul>
     <li>The T gate can be invoked with jqs.T(n) where n is target qubit.</li>
-  </ul>
-  <li>Phase Gate Ti</li>
+  </ul><br>
+  <li><b>Phase Gate Ti</b></li>
    <ul>
     <li>The Ti gate can be invoked with jqs.Ti(n) where n is target qubit.</li>
-  </ul>
-  <li>Identity</li>
+  </ul><br>
+  <li><b>Identity</b></li>
   <ul>
     <li>Identity can be invoked with jqs.ID(n) where n is the target qubit.</li>
     <li>**It should be noted that ID is not required, the solver will introduce ID where required unless you have a special case.**</li>
   </ul>
 </ol>  
 
+# Dual Qubit Gates  
+
+# Multi Qubit Gates
 # About  
 
 The project started off as a system based on the below article conceptually, but it is implemented  

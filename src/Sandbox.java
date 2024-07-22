@@ -21,10 +21,20 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
+//        simpleDemo();
         quantumTeleportation();
-        System.out.println("Test Simulate");
-        testingSimulate();
+//        System.out.println("Test Simulate");
+//        testingSimulate();
     }
+
+    public static void simpleDemo(){
+        jqs jqs = new jqs(2);
+        jqs.X(0);
+        jqs.H(1);
+        jqs.getComputationalState();
+        System.out.println(jqs);
+    }
+
     public static void testingSimulate(){
         jqs jqs = new jqs(3);
         jqs.X(0);
