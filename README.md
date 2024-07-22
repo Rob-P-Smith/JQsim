@@ -3,7 +3,7 @@
 [1. About](#about)  
 [2. Progress](#progress)  
 [3. Use](#use)  
-[4. Known Issues(#issues)
+[4. Known Issues](#issues)
 
 # Use  
 JQsim uses a layered abstraction design to present the user with a simply syntax, inspired by the popular Qiskit syntax, streamlining the Java specific code naunce for a better user experience.   
