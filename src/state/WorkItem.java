@@ -232,11 +232,13 @@ public class WorkItem {
      */
     @Override
     public String toString(){
-        String result;
+        String result ="";
         if(this.singleQubit){
-            result = this.operator +", Target qubit: " + this.target;
-        } else {
-            result = this.operator +"\nControls: ";
+            result += this.operator +", Target qubit: " + this.target;
+        } else if (this.dualQubit){
+            result += this.operator +", Control qubit: " + this.control + ", Target qubit: " + this.target;
+        }else if(this.multiQubit) {
+            result += this.operator +"\nControls: ";
             for(int i = 0; i < controls.length; i++){
                 if(i!=controls.length-1) {
                     result += controls[i] + ", ";

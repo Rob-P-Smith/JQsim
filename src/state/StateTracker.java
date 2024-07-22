@@ -44,7 +44,12 @@ public class StateTracker {
     }
 
     public StateTracker makeClone(){
-        return new StateTracker(this.getStateVec());
+        ComplexMatrix copy = new ComplexMatrix(this.getStateVecSize(), 1);
+        for(int i = 0; i < this.getStateVecSize(); i++){
+            ComplexNumber rowCopy = new ComplexNumber(this.get(i,0).getReal(),this.get(i,0).getImag());
+            copy.set(i,0, rowCopy);
+        }
+        return new StateTracker(copy);
     }
 
     /**

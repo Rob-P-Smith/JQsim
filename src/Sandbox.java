@@ -22,9 +22,10 @@ public class Sandbox {
      */
     public static void main(String[] args) {
 //        simpleDemo();
-        quantumTeleportation();
+//        quantumTeleportation();
 //        System.out.println("Test Simulate");
 //        testingSimulate();
+        smallTest();
     }
 
     public static void simpleDemo(){
@@ -46,6 +47,13 @@ public class Sandbox {
         jqs.CX(1,2);
         jqs.CZ(0, 2);
         jqs.M(2);
+        jqs.simulate();
+    }
+
+    public static void smallTest(){
+        jqs jqs = new jqs(2);
+        jqs.H(0);
+        jqs.CX(0,1);
         jqs.simulate();
     }
 

@@ -36,7 +36,7 @@ import java.util.Random;
  * @since 7 July 2024
  */
 public class jqs {
-    private int shots = 3;
+    private int shots = 1000;
     private int numQubits;
     private WorkQueue workQueue;
     private StateTracker tracker;
@@ -536,29 +536,29 @@ public class jqs {
      * @return the probabilities of each state in a String
      */
     public void simulate() {
-        WorkQueue workCopy = (WorkQueue)workQueue.makeClone();
-        StateTracker stateClone = (StateTracker)tracker.makeClone();
+        WorkQueue workCopy = workQueue.makeClone();
+        StateTracker stateClone = tracker.makeClone();
         Map<String, Integer> resultsMap = new HashMap<>();
         String probabilities = "";
 
         for (int i = 0; i < shots; i++) {
             while (workQueue.hasWork()) {
+                GateDirector gdd = new GateDirector(this.tracker);
                 WorkItem nextItem = workQueue.peek();
-                ComplexMatrix matrix = gd.getGate(workQueue.getNextGate());
+                ComplexMatrix matrix = gdd.getGate(workQueue.getNextGate());
                 if (nextItem.isSingleTarget()) { // TODO: temporary, fix this for non Control multi-qubit gates
                     tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
                 }
             }
             resultsMap.put(this.toString(), resultsMap.getOrDefault(this.toString(), 0) + 1);
-            if(i < shots-2) {
-                this.tracker = stateClone;
-                this.workQueue = workCopy;
+            if(i < shots) {
+                this.tracker = stateClone.makeClone();
+                this.workQueue = workCopy.makeClone();
             }
         }
         Map<String, Double> incidentMap = new HashMap<>();
         for (String key : resultsMap.keySet()) {
             double value = resultsMap.get(key)/(shots*1.0);
-
             incidentMap.put(key, value);
         }
         double perIncident = 1.0 / shots;
@@ -572,7 +572,6 @@ public class jqs {
         probabilities+="\nSum of raw probability values: "+total;
         System.out.println(probabilities);
     }
-
     public void setState(ComplexMatrix startingState) {
         tracker.setStateVec(startingState);
     }

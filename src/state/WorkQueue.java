@@ -47,7 +47,19 @@ public class WorkQueue {
      * @return WorkQueue copy of this
      */
     public WorkQueue makeClone(){
-     return new WorkQueue(this.getGates());
+        WorkQueue copy = new WorkQueue();
+        Queue<WorkItem> workItems = this.getGates();
+        for(WorkItem gate: workItems){
+            if(gate.isSingleTarget()) {
+                copy.addGate(gate.getOperator(), gate.getTarget());
+            } else if (gate.isDualTarget()){
+                copy.addGate(gate.getOperator(), gate.getControl(), gate.getTarget());
+            }
+            else {
+                copy.addGate(gate.getOperator(), gate.getControls(), gate.getTargets());
+            }
+        }
+        return copy;
     }
 
     /**
