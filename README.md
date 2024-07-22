@@ -68,24 +68,54 @@ Single qubit gates available are:
   <li>Pauli-X</li>
   <ul>
      <li>The X gate is invoked with jqs.X(n) where n is the target qubit.</li>
-    <\ul>
+  </ul>ul>
   <li>Pauli-Y</li>
       <ul>
      <li>The Y gate is invoked with jqs.Y(n) where n is the target qubit.</li>
-    <\ul>
+      </ul>ul>
   <li>Puali-Z</li>
         <ul>
      <li>The Z gate is invoked with jqs.Z(n) where n is the target qubit.</li>
-    <\ul>
+        </ul>
   <li>Rotation X</li>
-  <li>Rotation Y</li>
-  <li>Rotation Z</li>
+   <ul>
+     <li>The RX gate is invoked with jqs.RX(t, n) t is theta in radians (double) and n is the target qubit.</li>
+     <li>The RX gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
+        </ul>
+  <li>Rotation Y</li> <ul>
+     <li>The RY gate is invoked with jqs.RY(t, n) t is theta in radians (double) and n is the target qubit.</li>
+         <li>The RY gate has a default theta of PI/4, and can be invoked with jqs.RX(n) where n is the target qubit for the PI/4 default theta.</li>
+        </ul>
+  <li>Rotation Z</li> <ul>
+     <li>The RZ gate is invoked with jqs.RZ(t, n) t is theta in radians (double) and n is the target qubit.</li>
+         <li>The RZ gate has a default theta of PI/4, and can be invoked with jqs.RZ(n) where n is the target qubit for the PI/4 default theta.</li>
+        </ul>
   <li>Rotation Phase</li>
+  <ul>
+    <li>The Rotation Phase gate can be invoked with jqs.R1(n) where n is the target qubit.</li>
+         <li>The R1 gate has a default theta of PI, and can be invoked with jqs.R1(n) where n is the target qubit for the PI default theta.</li>
+  </ul>
   <li>Phase Gate S</li>
-  <li>Phase Gate Si</li>
+  <ul>
+    <li>The S gate can be invoked with jqs.S(n) where n is target qubit.</li>
+  </ul>
+  <li>Inverse Phase Gate S</li>
+  <ul>
+    <li>The Si gate can be invoked with jqs.Si(n) where n is target qubit.</li>
+  </ul>
   <li>Phase Gate T</li>
+   <ul>
+    <li>The T gate can be invoked with jqs.T(n) where n is target qubit.</li>
+  </ul>
   <li>Phase Gate Ti</li>
+   <ul>
+    <li></li>The Ti gate can be invoked with jqs.Ti(n) where n is target qubit.</li>
+  </ul>
   <li>Identity</li>
+  <ul>
+    <li>Identity can be invoked with jqs.ID(n) where n is the target qubit.</li>
+    <li>**It should be noted that ID is not required, the solver will introduce ID where required unless you have a special case.**</li>
+  </ul>
 </ol>  
 
 # About  
