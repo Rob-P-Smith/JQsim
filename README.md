@@ -1,5 +1,11 @@
 # JQsim is a *simple* quantum simulator code exploration which may evolve into a publicly available quantum simulation Java library.
 
+[1. About](#about)
+[2. Progress](#progress)
+[3. Use](#use)
+
+# About  
+
 The project started off as a system based on the below article conceptually, but it is implemented  
 using Java instead of Racket and is a more complex implementation than the article provides for.  
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
@@ -14,6 +20,8 @@ Practical upper limit for qubit creation at this point is ~14 qubits, which cons
 The groundwork is created that will implement sparse storage of the state vector and implement  
 sparse matrix calculations to reduce memory overhead, will be implemented when all other vector and  
 matrix operations provide correct outputs.
+
+# Progress
 
 ## Phase 1:
 &#x2705; Initial implementation to ensure flexibility for any practical number of qubits.  
@@ -48,3 +56,6 @@ front end construction.
 &#x274C;Build the front end (oh boy!)
 
 &#x274C;Implement a decomposer using a TopSort for possible gate compositions to achieve a resultant set of expectation values.
+
+# Use  
+
