@@ -9,12 +9,12 @@
 [4. Known Issues](#issues)
 
 # Use  
-JQsim uses a layered abstraction design to present the user with a simply syntax, inspired by the popular Qiskit syntax, streamlining the Java specific code naunce for a better user experience.   
+JQsim uses a layered abstraction design to present the user with a simple syntax, inspired by the popular Qiskit syntax, streamlining the Java specific code nuance for a better user experience.   
 Similar to Qiskit, JQsim requires a setup line at the head of the users file for example:  
 
 **jqs jqs = new jqs(n); n = number of qubits in system**  
 
-This will setup the backend and build a state vector with the MSB set to 1, while all other values are set to 0, e.g. a zero initialized 
+This will set up the backend and build a state vector with the MSB set to 1, while all other values are set to 0, e.g. a zero initialized 
 quantum state vector.  
 
 Following instantiation and setup above, the user can add gates intuitively by using the syntax:  
@@ -26,9 +26,9 @@ Example Pauli-X on the above targeting qubit 0 and Hadmard on qubit 1:
 **jqs.X(0);**  
 **jqs.H(1);**  
 
-This does not execute any calculation, as that is left to the user to pick whawt type of calculation is done.  
+This does not execute any calculation, as that is left to the user to pick what type of calculation is done.  
 getComputationalState() - This method simply calculates the current state vector values. It has no return. To print your system computational basis states
-a user would need to invoke a connsole print, e.g.:  
+a user would need to invoke a console print, e.g.:  
 
 **jqs.getComputationalState();**
 **System.out.println(jqs);**  
@@ -62,7 +62,7 @@ When using this the output for the system state if a user prints it will be one 
 **|ψ⟩111**  
 
 This measure function is akin to Qiskit's measure function, but only show a single determined output state. To get the probabilities for each state, the simulate() method should
-be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occuring.  
+be used instead. simulate() will calculate and print out all valid basis states after applying the circuit and the probability of each occurring.  
 
 # Single Qubit Gates
 
@@ -188,7 +188,7 @@ The project started off as a system based on the below article conceptually, but
 using Java instead of Racket and is a more complex implementation than the article provides for.  
 https://medium.com/@sourav_datta/build-a-quantum-computing-simulator-from-scratch-part-1-a8d9a9d93fba
 
-Currently I have shifted from a per qubit state tracker to a single state vector representing  
+Currently, I have shifted from a per qubit state tracker to a single state vector representing  
 the state of the entire system. No measurements are taken along the process, preserving all  
 information until the final measurement, as a real QC does. The computational basis states are  
 observable as gates are added.
