@@ -36,7 +36,7 @@ import java.util.Random;
  * @since 7 July 2024
  */
 public class jqs {
-    private int shots = 1001;
+    private int shots = 1000;
     private int numQubits;
     private WorkQueue workQueue;
     private StateTracker tracker;
@@ -62,6 +62,16 @@ public class jqs {
      * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
      */
     public jqs(int numQubits) {
+        device(numQubits);
+    }
+
+    /**
+     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     *
+     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
+     */
+    public jqs(int numQubits, int shots) {
+        this.shots = shots;
         device(numQubits);
     }
 
@@ -552,10 +562,15 @@ public class jqs {
             }
             // Need to insert the determined state resulting from the collapse into the resultsMap not the long form dirac or
             // short form dirac possible results, but a concrete result.
-            String[] viableStates = getViableStatesProbabilities();
+            for(int j = 0; j < numQubits; j++){
+                measureQubit(j);
+            }
+            String[] viableStates = getViableStates();
             for(String state : viableStates){
                 resultsMap.put(state, resultsMap.getOrDefault(state, 0)+1);
             }
+            workQueue = workCopy.makeClone();
+            tracker.setStateVec(stateClone.getStateVec());
         }
         aggregateResults(resultsMap);
     }
@@ -564,7 +579,7 @@ public class jqs {
         tracker.setStateVec(startingState);
     }
 
-    private String[] getViableStatesProbabilities(){
+    private String[] getViableStates(){
         String states = ComplexMath.complexMatrixToBasisStates(this.tracker.getStateVec());
         return states.split("\\$");
     }
