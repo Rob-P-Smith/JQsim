@@ -319,6 +319,10 @@ public final class ComplexMath {
 //        }
     }
 
+    public static double getPhase(double real, double imag){
+        return Math.atan2(imag, real);
+    }
+
     /**
      * Computes the conjugate of a complex number.
      *
