@@ -91,17 +91,17 @@ public class GateDirector {
             case ("Y"), ("CY") -> singleOperator = PAULI_Y.getMatrix();
             case ("Z"), ("CZ") -> singleOperator = PAULI_Z.getMatrix();
             case ("H"), ("CH") -> singleOperator = HADAMARD.getMatrix();
-            case ("S") -> singleOperator = S_GATE.getMatrix();
-            case ("Si") -> singleOperator = SI_GATE.getMatrix();
-            case ("T") -> singleOperator = T_GATE.getMatrix();
-            case ("Ti") -> singleOperator = TI_GATE.getMatrix();
-            case ("ID") -> singleOperator = IDENTITY.getMatrix();
-            case ("RX") -> singleOperator = buildRXGate(work);
-            case ("RY") -> singleOperator = buildRYGate(work);
-            case ("RZ") -> singleOperator = buildRZGate(work);
-            case ("R1") -> singleOperator = buildR1Gate(work);
+            case ("S"), ("CS") -> singleOperator = S_GATE.getMatrix();
+            case ("Si"), ("CSi") -> singleOperator = SI_GATE.getMatrix();
+            case ("T"), ("CT") -> singleOperator = T_GATE.getMatrix();
+            case ("Ti"), ("CTi") -> singleOperator = TI_GATE.getMatrix();
+            case ("RX"), ("CRX") -> singleOperator = buildRXGate(work);
+            case ("RY"), ("CRY") -> singleOperator = buildRYGate(work);
+            case ("RZ"), ("CRZ") -> singleOperator = buildRZGate(work);
+            case ("R1"), ("CR1") -> singleOperator = buildR1Gate(work);
             case ("SWAP"), ("CSWAP") -> singleOperator = SWAP.getMatrix();
             case ("ISWAP") -> singleOperator = ISWAP.getMatrix();
+            case ("ID") -> singleOperator = IDENTITY.getMatrix();
         }
         return singleOperator;
     }

@@ -232,19 +232,16 @@ public final class ComplexMath {
                 }else {
                     result.append(", ");
                 }
-
                 String coeffString = complexToString(amplitude);
                 if (!coeffString.equals("1") && !coeffString.equals("-1")) {
                     result.append(coeffString);
                 } else if (coeffString.equals("-1") && firstTerm) {
                     result.append("-");
                 }
-
                 result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩");
                 firstTerm = false;
             }
         }
-
         return result.toString();
     }
 
@@ -263,7 +260,10 @@ public final class ComplexMath {
 
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
+            String phaseString = complexPhaseToString(amplitude);
             if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
+                result.append("|").append(PSI.lower()).append("⟩ = ");
+                result.append(phaseString);
                 result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩").append('$');
             }
         }
@@ -284,6 +284,39 @@ public final class ComplexMath {
         } else {
             return String.format("(%.3f + %.3fi)", compNum.getReal(), compNum.getImag());
         }
+    }
+
+    /**
+     * Converts the complex number to a string in a particular format for use elsewhere
+     * @param compNum the ComplexNumber to convert
+     * @return the string in a special format
+     */
+    public static String complexPhaseToString(ComplexNumber compNum) {
+        double real = compNum.getReal();
+        double imag = compNum.getImag();
+
+        if(real < 1e-10 && imag < 1e-10){
+            return String.format("(%.1f + %.1fi)", compNum.getReal(), compNum.getImag());
+        } else if(real < 1e-10){
+            return String.format("%.1fi", compNum.getImag());
+        } else if(imag < 1e-10){
+            return String.format("%.1f", compNum.getReal());
+        } else {
+            return "";
+        }
+
+//        if (Math.abs(compNum.getReal()) < 1e-10) {
+//            return String.format("%.0fi", compNum.getImag());
+//        } else {
+//            return "";
+//        if (Math.abs(compNum.getImag()) < 1e-10) {
+//            return String.format("%.0f", compNum.getReal());
+//        } else if (Math.abs(compNum.getReal()) < 1e-10) {
+//            return String.format("%.0fi", compNum.getImag());
+//        } else {
+//            return String.format("(%.0f + %.0fi)", compNum.getReal(), compNum.getImag());
+//        }
+//        }
     }
 
     /**

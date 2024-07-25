@@ -132,7 +132,9 @@ public class MultiQubitGateBuilder {
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
-//                gateD.tracker.getStateVec().setData(newStateVector.getData());
+            }
+            case "CS" -> {
+
             }
         }
     }
@@ -176,18 +178,6 @@ public class MultiQubitGateBuilder {
                 gateD.tracker.setStateVec(newStateVector);
             }
         }
-//        for (int i = 0; i < stateSize; i++) {
-//            int controlBit = (i >> controlQubits) & 1;
-//
-//            if (controlBit == 1) {
-//                // Flip the target bit
-//                int newState = i ^ (1 << targetQubits);
-//                newStateVector.set(newState, 0, gateD.tracker.get(i, 0));
-//            } else {
-//                // Keep the state as is
-//                newStateVector.set(i, 0, gateD.tracker.get(i, 0));
-//            }
-//        }
         gateD.tracker.setStateVec(newStateVector);
     }
 }

@@ -407,7 +407,7 @@ public class jqs {
     public void CGate(String gate, int control, int target) {
         Integer[] controls = {control};
         Integer[] targets = {target};
-        workQueue.addGate(new WorkItem(gate, controls, targets));
+        workQueue.addGate(new WorkItem("C"+gate, controls, targets));
     }
 
     /**
@@ -588,17 +588,16 @@ public class jqs {
         int probArrayIdx = 1;                                                   //tracker position in for each loop
         probabilitiesArray[0] = "Probabilities over "+shots+" shots:";
         double perIncident = 1.0 / shots;                                       //weighted value per occurance of a result
-//        double total = 0.0;
+        double total = 0.0;
 
         for (String key : resultsMap.keySet()) {
             double chance = (resultsMap.get(key)/(shots))*perIncident*shots;
             String chanceString = String.format("%.3f", chance);
-//            total+= chance;
+            total+= chance;
             probabilitiesArray[probArrayIdx++]=key + ": " + chanceString;
         }
 
-//        probabilitiesArray[probArrayIdx]="\nSum of raw probability values: "+total; //enable if sum of probabilities == 1.0 is in doubt
-
+        probabilitiesArray[probArrayIdx]="\nSum of raw probability values: "+total; //enable if sum of probabilities == 1.0 is in doubt
         for(String value : probabilitiesArray){
             if(value != null){
                 System.out.println(value);

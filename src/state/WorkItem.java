@@ -23,7 +23,7 @@ public class WorkItem {
      * Constructs a WorkItem with a single target.
      *
      * @param operator The operator string.
-     * @param target The target value.
+     * @param target   The target value.
      * @see #WorkItem(String, int)
      */
     public WorkItem(String operator, int target) {
@@ -38,8 +38,8 @@ public class WorkItem {
      * Constructs a WorkItem with a single target for R gates.
      *
      * @param operator The operator string.
-     * @param target The target value.
-     * @param theta The rotation in radians.
+     * @param target   The target value.
+     * @param theta    The rotation in radians.
      * @see #WorkItem(String, int)
      */
     public WorkItem(String operator, int target, double theta) {
@@ -55,8 +55,8 @@ public class WorkItem {
      * Constructs a WorkItem with single control and single target.
      *
      * @param operator The operator string.
-     * @param control An array of control values.
-     * @param target An array of target values.
+     * @param control  An array of control values.
+     * @param target   An array of target values.
      * @see #WorkItem(String, Integer[], Integer[])
      */
     public WorkItem(String operator, int control, int target) {
@@ -73,8 +73,8 @@ public class WorkItem {
      *
      * @param operator The operator string.
      * @param controls An array of control values.
-     * @param targets An array of target values.
-     * @see #WorkItem(String, Integer[], Integer[])
+     * @param targets  An array of target values.
+     * @see #WorkItem(String, int, int)
      */
     public WorkItem(String operator, Integer[] controls, Integer[] targets) {
         this.operator = operator;
@@ -142,6 +142,7 @@ public class WorkItem {
 
     /**
      * Gets whether this work item is a single qubit gate.
+     *
      * @return boolean true if single qubit gate, false if not.
      */
     public boolean isSingleTarget() {
@@ -150,6 +151,7 @@ public class WorkItem {
 
     /**
      * Gets whether this work item is a dual qubit gate.
+     *
      * @return boolean true if dual qubit gate, false if not.
      */
     public boolean isDualTarget() {
@@ -158,6 +160,7 @@ public class WorkItem {
 
     /**
      * Gets whether this work item is a multi qubit gate.
+     *
      * @return boolean true if multi qubit gate, false if not.
      */
     public boolean isMultiTarget() {
@@ -218,38 +221,39 @@ public class WorkItem {
 
     /**
      * To string for the work item outputs
-     *<p><ul>
+     * <p><ul>
      * Single-qubit gates in format
      * operator, Target qubit: qubit#
-     *</ul>
+     * </ul>
      * <p>
      * Multi-qubit gates in format
      * <ul>
      * Controls: qubit#, qubit#
      * Targets: qubit#, qubit#
-     *</ul>
+     * </ul>
+     *
      * @return String of the work item
      */
     @Override
-    public String toString(){
-        String result ="";
-        if(this.singleQubit){
-            result += this.operator +", Target qubit: " + this.target;
-        } else if (this.dualQubit){
-            result += this.operator +", Control qubit: " + this.control + ", Target qubit: " + this.target;
-        }else if(this.multiQubit) {
-            result += this.operator +"\nControls: ";
-            for(int i = 0; i < controls.length; i++){
-                if(i!=controls.length-1) {
+    public String toString() {
+        String result = "";
+        if (this.singleQubit) {
+            result += this.operator + ", Target qubit: " + this.target;
+        } else if (this.dualQubit) {
+            result += this.operator + ", Control qubit: " + this.control + ", Target qubit: " + this.target;
+        } else if (this.multiQubit) {
+            result += this.operator + "\nControls: ";
+            for (int i = 0; i < controls.length; i++) {
+                if (i != controls.length - 1) {
                     result += controls[i] + ", ";
                 } else {
                     result += controls[i];
                 }
             }
-            result+="\n Targets: ";
-            for(int i = 0; i < targets.length; i++){
-                if(i!=targets.length-1){
-                    result += targets[i]+", ";
+            result += "\n Targets: ";
+            for (int i = 0; i < targets.length; i++) {
+                if (i != targets.length - 1) {
+                    result += targets[i] + ", ";
                 } else {
                     result += targets[i];
                 }
