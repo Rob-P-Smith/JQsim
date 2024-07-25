@@ -8,10 +8,7 @@ import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class provides the user interface for jqsim. The commands are similar to other established
@@ -548,7 +545,7 @@ public class jqs {
     public void simulate() {
         WorkQueue workCopy = workQueue.makeClone();
         StateTracker stateClone = tracker.makeClone();
-        Map<String, Integer> resultsMap = new HashMap<>();
+        Map<String, Double> resultsMap = new HashMap<>();
 
 
         for (int i = 0; i < shots; i++) {
@@ -567,7 +564,7 @@ public class jqs {
             }
             String[] viableStates = getViableStates();
             for(String state : viableStates){
-                resultsMap.put(state, resultsMap.getOrDefault(state, 0)+1);
+                resultsMap.put(state, resultsMap.getOrDefault(state, 0.0)+1.0);
             }
             workQueue = workCopy.makeClone();
             tracker.setStateVec(stateClone.getStateVec());
@@ -584,23 +581,28 @@ public class jqs {
         return states.split("\\$");
     }
 
-    private void aggregateResults(Map<String, Integer> resultsMap){
-        Map<String, Double> incidentMap = new HashMap<>();
-        String probabilities = "";
+    //enabled commented out code to check the sum values of all probabilities while the method runs and display in console.
+    //used for verifying the sum of all probabilities is ~1.0
+    private void aggregateResults(Map<String, Double> resultsMap){
+        String[] probabilitiesArray = new String[tracker.getStateVecSize()+2];  //sized for all possibilities + the 2 comments
+        int probArrayIdx = 1;                                                   //tracker position in for each loop
+        probabilitiesArray[0] = "Probabilities over "+shots+" shots:";
+        double perIncident = 1.0 / shots;                                       //weighted value per occurance of a result
+//        double total = 0.0;
+
         for (String key : resultsMap.keySet()) {
-            double value = resultsMap.get(key)/(shots*1.0);
-            incidentMap.put(key, value);
+            double chance = (resultsMap.get(key)/(shots))*perIncident*shots;
+            String chanceString = String.format("%.3f", chance);
+//            total+= chance;
+            probabilitiesArray[probArrayIdx++]=key + ": " + chanceString;
         }
 
-        double perIncident = 1.0 / shots;
-        double total = 0.0;
-        for (String key : incidentMap.keySet()) {
-            double chance = incidentMap.get(key)*perIncident*shots;
-            String chanceString = String.format("%.3f", chance);
-            total+= chance;
-            probabilities += "\n" + key + ": " + chanceString;
+//        probabilitiesArray[probArrayIdx]="\nSum of raw probability values: "+total; //enable if sum of probabilities == 1.0 is in doubt
+
+        for(String value : probabilitiesArray){
+            if(value != null){
+                System.out.println(value);
+            }
         }
-        probabilities+="\nSum of raw probability values: "+total;
-        System.out.println(probabilities);
     }
 }

@@ -26,7 +26,20 @@ public class Sandbox {
 //        smallTest();
 //        testingSimulate();
 //        quantumTeleportation();
-        hadmardTestForKickBack();
+//        hadmardTestForKickBack();
+        testKickBackMore();
+    }
+
+    public static void testKickBackMore(){
+        jqs jqs = new jqs(4);
+        jqs.H(0);
+        jqs.CX(0,1);
+        jqs.H(1);
+        jqs.CX(1,2);
+        jqs.H(2);
+        jqs.simulate();
+//        jqs.getComputationalState();
+//        System.out.println(jqs);
     }
 
     public static void hadmardTestForKickBack(){

@@ -5,8 +5,8 @@
 [2. Progress](#progress)  
 [3. Use](#use)  
 [4. Single Qubit Gates](#single-qubit-gates)  
-[5. Dual Qubit Gates](#dual_qubit_gates)  
-[6. Multi Qubit Gates](#multi_qubit_gates)  
+[5. Dual Qubit Gates](#dual-qubit-gates)  
+[6. Multi Qubit Gates](#multi-qubit-gates)  
 [4. Known Issues](#issues)
 
 # Use  
