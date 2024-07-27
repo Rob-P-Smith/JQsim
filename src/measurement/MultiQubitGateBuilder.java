@@ -67,32 +67,32 @@ public class MultiQubitGateBuilder {
             if (controlQubit == targetQubit || controlQubit >= numQubits || targetQubit >= numQubits || controlQubit < 0 || targetQubit < 0) {
                 throw new IllegalArgumentException("Invalid control or target qubit.");
             }
-            applyDualQubitGate(work.getOperator(), controlQubit, targetQubit, numQubits);
+            applyDualQubitGate(work, numQubits);
         }
     }
 
     /**
      * Directly mutates the system state after applying the control gate in a single control single target gate.
      *
-     * @param controlQubit the qubit to set as control in control gate operation
-     * @param targetQubit  the qubit to use as the target based on the control qubit value
-     * @param numQubits    the number of qubits, not the state vector size
+     * @param work  the WorkItem to evaluate and execute.
+     * @param numQubits    the number of qubits, not the state vector size.
      */
-    private void applyDualQubitGate(String operator, int controlQubit, int targetQubit, int numQubits) {
+    private void applyDualQubitGate(WorkItem work, int numQubits) {
+        int controlQubit = work.getControl();
+        int targetQubit = work.getTarget();
         int stateSize = 1 << numQubits;
         ComplexMatrix newStateVector = new ComplexMatrix(stateSize, 1);
-        switch (operator) {
+        switch (work.getOperator()) {
             case "CX" -> {
                 for (int i = 0; i < stateSize; i++) {
                     int controlBit = (i >> controlQubit) & 1;
-
-                    if (controlBit == 1) {
-                        // Flip the target bit
-                        int newState = i ^ (1 << targetQubit);
-                        newStateVector.set(newState, 0, gateD.tracker.get(i, 0));
+                    if (controlBit == 1){
+                        WorkItem applyX = new WorkItem("X",targetQubit);
+                        ComplexMatrix matrix = gateD.getGate(applyX);
+                        ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
+                        newStateVector.set(i, 0, thisMatrix.get(i,0));
                     } else {
-                        // Keep the state as is
-                        newStateVector.set(i, 0, gateD.tracker.get(i, 0));
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -115,7 +115,6 @@ public class MultiQubitGateBuilder {
                 for (int i = 0; i < stateSize; i++) {
                     int controlBit = (i >> controlQubit) & 1;
                     int targetBit = (i >> targetQubit) & 1;
-
                     if (controlBit == 1) {
                         // Apply Y rotation to target qubit
                         int flippedState = i ^ (1 << targetQubit);
@@ -139,11 +138,23 @@ public class MultiQubitGateBuilder {
                 }
                 for(int i = 0; i < stateSize; i++){
                     int controlBit = (i >> controlQubit) & 1;
-                    int targetBit = (i >> targetQubit) & 1;
-
                     if (controlBit == 1){
                         WorkItem applyS = new WorkItem("S",targetQubit);
                         ComplexMatrix matrix = gateD.getGate(applyS);
+                        ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
+                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                    } else {
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
+            }
+            case "CRZ" -> {
+                for(int i = 0; i < stateSize; i++){
+                    int controlBit = (i >> controlQubit) & 1;
+                    if (controlBit == 1){
+                        WorkItem applyRZ = new WorkItem("RZ",targetQubit, work.getTheta());
+                        ComplexMatrix matrix = gateD.getGate(applyRZ);
                         ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
                         newStateVector.set(i, 0, thisMatrix.get(i,0));
                     } else {

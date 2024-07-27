@@ -69,6 +69,27 @@ public class WorkItem {
     }
 
     /**
+     * Constructs a WorkItem with single control and single target.
+     *
+     * @param operator The operator string.
+     * @param control  An array of control values.
+     * @param target   An array of target values.
+     * @param theta The rotation to apply as double.
+     * @see #WorkItem(String, Integer[], Integer[])
+     * @see #WorkItem(String, int, int)
+     * @see #WorkItem(String, int, double)
+     */
+    public WorkItem(String operator, int control, int target, double theta) {
+        this.operator = operator;
+        this.control = control;
+        this.target = target;
+        this.theta = theta;
+        this.singleQubit = false;
+        this.dualQubit = true;
+        this.multiQubit = false;
+    }
+
+    /**
      * Constructs a WorkItem with multiple controls and/or targets.
      *
      * @param operator The operator string.

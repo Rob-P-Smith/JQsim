@@ -201,12 +201,12 @@ public class jqs {
     }
 
     /**
-     * Applies the RZ gate to the specified target qubit with default PI/4 as theta.
+     * Applies the RZ gate to the specified target qubit with default PI/2 as theta.
      *
      * @param target The target qubit.
      */
     public void RZ(int target) {
-        workQueue.addGate(new WorkItem("RZ", target, Math.PI / 4));
+        workQueue.addGate(new WorkItem("RZ", target, Math.PI / 2));
     }
 
     /**
@@ -397,7 +397,7 @@ public class jqs {
     /**
      * Applies a controlled gate with the specified gate name, control qubit, and target qubit.
      * Single control and single target gate
-     * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
+     * Accepts any single basis state changing qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
      * @param gate    The name of the controlled gate.
      * @param control The control qubit.
@@ -405,6 +405,20 @@ public class jqs {
      */
     public void CGate(String gate, int control, int target) {
         workQueue.addGate(new WorkItem("C"+gate, control, target));
+    }
+
+    /**
+     * Applies a controlled phase gate with the specified gate name, control qubit, target qubit, and theta.
+     * Single control and single target gate
+     * Accepts any single qubit phase rotation gate as the type to apply as controlled gate, e.g. CRZ, CRY etc.
+     *
+     * @param gate    The name of the controlled gate.
+     * @param control The control qubit.
+     * @param target  The target qubit.
+     * @param theta the rotation to apply as a double.
+     */
+    public void CGate(String gate, int control, int target, double theta) {
+        workQueue.addGate(new WorkItem("C"+gate, control, target, theta));
     }
 
     /**
