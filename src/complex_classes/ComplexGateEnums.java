@@ -79,6 +79,7 @@ public enum ComplexGateEnums {
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), getTIValue()}
     })),
+
     SWAP(new ComplexMatrix(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(1), new ComplexNumber(0)},

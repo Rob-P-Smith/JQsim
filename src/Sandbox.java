@@ -30,18 +30,18 @@ public class Sandbox {
 //        testKickBackMore();
 //        testKickBackMoreTwo();
 //        testQFT();
-        testSwap();
+        testCS();
     }
 
-    public static void testSwap(){
+    public static void testCS(){
         jqs jqs = new jqs(4);
-        jqs.X(0);
         jqs.X(1);
-        jqs.X(2);
-        jqs.SWAP(0,3);
+        jqs.CX(1,3);
+//        jqs.H(1);
+        jqs.CGate("S", 1,3);
+        jqs.CX(3,2);
         jqs.getComputationalState();
         System.out.println(jqs);
-
     }
 
     public static void testQFT(){
@@ -72,6 +72,7 @@ public class Sandbox {
         jqs.M(0);
         jqs.M(4);
         jqs.getComputationalState();
+        System.out.println(jqs);
         System.out.println(jqs.getStateVec());
 //        jqs.simulate();
     }

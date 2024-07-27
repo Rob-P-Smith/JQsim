@@ -134,7 +134,36 @@ public class MultiQubitGateBuilder {
                 gateD.tracker.setStateVec(newStateVector);
             }
             case "CS" -> {
+                for (int i = 0; i < stateSize; i++) {
+                    newStateVector.set(i, 0, new ComplexNumber());
+                }
+                for(int i = 0; i < stateSize; i++){
+                    int controlBit = (i >> controlQubit) & 1;
+                    int targetBit = (i >> targetQubit) & 1;
 
+                    if (controlBit == 1){
+                        WorkItem applyS = new WorkItem("S",targetQubit);
+                        ComplexMatrix matrix = gateD.getGate(applyS);
+                        ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
+                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                    } else {
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
+            }
+            case "SWAP" -> {
+                for (int i = 0; i < stateSize; i++){
+                    int bit1 = (i >> controlQubit) & 1;
+                    int bit2 = (i >> targetQubit) & 1;
+                    if(bit1 != bit2){
+                        int swappedIndex = i ^ (1 << controlQubit) ^ (1 << targetQubit);
+                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
+                    } else {
+                        newStateVector.set(i,0,gateD.tracker.getStateVec().get(i,0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
             }
         }
     }
@@ -176,6 +205,23 @@ public class MultiQubitGateBuilder {
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
+            }
+            case "CSWAP" -> {
+                int controlQubit = controlQubits[0];
+                int targetQubitOne = targetQubits[0];
+                int targetQubitTwo = targetQubits[1];
+                for(int i =0; i < stateSize; i++){
+                    int bit1 = (i >> controlQubit) & 1;
+                    int bit2 = (i >> targetQubitOne) & 1;
+                    int bit3 = (i >> targetQubitTwo) & 1;
+
+                    if(bit1 == 1 && (bit2 != bit3)){
+                        int swappedIndex = i ^ (1 << targetQubitOne) ^ (1 << targetQubitTwo);
+                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
+                    } else {
+                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(i,0));
+                    }
+                }
             }
         }
         gateD.tracker.setStateVec(newStateVector);

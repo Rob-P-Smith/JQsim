@@ -396,7 +396,6 @@ public class jqs {
 
     /**
      * Applies a controlled gate with the specified gate name, control qubit, and target qubit.
-     * TODO: Implement this in the gatebuilder
      * Single control and single target gate
      * Accepts any single qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
      *
@@ -405,9 +404,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CGate(String gate, int control, int target) {
-        Integer[] controls = {control};
-        Integer[] targets = {target};
-        workQueue.addGate(new WorkItem("C"+gate, controls, targets));
+        workQueue.addGate(new WorkItem("C"+gate, control, target));
     }
 
     /**
