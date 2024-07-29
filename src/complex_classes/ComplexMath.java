@@ -228,17 +228,23 @@ public final class ComplexMath {
             ComplexNumber amplitude = stateVector.get(i, 0);
             if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
                 if(firstTerm){
-                    result.append("|").append(PSI.lower()).append("⟩ = ");
+                    result.append("|").append(PSI.lower()).append("⟩ = \n");
+                    result.append("{phase} " + "amplitude" + " |basis⟩ \n-------------------------\n");
+
                 }else {
-                    result.append(", ");
+                    result.append("\n");
                 }
+
+                double phase = getPhase(amplitude);
+                result.append("{").append(String.format("%.3f" + "} ",phase));
+
                 String coeffString = complexToString(amplitude);
                 if (!coeffString.equals("1") && !coeffString.equals("-1")) {
                     result.append(coeffString);
                 } else if (coeffString.equals("-1") && firstTerm) {
                     result.append("-");
                 }
-                result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩");
+                result.append(" |").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩");
                 firstTerm = false;
             }
         }
@@ -304,23 +310,10 @@ public final class ComplexMath {
         } else {
             return "";
         }
-
-//        if (Math.abs(compNum.getReal()) < 1e-10) {
-//            return String.format("%.0fi", compNum.getImag());
-//        } else {
-//            return "";
-//        if (Math.abs(compNum.getImag()) < 1e-10) {
-//            return String.format("%.0f", compNum.getReal());
-//        } else if (Math.abs(compNum.getReal()) < 1e-10) {
-//            return String.format("%.0fi", compNum.getImag());
-//        } else {
-//            return String.format("(%.0f + %.0fi)", compNum.getReal(), compNum.getImag());
-//        }
-//        }
     }
 
-    public static double getPhase(double real, double imag){
-        return Math.atan2(imag, real);
+    public static double getPhase(ComplexNumber amplitude){
+            return Math.atan2(amplitude.getImag(),amplitude.getReal());
     }
 
     /**
