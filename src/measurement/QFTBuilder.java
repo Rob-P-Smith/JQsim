@@ -2,7 +2,6 @@ package measurement;
 
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
-import complex_classes.ComplexNumber;
 import state.WorkItem;
 
 /**
@@ -77,6 +76,7 @@ public class QFTBuilder {
             int controlBit = (i >> controlQubit) & 1;
             int targetBit = (i >> targetQubit) & 1;
             if (controlBit == 1 && targetBit == 1) {
+                //todo problem lies here in the theta value calculation for the Rk gate.
                 double theta = 2 * Math.PI * targetBit / Math.pow(2, k);
                 WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
 //                ComplexNumber phase = new ComplexNumber(Math.cos(theta), Math.sin(theta));
