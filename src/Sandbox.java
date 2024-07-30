@@ -33,27 +33,17 @@ public class Sandbox {
 //        rotations();
     }
 
-    public static void rotations(){
-        System.out.println("PI over 2: "+Math.PI/2*(180/Math.PI));
-        System.out.println("PI over 4: "+Math.PI/4*(180/Math.PI));
-        System.out.println("PI over 8: "+Math.PI/8*(180/Math.PI));
-        System.out.println("PI over 16: "+Math.PI/16*(180/Math.PI));
-    }
-
+    //This is taken from https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z^%C2%BD%22],[%22%E2%80%A2%22,1,%22Z^%C2%BC%22],[1,%22H%22],[1,%22%E2%80%A2%22,%22Z^%C2%BD%22],[1,1,%22H%22],[%22Swap%22,1,%22Swap%22]]}
+    //The output of my program agrees with their output state amplitudes per computational basis state.
     public static void testQFT() {
-        jqs jqs = new jqs(3, 10000);
-        jqs.H(0);
-        //This is right, but it's wrong, because the user has to manually determine the correct phase applied to the CGate involved.
-        //Need to turn this into a "black-box" that does the QFT automatically based on user input state provided and act as a controlled U for
-        //the ancilla bits to transform them based on the wave form from QFT.
-        //Then reverse the QFT to inverse QFT to decode the ancilla bits at the end, and get the state of the system after all the controlled U QFT steps
-        //to get QPE.
+        jqs jqs = new jqs(3);
         jqs.X(1);
         jqs.X(2);
-        jqs.CGate("RZ", 1, 0, Math.PI / 2);
-        jqs.CGate("RZ", 2, 0, Math.PI / 4);
+        jqs.H(0);
+        jqs.CGate("S", 1,0);
+        jqs.CGate("T", 2,0);
         jqs.H(1);
-        jqs.CGate("RZ", 2, 1, Math.PI / 2);
+        jqs.CGate("S",2,1);
         jqs.H(2);
         jqs.SWAP(0,2);
         jqs.getComputationalState();

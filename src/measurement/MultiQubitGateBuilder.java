@@ -149,6 +149,23 @@ public class MultiQubitGateBuilder {
                 }
                 gateD.tracker.setStateVec(newStateVector);
             }
+            case "CT" -> {
+                for (int i = 0; i < stateSize; i++) {
+                    newStateVector.set(i, 0, new ComplexNumber());
+                }
+                for(int i = 0; i < stateSize; i++){
+                    int controlBit = (i >> controlQubit) & 1;
+                    if (controlBit == 1){
+                        WorkItem applyT = new WorkItem("T",targetQubit);
+                        ComplexMatrix matrix = gateD.getGate(applyT);
+                        ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
+                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                    } else {
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
+            }
             case "CRZ" -> {
                 for(int i = 0; i < stateSize; i++){
                     int controlBit = (i >> controlQubit) & 1;

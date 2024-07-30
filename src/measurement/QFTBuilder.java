@@ -8,26 +8,10 @@ import state.WorkItem;
  * This class implements the Quantum Fourier Transform (QFT) algorithm.
  * It uses a GateDirector to apply the necessary quantum gates.
  *
- * |j〉 −→ √1N Sum of range(k=0 to N−1) e2πijk/N|k〉
- * Where
- * |j> is the starting state of the system
- * √1N is the scalar also 1/√2^numQubits also 1/2^(numQubits/2)
- * k=0 to N-1 simple states use the whole state vector
- * e = euler number
- * 2πi to transfer to the cartesian system and use exponential notation to make math easier
- * j = binary value of system start state
- * k = each index in the range of the stave vector that needs to be summed into the value
- * /N = √2^numQubits also 1/2^(numQubits/2)
- *
- * For each qubit in the system, run the above, where the range is the total number of qubits - the qubit index, yielding
- * a decreasing number of Rk gates applied as working through the QFT process. k should decrement down by one for
- * each qubit it does the process on.
- *
- * todo workout why this isn't quite occurring as is.
- *
- * @author Robert Smith
- * @version 0.01
- * @since 29 July 2024
+ * @see GateDirector
+ * @see complex_classes.ComplexMath
+ * @see complex_classes.ComplexMatrix
+ * @see state.WorkItem
  */
 public class QFTBuilder {
     private GateDirector gateD;
@@ -38,18 +22,18 @@ public class QFTBuilder {
      * Constructor for the QFTBuilder class.
      *
      * @param gateD the active GateDirector
+     * @see GateDirector
      */
     public QFTBuilder(GateDirector gateD) {
         this.gateD = gateD;
         this.stateSize = gateD.tracker.getStateVecSize();
         this.numQubits = (int) (Math.log(stateSize) / Math.log(2));
-
     }
 
     /**
-     * Overridden toString() so the linter can s t f u.
+     * Returns a string representation of the current quantum state.
      *
-     * @return the string from the called toString().
+     * @return a string representation of the quantum state
      */
     @Override
     public String toString() {
@@ -60,10 +44,10 @@ public class QFTBuilder {
      * Applies the Quantum Fourier Transform to the current state vector.
      */
     public void applyQFT() {
-        for (int i = numQubits - 1; i >= 0; i--) {
+        for (int i = 0; i < numQubits; i++) {
             applyHadamard(i);
-            for (int j = i - 1; j >= 0; j--) {
-                applyRk(j, i, numQubits - i);
+            for (int j = i + 1; j < numQubits; j++) {
+                applyRk(i, j, j - i);
             }
         }
         swapQubits();
@@ -73,11 +57,9 @@ public class QFTBuilder {
      * Swaps the order of qubits in the state vector.
      */
     private void swapQubits() {
-        int idx = 0;
-        int jdx = numQubits - 1;
-        while (idx < jdx) {
-            WorkItem applySwap = new WorkItem("SWAP", idx++, jdx--);
-            ComplexMatrix matrix = gateD.getGate(applySwap);
+        for (int i = 0; i < numQubits / 2; i++) {
+            WorkItem applySwap = new WorkItem("SWAP", numQubits - 1 - i, i);
+            gateD.getGate(applySwap);
         }
     }
 
@@ -86,26 +68,25 @@ public class QFTBuilder {
      *
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
-     * @param k the qubit limit while iterating through
+     * @param k            the qubit limit while iterating through
+     * @see WorkItem
+     * @see ComplexMatrix
+     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
-        for (int i = 0; i < stateSize; i++) {
-            int controlBit = (i >> controlQubit) & 1;
-            int targetBit = (i >> targetQubit) & 1;
-            if (controlBit == 1 && targetBit == 1) {
-                //todo problem lies here in the theta value calculation for the Rk gate.
-                double theta = 2 * Math.PI * targetBit / Math.pow(2, k);
-                WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
-//                ComplexNumber phase = new ComplexNumber(Math.cos(theta), Math.sin(theta));
-//                gateD.tracker.getStateVec().set(i, 0, ComplexMath.multiplyComplexNumbers(gateD.tracker.getStateVec().get(i, 0), phase));
-            }
-        }
+        double theta = 2 * Math.PI / Math.pow(2, k);
+        WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
+        ComplexMatrix matrix = gateD.getGate(Rk);
+        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
     }
 
     /**
      * Applies the Hadamard gate to the specified qubit.
      *
      * @param targetQubit the qubit to apply the Hadamard gate to
+     * @see WorkItem
+     * @see ComplexMatrix
+     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
      */
     private void applyHadamard(int targetQubit) {
         WorkItem applyHadamard = new WorkItem("H", targetQubit);
@@ -113,4 +94,3 @@ public class QFTBuilder {
         gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
     }
 }
-
