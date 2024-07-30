@@ -26,7 +26,10 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        quantumTeleportation();
+//        quantumTeleportation();
+          testQFT();
+        System.out.println("\n Testing Auto Version \n");
+          testAutoQFT();
 //        rotations();
     }
 
@@ -57,6 +60,15 @@ public class Sandbox {
         System.out.println(jqs);
     }
 
+    public static void testAutoQFT(){
+        jqs jqs = new jqs(3,1000,"QFT-TEST");
+        jqs.X(1);
+        jqs.X(2);
+        jqs.getComputationalState();
+        jqs.QFT();
+
+        System.out.println(jqs);
+    }
 
     public static void quantumTeleportation() {
         jqs jqs = new jqs(3, 1000);

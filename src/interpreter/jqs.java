@@ -5,6 +5,7 @@ import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
 import measurement.Backend;
 import measurement.GateDirector;
+import measurement.QFTBuilder;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
@@ -388,11 +389,11 @@ public class jqs {
     /**
      * Applies the SWAP gate with the specified control and target qubits.
      *
-     * @param control The control qubit.
-     * @param target  The target qubit.
+     * @param bitOne The first qubit.
+     * @param bitTwo  The second qubit.
      */
-    public void SWAP(int control, int target) {
-        workQueue.addGate("SWAP", control, target);
+    public void SWAP(int bitOne, int bitTwo) {
+        workQueue.addGate("SWAP", bitOne, bitTwo);
     }
 
     /**
@@ -409,10 +410,35 @@ public class jqs {
      * Applies the CSWAP (controlled SWAP) gate with the specified control and target qubits.
      *
      * @param control The control qubit.
+     * @param targetOne  The target qubit.
+     * @param targetTwo  The second target qubit.
+     */
+    public void CSWAP(int control, int targetOne, int targetTwo) {
+        workQueue.addGate("CSWAP", control, targetOne, targetTwo);
+    }
+
+    /**
+     * Applies the CSWAP (controlled SWAP) gate with the specified control and target qubits.
+     *
+     * @param control The control qubit.
+     * @param targetOne  The target qubit.
+     * @param targetTwo  The second target qubit.
+     */
+    public void Fredkin(int control, int targetOne, int targetTwo) {
+        workQueue.addGate("CSWAP", control, targetOne, targetTwo);
+    }
+
+    /**
+     * Applies a controlled gate with the specified gate name, control qubit, and target qubit.
+     * Single control and single target gate
+     * Accepts any single basis state changing qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
+     *
+     * @param gate    The name of the controlled gate.
+     * @param control The control qubit.
      * @param target  The target qubit.
      */
-    public void CSWAP(int control, int target) {
-        workQueue.addGate("CSWAP", control, target);
+    public void CGate(String gate, int control, int target) {
+        workQueue.addGate(new WorkItem("C"+gate, control, target));
     }
 
     ///////////////////////
@@ -443,19 +469,6 @@ public class jqs {
         Integer[] controls = {control};
         Integer[] targets = {targetOne, targetTwo};
         workQueue.addGate(new WorkItem("CXX", controls, targets));
-    }
-
-    /**
-     * Applies a controlled gate with the specified gate name, control qubit, and target qubit.
-     * Single control and single target gate
-     * Accepts any single basis state changing qubit gate as the type to apply as controlled gate, e.g. cS, cT etc.
-     *
-     * @param gate    The name of the controlled gate.
-     * @param control The control qubit.
-     * @param target  The target qubit.
-     */
-    public void CGate(String gate, int control, int target) {
-        workQueue.addGate(new WorkItem("C"+gate, control, target));
     }
 
     /**
@@ -555,4 +568,12 @@ public class jqs {
         backend.simulate();
     }
 
+    /**
+     * Conduct QFT on the system
+     * TODO need to split this out into more specific implementation rather than full system implementation as it is now
+     */
+    public void QFT(){
+        QFTBuilder qft = new QFTBuilder(gd);
+        qft.applyQFT();
+    }
 }

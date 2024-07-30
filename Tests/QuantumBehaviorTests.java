@@ -128,6 +128,53 @@ public class QuantumBehaviorTests {
     }
 
     @Test
+    void testCSWAP() {
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.X(2);
+        jqs.CSWAP(0, 1, 2);
+        jqs.getComputationalState();
+//        System.out.println(jqs);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{0.000} 1.000 |011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
+        jqs = new jqs(3);
+        jqs.X(2);
+        jqs.CSWAP(0, 1, 2);
+        jqs.getComputationalState();
+//        System.out.println(jqs);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{0.000} 1.000 |100⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
+        jqs = new jqs(3);
+        jqs.X(0);
+        jqs.X(2);
+        jqs.T(2);
+        jqs.getComputationalState();
+//        System.out.println(jqs);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{0.785} (0.707 + 0.707i) |101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+
+        jqs = new jqs(3);
+        jqs.X(0);
+        jqs.X(2);
+        jqs.T(2);
+        jqs.CSWAP(0,1,2);
+        jqs.getComputationalState();
+//        System.out.println(jqs);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{0.785} (0.707 + 0.707i) |011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+    }
+
+    @Test
     public void testQuantumKickback() {
         jqs jqs = new jqs(3);
 
@@ -166,12 +213,12 @@ public class QuantumBehaviorTests {
         jqs3.getComputationalState();
 //        System.out.println(jqs3);
         assertEquals("|ψ⟩ = \n" +
-                "{phase} amplitude |basis⟩ \n" +
-                "-------------------------\n" +
-                "{0.393} (0.604 + 0.250i) |0000⟩\n" +
-                "{0.393} (0.604 + 0.250i) |0010⟩\n" +
-                "{-1.178} (0.104 + -0.250i) |0101⟩\n" +
-                "{1.963} (-0.104 + 0.250i) |0111⟩",
+                        "{phase} amplitude |basis⟩ \n" +
+                        "-------------------------\n" +
+                        "{0.393} (0.604 + 0.250i) |0000⟩\n" +
+                        "{0.393} (0.604 + 0.250i) |0010⟩\n" +
+                        "{-1.178} (0.104 + -0.250i) |0101⟩\n" +
+                        "{1.963} (-0.104 + 0.250i) |0111⟩",
                 ComplexMath.complexMatrixToDiracNotation(jqs3.getStateVec()));
 
     }

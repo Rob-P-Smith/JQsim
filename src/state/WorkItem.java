@@ -90,6 +90,24 @@ public class WorkItem {
     }
 
     /**
+     * Constructs a WorkItem with single controls and two targets.
+     *
+     * @param operator The operator string.
+     * @param control An array of control values.
+     * @param targetOne  The first target qubit.
+     * @param targetTwo  The second target qubit.
+     * @see #WorkItem(String, int, int)
+     */
+    public WorkItem(String operator, int control, int targetOne, int targetTwo) {
+        this.operator = operator;
+        this.controls = new Integer[]{control};
+        this.targets = new Integer[]{targetOne, targetTwo};
+        this.singleQubit = false;
+        this.dualQubit = false;
+        this.multiQubit = true;
+    }
+
+    /**
      * Constructs a WorkItem with multiple controls and/or targets.
      *
      * @param operator The operator string.

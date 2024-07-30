@@ -15,7 +15,6 @@ import state.WorkItem;
  */
 public class QFTBuilder {
     private GateDirector gateD;
-    private ComplexMatrix inputMatrix;
     private int numQubits;
     private int stateSize;
 
@@ -26,11 +25,16 @@ public class QFTBuilder {
      */
     public QFTBuilder(GateDirector gateD) {
         this.gateD = gateD;
-        this.inputMatrix = gateD.tracker.getStateVec();
-        this.numQubits = (int) (Math.log(inputMatrix.getHeight()) / Math.log(2));
-        this.stateSize = inputMatrix.getHeight();
+        this.stateSize = gateD.tracker.getStateVecSize();
+        this.numQubits = (int) (Math.log(stateSize) / Math.log(2));
+
     }
 
+    /**
+     * Overridden toString() so the linter can s t f u.
+     *
+     * @return the string from the called toString().
+     */
     @Override
     public String toString() {
         return gateD.tracker.toString();
@@ -39,10 +43,10 @@ public class QFTBuilder {
     /**
      * Applies the Quantum Fourier Transform to the current state vector.
      */
-    public void applyQFT(){
-        for(int i = numQubits - 1; i >= 0; i--){
+    public void applyQFT() {
+        for (int i = numQubits - 1; i >= 0; i--) {
             applyHadamard(i);
-            for(int j = i - 1; j >= 0; j--){
+            for (int j = i - 1; j >= 0; j--) {
                 applyRk(j, i, numQubits - i);
             }
         }
@@ -51,47 +55,45 @@ public class QFTBuilder {
 
     /**
      * Swaps the order of qubits in the state vector.
-     * 32 - numQubits only works for a system with 32 or fewer qubits, going over 32 requires implementation of long for the qubit size to allow more bits.
-     * The 32 qubit limit will not be an issue due to memory constraints, even when sparse storage is implemented.
      */
-    private void swapQubits(){
-        ComplexMatrix reversedMatrix = new ComplexMatrix(1<<numQubits, 1);
-        final int BITCOUNT = 32;
-        for (int i = 0; i < stateSize; i++) {
-            int reversedIndex = Integer.reverse(i) >>> (BITCOUNT - numQubits);
-            reversedMatrix.set(reversedIndex, 0, inputMatrix.get(i, 0));
+    private void swapQubits() {
+        int idx = 0;
+        int jdx = numQubits - 1;
+        while (idx < jdx) {
+            WorkItem applySwap = new WorkItem("SWAP", idx++, jdx--);
+            ComplexMatrix matrix = gateD.getGate(applySwap);
         }
-        inputMatrix = reversedMatrix;
     }
 
     /**
      * Applies the controlled rotation gate Rk.
+     *
      * @param controlQubit the control qubit
-     * @param targetQubit the target qubit
-     * @param limit the rotation parameter
+     * @param targetQubit  the target qubit
+     * @param k the qubit limit while iterating through
      */
-    private void applyRk(int controlQubit, int targetQubit, int limit){
-
+    private void applyRk(int controlQubit, int targetQubit, int k) {
         for (int i = 0; i < stateSize; i++) {
             int controlBit = (i >> controlQubit) & 1;
             int targetBit = (i >> targetQubit) & 1;
-
-            if (controlBit == 1) {
-                double theta = 2 * Math.PI * targetBit / Math.pow(2, limit);
-                ComplexNumber phase = new ComplexNumber(Math.cos(theta), Math.sin(theta));
-                inputMatrix.set(i, 0, ComplexMath.multiplyComplexNumbers(inputMatrix.get(i, 0) , phase));
+            if (controlBit == 1 && targetBit == 1) {
+                double theta = 2 * Math.PI * targetBit / Math.pow(2, k);
+                WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
+//                ComplexNumber phase = new ComplexNumber(Math.cos(theta), Math.sin(theta));
+//                gateD.tracker.getStateVec().set(i, 0, ComplexMath.multiplyComplexNumbers(gateD.tracker.getStateVec().get(i, 0), phase));
             }
         }
     }
 
     /**
      * Applies the Hadamard gate to the specified qubit.
+     *
      * @param targetQubit the qubit to apply the Hadamard gate to
      */
-    private void applyHadamard(int targetQubit){
+    private void applyHadamard(int targetQubit) {
         WorkItem applyHadamard = new WorkItem("H", targetQubit);
         ComplexMatrix matrix = gateD.getGate(applyHadamard);
-        inputMatrix = ComplexMath.multiplyMatrix(matrix, inputMatrix);
+        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
     }
 }
 
