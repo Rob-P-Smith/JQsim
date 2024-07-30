@@ -155,20 +155,39 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000} 0.707 |010⟩\n" +
                 "{-3.142} -0.707 |011⟩", ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
+
+        jqs jqs3 = new jqs(4);
+        jqs3.H(0);
+        jqs3.H(1);
+        jqs3.T(1);
+        jqs3.CX(0, 1);
+        jqs3.H(0);
+        jqs3.CX(0, 2);
+        jqs3.getComputationalState();
+//        System.out.println(jqs3);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{0.393} (0.604 + 0.250i) |0000⟩\n" +
+                "{0.393} (0.604 + 0.250i) |0010⟩\n" +
+                "{-1.178} (0.104 + -0.250i) |0101⟩\n" +
+                "{1.963} (-0.104 + 0.250i) |0111⟩",
+                ComplexMath.complexMatrixToDiracNotation(jqs3.getStateVec()));
+
     }
 
     @Test
-    public void testQuantumTeleportation(){
+    public void testQuantumTeleportation() {
         jqs jqs = new jqs(3);
         jqs.X(0);
         jqs.H(1);
-        jqs.CX(1,2);
+        jqs.CX(1, 2);
         jqs.H(0);
-        jqs.CX(0,1);
+        jqs.CX(0, 1);
         jqs.measureQubit(0);
         jqs.measureQubit(1);
-        jqs.CX(1,2);
-        jqs.CZ(0,2);
+        jqs.CX(1, 2);
+        jqs.CZ(0, 2);
         jqs.measureQubit(2);
     }
 
