@@ -8,6 +8,23 @@ import state.WorkItem;
  * This class implements the Quantum Fourier Transform (QFT) algorithm.
  * It uses a GateDirector to apply the necessary quantum gates.
  *
+ * |j〉 −→ √1N Sum of range(k=0 to N−1) e2πijk/N|k〉
+ * Where
+ * |j> is the starting state of the system
+ * √1N is the scalar also 1/√2^numQubits also 1/2^(numQubits/2)
+ * k=0 to N-1 simple states use the whole state vector
+ * e = euler number
+ * 2πi to transfer to the cartesian system and use exponential notation to make math easier
+ * j = binary value of system start state
+ * k = each index in the range of the stave vector that needs to be summed into the value
+ * /N = √2^numQubits also 1/2^(numQubits/2)
+ *
+ * For each qubit in the system, run the above, where the range is the total number of qubits - the qubit index, yielding
+ * a decreasing number of Rk gates applied as working through the QFT process. k should decrement down by one for
+ * each qubit it does the process on.
+ *
+ * todo workout why this isn't quite occurring as is.
+ *
  * @author Robert Smith
  * @version 0.01
  * @since 29 July 2024
