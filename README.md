@@ -216,7 +216,7 @@ state vector of the system.
 ## Phase 5: 
 &#x2705;Ensure control gates apply correctly across superposition system states when multiple gates are applied, preserving  
 both amplitude and phase of each qubit.  
-***Currently Working*** &#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
+&#x2705; ***Currently Working*** Implement QFT as a black-box/oracle callable on a register of qubits which have a user prepared input state and Fourier Transformed output state.    &#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
 a classical bit.  
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
