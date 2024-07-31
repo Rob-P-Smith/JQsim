@@ -14,9 +14,64 @@ import state.WorkItem;
  * @see state.WorkItem
  */
 public class QFTBuilder {
-    private GateDirector gateD;
-    private int numQubits;
-    private int stateSize;
+    private final GateDirector gateD;
+    private final int numQubits;
+    private final int stateSize;
+
+    /**
+     * Applies the Quantum Fourier Transform to the current state vector.
+     */
+    public void applyQFT() {
+
+        for (int i = 0; i < numQubits; i++) {
+            applyHadamard(numQubits - 1 - i);
+            int k = 2;
+            for (int j = i + 1; j < numQubits; j++) {
+                applyRk(i,j,k++);
+            }
+        }
+//        swapQubits();
+    }
+
+    /**
+     * Applies the controlled rotation gate Rk.
+     *
+     * @param controlQubit the control qubit
+     * @param targetQubit  the target qubit
+     * @see WorkItem
+     * @see ComplexMatrix
+     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     */
+    private void applyRk(int controlQubit, int targetQubit, int k) {
+        double theta = (2 * Math.PI / stateSize) * k;
+        WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
+        ComplexMatrix matrix = gateD.getGate(Rk);
+        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
+    }
+
+    /**
+     * Swaps the order of qubits in the state vector.
+     */
+    private void swapQubits() {
+        for (int i = 0; i < numQubits / 2; i++) {
+            WorkItem applySwap = new WorkItem("SWAP", i, numQubits - 1 - i);
+            gateD.getGate(applySwap);
+        }
+    }
+
+    /**
+     * Applies the Hadamard gate to the specified qubit.
+     *
+     * @param targetQubit the qubit to apply the Hadamard gate to
+     * @see WorkItem
+     * @see ComplexMatrix
+     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     */
+    private void applyHadamard(int targetQubit) {
+        WorkItem applyHadamard = new WorkItem("H", targetQubit);
+        ComplexMatrix matrix = gateD.getGate(applyHadamard);
+        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
+    }
 
     /**
      * Constructor for the QFTBuilder class.
@@ -40,57 +95,5 @@ public class QFTBuilder {
         return gateD.tracker.toString();
     }
 
-    /**
-     * Applies the Quantum Fourier Transform to the current state vector.
-     */
-    public void applyQFT() {
-        for (int i = 0; i < numQubits; i++) {
-            applyHadamard(i);
-            for (int j = i + 1; j < numQubits; j++) {
-                applyRk(i, j, j - i);
-            }
-        }
-        swapQubits();
-    }
 
-    /**
-     * Swaps the order of qubits in the state vector.
-     */
-    private void swapQubits() {
-        for (int i = 0; i < numQubits / 2; i++) {
-            WorkItem applySwap = new WorkItem("SWAP", numQubits - 1 - i, i);
-            gateD.getGate(applySwap);
-        }
-    }
-
-    /**
-     * Applies the controlled rotation gate Rk.
-     *
-     * @param controlQubit the control qubit
-     * @param targetQubit  the target qubit
-     * @param k            the qubit limit while iterating through
-     * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
-     */
-    private void applyRk(int controlQubit, int targetQubit, int k) {
-        double theta = 2 * Math.PI / Math.pow(2, k);
-        WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
-        ComplexMatrix matrix = gateD.getGate(Rk);
-        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
-    }
-
-    /**
-     * Applies the Hadamard gate to the specified qubit.
-     *
-     * @param targetQubit the qubit to apply the Hadamard gate to
-     * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
-     */
-    private void applyHadamard(int targetQubit) {
-        WorkItem applyHadamard = new WorkItem("H", targetQubit);
-        ComplexMatrix matrix = gateD.getGate(applyHadamard);
-        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
-    }
 }
