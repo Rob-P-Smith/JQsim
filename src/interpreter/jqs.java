@@ -570,10 +570,17 @@ public class jqs {
 
     /**
      * Conduct QFT on the system
-     * TODO need to split this out into more specific implementation rather than full system implementation as it is now
      */
     public void QFT(){
         QFTBuilder qft = new QFTBuilder(gd);
         qft.applyQFT();
+    }
+
+    /**
+     * Conduct QFT on the system
+     */
+    public void QFTi(){
+        QFTBuilder qft = new QFTBuilder(gd);
+        qft.applyQFTi();
     }
 }

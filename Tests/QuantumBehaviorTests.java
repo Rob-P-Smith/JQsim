@@ -461,8 +461,8 @@ public class QuantumBehaviorTests {
     }
 
     @Test
-        //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22],[%22%E2%80%A2%22,%22X%22],[1,%22Z%22],[1,%22%E2%80%A2%22,%22X%22],[1,%22H%22,%22H%22],[1,1,%22Z^%C2%BD%22]]}
     void testSimpleCircuits() {
+        //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22],[%22%E2%80%A2%22,%22X%22],[1,%22Z%22],[1,%22%E2%80%A2%22,%22X%22],[1,%22H%22,%22H%22],[1,1,%22Z^%C2%BD%22]]}
         jqs jqs = new jqs(3);
         jqs.X(0);
         jqs.CX(0, 1);

@@ -99,6 +99,7 @@ public class GateDirector {
             case ("RY"), ("CRY") -> singleOperator = buildRYGate(work);
             case ("RZ"), ("CRZ") -> singleOperator = buildRZGate(work);
             case ("R1"), ("CR1") -> singleOperator = buildR1Gate(work);
+            case ("R1i"), ("CR1i") -> singleOperator = buildR1Gatei(work);
             case ("SWAP"), ("CSWAP") -> singleOperator = SWAP.getMatrix();
             case ("ISWAP") -> singleOperator = ISWAP.getMatrix();
             case ("ID") -> singleOperator = IDENTITY.getMatrix();
@@ -109,10 +110,8 @@ public class GateDirector {
     /**
      * Construct the matrix for the R1 gate based on user provided theta value.
      *
-     * [
-     *     1    0
-     *     0    e^(iθ)
-     * ]
+     * [1    0     ]
+     * [0    e^(iθ)]
      *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
@@ -125,6 +124,25 @@ public class GateDirector {
         builtGate.set(1,1, new ComplexNumber(Math.cos(work.getTheta()), Math.sin(work.getTheta())));
         return builtGate;
     }
+
+    /**
+     * Construct the matrix for the R1 gate inverse based on user provided theta value.
+     *
+     * [1    0      ]
+     * [0    e^(-iθ)]
+     *7
+     * @param work the work item that contains the RX gate in the workQueue
+     * @return the complex matrix that is the RX gate operator
+     */
+    private static ComplexMatrix buildR1Gatei(WorkItem work) {
+        ComplexMatrix builtGate = new ComplexMatrix(2,2);
+        builtGate.set(0,0, new ComplexNumber(1,0) );
+        builtGate.set(0,1, new ComplexNumber(0,0));
+        builtGate.set(1,0, new ComplexNumber(0,0));
+        builtGate.set(1,1, new ComplexNumber(Math.cos(work.getTheta()), -Math.sin(work.getTheta())));
+        return builtGate;
+    }
+
     /**
      * Construct the matrix for the RX gate based on user provided theta value.
      *
@@ -148,10 +166,8 @@ public class GateDirector {
     }
     /**
      * Construct the matrix for the RY gate based on user provided theta value.
-     * [
-     *     cos(θ/2)    -sin(θ/2)
-     *     sin(θ/2)     cos(θ/2)
-     * ]
+     * [cos(θ/2)    -sin(θ/2)]
+     * [sin(θ/2)     cos(θ/2)]
      *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RY gate operator
@@ -169,10 +185,8 @@ public class GateDirector {
     /**
      * Construct the matrix for the RZ gate based on user provided theta value.
      *
-     * [
-     *     cos(θ/2) - i*sin(θ/2)    0
-     *     0                        cos(θ/2) + i*sin(θ/2)
-     * ]
+     * [cos(θ/2) - i*sin(θ/2) 0                    ]
+     * [0                     cos(θ/2) + i*sin(θ/2)]
      *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RZ gate operator

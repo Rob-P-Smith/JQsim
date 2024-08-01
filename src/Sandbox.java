@@ -26,6 +26,12 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        System.out.println("ON TO QPE!!");
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.getComputationalState();
+        jqs.QFT();
+        System.out.println(jqs);
+        jqs.QFTi();
+        System.out.println("\n"+jqs);
     }
 }
