@@ -236,7 +236,7 @@ public final class ComplexMath {
                 }
 
                 double phase = getPhase(amplitude);
-                result.append("{").append(String.format("%.3f" + "} ",phase));
+                result.append("{").append(String.format("%.3f°" + "} ",phase));
 
                 String coeffString = complexToString(amplitude);
                 if (!coeffString.equals("1") && !coeffString.equals("-1")) {
@@ -284,11 +284,11 @@ public final class ComplexMath {
      */
     public static String complexToString(ComplexNumber compNum) {
         if (Math.abs(compNum.getImag()) < 1e-10) {
-            return String.format("%.3f", compNum.getReal());
+            return String.format("%.5f", compNum.getReal());
         } else if (Math.abs(compNum.getReal()) < 1e-10) {
-            return String.format("%.3fi", compNum.getImag());
+            return String.format("%.5fi", compNum.getImag());
         } else {
-            return String.format("(%.3f + %.3fi)", compNum.getReal(), compNum.getImag());
+            return String.format("(%.5f + %.5fi)", compNum.getReal(), compNum.getImag());
         }
     }
 
@@ -313,7 +313,9 @@ public final class ComplexMath {
     }
 
     public static double getPhase(ComplexNumber amplitude){
-            return Math.atan2(amplitude.getImag(),amplitude.getReal());
+            double decimalPhase = Math.atan2(amplitude.getImag(),amplitude.getReal());
+            double degreePhase = 180/Math.PI * decimalPhase;
+            return degreePhase;
     }
 
     /**

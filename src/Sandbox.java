@@ -26,20 +26,22 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        printRotations();
-//        debuggingRk();
-//        testQFT();
-        System.out.println("\n Testing Composed RZ Version \n");
-        testQFTWithRZ();
-        System.out.println("\n Testing Black Box QFT Version \n");
+        System.out.println("Simple case QFT black box: ");
         testAutoQFT();
+        System.out.println("\nSimple case Constructed QFT using CS and CT");
+        testQFT();
+        System.out.println("\nSimple case Constructed QFT using CRZ");
+        testQFTWithRZ();
+//        System.out.println("Complex case QFT black box: ");
+//        testComplexQFT();
+
     }
 
     public static void testAutoQFT() {
         jqs jqs = new jqs(3, 1000, "QFT-TEST");
-        jqs.X(0);
-        jqs.X(1);
-        jqs.X(2);
+//        jqs.X(0);
+//        jqs.X(1);
+//        jqs.X(2);
         jqs.getComputationalState();
         jqs.QFT();
         System.out.println(jqs);
@@ -49,16 +51,16 @@ public class Sandbox {
     //The output of my program agrees with their output state amplitudes per computational basis state.
     public static void testQFT() {
         jqs jqs = new jqs(3);
-        jqs.X(0);
-        jqs.X(1);
-        jqs.X(2);
+//        jqs.X(0);
+//        jqs.X(1);
+//        jqs.X(2);
         jqs.H(2);
         jqs.CGate("S", 2, 1);
         jqs.CGate("T", 2, 0);
         jqs.H(1);
         jqs.CGate("S", 1, 0);
         jqs.H(0);
-//        jqs.SWAP(0,2);
+        jqs.SWAP(0,2);
         jqs.getComputationalState();
         System.out.println(jqs);
     }
@@ -67,9 +69,9 @@ public class Sandbox {
     //The output of my program agrees with their output state amplitudes per computational basis state.
     public static void testQFTWithRZ() {
         jqs jqs = new jqs(3);
-        jqs.X(0);
-        jqs.X(1);
-        jqs.X(2);
+//        jqs.X(0);
+//        jqs.X(1);
+//        jqs.X(2);
         jqs.H(2);
         jqs.CGate("RZ", 2, 1, Math.PI);
         jqs.CGate("RZ", 2, 0, Math.PI/2);
