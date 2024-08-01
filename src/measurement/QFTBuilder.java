@@ -29,17 +29,25 @@ public class QFTBuilder {
 
         for (int i = 0; i < numQubits; i++) {
             applyHadamard(numQubits - 1 - i);
-            int k = 2;
+            int k = 1;
             for (int j = i + 1; j < numQubits; j++) {
                 applyRk(i,j,k++);
             }
         }
-//        swapQubits();
+        swapQubits();
     }
 
     /**
      * Applies the controlled rotation gate Rk.
-     *
+     *<p>
+     * theta below examples:
+     * 2*Math.PI/Math.pow(2,2) = Math.PI/2
+     * 2*Math.PI/Math.pow(2,3) = Math.PI/4
+     *</p>
+     * k starts at 2 because the hadamard applied already is the R1 version of Rk and RZ already
+     * cuts theta in half during construction each iteration through the method cuts the degree
+     * of rotation in half by exponentially increasing the divisor for 2 * Math.PI for each
+     * subsequent application of Rk to a given qubit in register having QFT applied.
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
      * @see WorkItem
@@ -47,10 +55,9 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
-        double theta = (2 * Math.PI / stateSize) * k;
-        WorkItem Rk = new WorkItem("CRZ", controlQubit, targetQubit, theta);
-        ComplexMatrix matrix = gateD.getGate(Rk);
-        gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
+        double theta = (2 * Math.PI / Math.pow(2,k));
+        WorkItem Rk = new WorkItem("CRZ", numQubits-1-controlQubit, numQubits-1-targetQubit, theta);
+        gateD.getGate(Rk);
     }
 
     /**

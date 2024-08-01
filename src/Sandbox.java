@@ -27,10 +27,12 @@ public class Sandbox {
      */
     public static void main(String[] args) {
 //        printRotations();
-        debuggingRk();
+//        debuggingRk();
 //        testQFT();
-//        System.out.println("\n Testing Auto Version \n");
-//        testAutoQFT();
+        System.out.println("\n Testing Composed RZ Version \n");
+        testQFTWithRZ();
+        System.out.println("\n Testing Black Box QFT Version \n");
+        testAutoQFT();
     }
 
     public static void testAutoQFT() {
@@ -61,6 +63,24 @@ public class Sandbox {
         System.out.println(jqs);
     }
 
+    //This is taken from https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22X%22,%22X%22],[%22%E2%80%A2%22,%22Z^%C2%BD%22],[%22%E2%80%A2%22,1,%22Z^%C2%BC%22],[1,%22H%22],[1,%22%E2%80%A2%22,%22Z^%C2%BD%22],[1,1,%22H%22],[%22Swap%22,1,%22Swap%22]]}
+    //The output of my program agrees with their output state amplitudes per computational basis state.
+    public static void testQFTWithRZ() {
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.X(1);
+        jqs.X(2);
+        jqs.H(2);
+        jqs.CGate("RZ", 2, 1, Math.PI);
+        jqs.CGate("RZ", 2, 0, Math.PI/2);
+        jqs.H(1);
+        jqs.CGate("RZ", 1, 0, Math.PI);
+        jqs.H(0);
+        jqs.SWAP(0,2);
+        jqs.getComputationalState();
+        System.out.println(jqs);
+    }
+
     public static void debuggingRk(){
         jqs jqs = new jqs(2);
         jqs jqs2 = new jqs(2);
@@ -68,6 +88,7 @@ public class Sandbox {
         jqs jqs4 = new jqs(2);
 
         jqs.X(0);
+        jqs.S(0);
         jqs.S(0);
         jqs.getComputationalState();
         System.out.println("S Gate");
