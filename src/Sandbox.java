@@ -32,16 +32,14 @@ public class Sandbox {
         testQFT();
         System.out.println("\nSimple case Constructed QFT using CRZ");
         testQFTWithRZ();
-//        System.out.println("Complex case QFT black box: ");
-//        testComplexQFT();
-
+        System.out.println("Complex case QFT black box: ");
     }
 
     public static void testAutoQFT() {
         jqs jqs = new jqs(3, 1000, "QFT-TEST");
 //        jqs.X(0);
-//        jqs.X(1);
-//        jqs.X(2);
+        jqs.X(1);
+        jqs.X(2);
         jqs.getComputationalState();
         jqs.QFT();
         System.out.println(jqs);
@@ -52,8 +50,8 @@ public class Sandbox {
     public static void testQFT() {
         jqs jqs = new jqs(3);
 //        jqs.X(0);
-//        jqs.X(1);
-//        jqs.X(2);
+        jqs.X(1);
+        jqs.X(2);
         jqs.H(2);
         jqs.CGate("S", 2, 1);
         jqs.CGate("T", 2, 0);
@@ -70,8 +68,8 @@ public class Sandbox {
     public static void testQFTWithRZ() {
         jqs jqs = new jqs(3);
 //        jqs.X(0);
-//        jqs.X(1);
-//        jqs.X(2);
+        jqs.X(1);
+        jqs.X(2);
         jqs.H(2);
         jqs.CGate("RZ", 2, 1, Math.PI);
         jqs.CGate("RZ", 2, 0, Math.PI/2);

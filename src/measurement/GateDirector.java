@@ -178,11 +178,16 @@ public class GateDirector {
      * @return the complex matrix that is the RZ gate operator
      */
     private static ComplexMatrix buildRZGate(WorkItem work){
-        ComplexMatrix RZ = new ComplexMatrix(2,2);
-        RZ.set(0,0,new ComplexNumber(Math.cos(work.getTheta()/2), -Math.sin(work.getTheta()/2)));
-        RZ.set(0,1, new ComplexNumber(0,0));
-        RZ.set(1,0, new ComplexNumber(0,0));
-        RZ.set(1,1, new ComplexNumber(Math.cos(work.getTheta()/2), Math.sin(work.getTheta()/2)));
+        ComplexMatrix RZ = new ComplexMatrix(2, 2);
+        if(work.getTheta()!=Math.PI) {
+            RZ.set(0, 0, new ComplexNumber(Math.cos(work.getTheta() / 2), -Math.sin(work.getTheta() / 2)));
+            RZ.set(1, 1, new ComplexNumber(Math.cos(work.getTheta() / 2), Math.sin(work.getTheta() / 2)));
+        } else {
+            RZ.set(0, 0, new ComplexNumber(1, 0));
+            RZ.set(1, 1, new ComplexNumber(0.0, Math.sin(work.getTheta() / 2)));
+        }
+        RZ.set(0, 1, new ComplexNumber(0, 0));
+        RZ.set(1, 0, new ComplexNumber(0, 0));
         return RZ;
     }
 
