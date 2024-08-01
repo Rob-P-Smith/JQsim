@@ -258,7 +258,7 @@ public class jqs {
      * @param target The target qubit.
      */
     public void RZ(int target) {
-        workQueue.addGate(new WorkItem("RZ", target, Math.PI / 2));
+        workQueue.addGate(new WorkItem("RZ", target, Math.PI));
     }
 
     /**

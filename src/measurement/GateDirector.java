@@ -108,6 +108,12 @@ public class GateDirector {
 
     /**
      * Construct the matrix for the R1 gate based on user provided theta value.
+     *
+     * [
+     *     1    0
+     *     0    e^(iθ)
+     * ]
+     *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
@@ -121,6 +127,12 @@ public class GateDirector {
     }
     /**
      * Construct the matrix for the RX gate based on user provided theta value.
+     *
+     * [
+     *     cos(θ/2)     -i*sin(θ/2)
+     *     -i*sin(θ/2)   cos(θ/2)
+     * ]
+     *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
@@ -136,6 +148,11 @@ public class GateDirector {
     }
     /**
      * Construct the matrix for the RY gate based on user provided theta value.
+     * [
+     *     cos(θ/2)    -sin(θ/2)
+     *     sin(θ/2)     cos(θ/2)
+     * ]
+     *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RY gate operator
      */
@@ -151,16 +168,22 @@ public class GateDirector {
     }
     /**
      * Construct the matrix for the RZ gate based on user provided theta value.
+     *
+     * [
+     *     cos(θ/2) - i*sin(θ/2)    0
+     *     0                        cos(θ/2) + i*sin(θ/2)
+     * ]
+     *
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RZ gate operator
      */
     private static ComplexMatrix buildRZGate(WorkItem work){
-        ComplexMatrix builtGate = new ComplexMatrix(2,2);
-        builtGate.set(0,0,new ComplexNumber(Math.cos(-work.getTheta()/2), Math.sin(-work.getTheta()/2)));
-        builtGate.set(0,1, new ComplexNumber(0, 0));
-        builtGate.set(1,0,new ComplexNumber(0, 0));
-        builtGate.set(1,1,new ComplexNumber(Math.cos(-work.getTheta()/2), -Math.sin(-work.getTheta()/2)));
-        return builtGate;
+        ComplexMatrix RZ = new ComplexMatrix(2,2);
+        RZ.set(0,0,new ComplexNumber(Math.cos(work.getTheta()/2), -Math.sin(work.getTheta()/2)));
+        RZ.set(0,1, new ComplexNumber(0,0));
+        RZ.set(1,0, new ComplexNumber(0,0));
+        RZ.set(1,1, new ComplexNumber(Math.cos(work.getTheta()/2), Math.sin(work.getTheta()/2)));
+        return RZ;
     }
 
     /**

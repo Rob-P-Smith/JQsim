@@ -14,9 +14,9 @@ import java.util.Random;
 /**
  * The default engine that will execute the WorkQueue for a given jqs quantum circuit.
  *
- * @author Rober Smith
+ * @author Robert Smith
  * @version 0.1
- * @since 7 July 2024
+ * @since 27 July 2024
  */
 public class Backend {
     private int shots;

@@ -8,6 +8,10 @@ import state.WorkItem;
  * This class implements the Quantum Fourier Transform (QFT) algorithm.
  * It uses a GateDirector to apply the necessary quantum gates.
  *
+ *  * @author Robert Smith
+ *  * @version 0.1
+ *  * @since 28 July 2024
+ *
  * @see GateDirector
  * @see complex_classes.ComplexMath
  * @see complex_classes.ComplexMatrix
