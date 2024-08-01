@@ -55,8 +55,9 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
-        double theta = (2 * Math.PI / Math.pow(2,k));
-        WorkItem Rk = new WorkItem("CRZ", numQubits-1-controlQubit, numQubits-1-targetQubit, theta);
+        double theta = (2 * Math.PI / Math.pow(2,k)/2);
+//        WorkItem Rk = new WorkItem("CRZ", numQubits-1-controlQubit, numQubits-1-targetQubit, theta);
+        WorkItem Rk = new WorkItem("CR1", numQubits-1-controlQubit, numQubits-1-targetQubit, theta);
         gateD.getGate(Rk);
     }
 
