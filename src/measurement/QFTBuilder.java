@@ -5,12 +5,22 @@ import complex_classes.ComplexMatrix;
 import state.WorkItem;
 
 /**
- * This class implements the Quantum Fourier Transform (QFT) algorithm.
+ * This class implements the Quantum Fourier Transform (QFT) algorithm and its counterpart QFT inverse.
  * It uses a GateDirector to apply the necessary quantum gates.
- * <p>
- * * @author Robert Smith
- * * @version 0.1
- * * @since 28 July 2024
+ * In the formula
+ * e^2PIijk/2^n for QFT
+ * <ul>
+ * <li>e^2PIi is solved with the cos/sin math in the R1 gate builder</li>
+ * <li>j=i in the outer loop of applyQFT and applyQFTi</li>
+ * <li>k=j in the inner loop of applyQFT and applyQFTi</li>
+ * <li>n=k as the 3rd parameter passed to the applyRk and applyRki methods</li>
+ * </ul>
+ * Functionally, this represents rows as i and columns as j with k being the scalar on rotation of the Rk gate. For each
+ * increment of k, the rotation scalar, the subsequent rotations are 1/2 the distance of the last, which reflects the
+ * requirement in QFT to reduce the influence of each subsequent bit on transformed state by 50%.
+ * @author Robert Smith
+ * @version 0.1
+ * @since 28 July 2024
  *
  * @see GateDirector
  * @see complex_classes.ComplexMath
@@ -43,7 +53,7 @@ public class QFTBuilder {
      * 2*Math.PI/Math.pow(2,2) = Math.PI/2
      * 2*Math.PI/Math.pow(2,3) = Math.PI/4
      * </p>
-     * k starts at 2 because the hadamard applied already
+     * k starts at 1 because the hadamard applied already as the power 0 increment.
      *
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
@@ -63,27 +73,18 @@ public class QFTBuilder {
      */
     public void applyQFTi() {
         swapQubits();
-
-//        applyHadamard(0);
-//        applyRki(1, 2, 1);
-//        applyHadamard(1);
-//        applyRki(0, 2, 2);
-//        applyRki(0, 1, 1);
-//        applyHadamard(2);
-
         for (int i = numQubits-1; i >=0 ; i--) {
             applyHadamard(numQubits - i-1);
             int k = 1;
             for (int j = i - 1; j >=0; j--) {
                 applyRki(j, i, k++);
             }
-
         }
     }
 
     /**
      * Applies the controlled rotation gate inverse, Rki.
-     * k starts at 2 because the hadamard applied already
+     * k starts at 1 because the hadamard applied already as the 0 exponent.
      *
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit

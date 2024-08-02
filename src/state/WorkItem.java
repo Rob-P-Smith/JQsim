@@ -301,6 +301,10 @@ public class WorkItem {
         return result;
     }
 
+    /**
+     * Returns the theta value of this WorkItem object
+     * @return the double value of this WorkItem's theta field
+     */
     public double getTheta() {
         return this.theta;
     }

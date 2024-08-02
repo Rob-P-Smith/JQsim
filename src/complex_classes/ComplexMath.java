@@ -312,6 +312,12 @@ public final class ComplexMath {
         }
     }
 
+    /**
+     * Gets the phase of the computational basis state by taking the atan2 of the imaginary and real
+     * values and converting it to degrees.
+     * @param amplitude the amplitude of the basis state
+     * @return the double as degrees of rotation around the Z axis from the X axis as 0.0 degrees.
+     */
     public static double getPhase(ComplexNumber amplitude){
             double decimalPhase = Math.atan2(amplitude.getImag(),amplitude.getReal());
             double degreePhase = 180/Math.PI * decimalPhase;

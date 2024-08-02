@@ -26,6 +26,13 @@ public class Backend {
     private int numQubits;
 
 
+    /**
+     * Constructor for the backend class.
+     * @param gateD The gateDirector object
+     * @param tracker The tracker object that tracks the state of the system in a StateTracker
+     * @param workQueue the workQueue that contains all the gates to apply
+     * @param shots the number of shots, or iterations, to use for getting expectation values
+     */
     public Backend(GateDirector gateD, StateTracker tracker, WorkQueue workQueue, int shots) {
         this.numQubits = tracker.getQubitCount();
         this.gateD = gateD;
@@ -51,6 +58,7 @@ public class Backend {
      * Will provide a measurement for the system on the specified qubit, not complete yet.
      *
      * @param target the qubit to measure
+     * @return the value of the qubit measured
      */
     public int measureQubit(int target) {
         Random random = new Random();
@@ -137,7 +145,7 @@ public class Backend {
         String[] probabilitiesArray = new String[tracker.getStateVecSize() + 2];  //sized for all possibilities + the 2 comments
         int probArrayIdx = 1;                                                   //tracker position in for each loop
         probabilitiesArray[0] = "Probabilities over " + shots + " shots:";
-        double perIncident = 1.0 / shots;                                       //weighted value per occurance of a result
+        double perIncident = 1.0 / shots;                                       //weighted value per occurrence of a result
         double total = 0.0;
 
         for (String key : resultsMap.keySet()) {

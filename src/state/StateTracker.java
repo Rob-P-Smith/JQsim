@@ -15,7 +15,7 @@ import complex_classes.ComplexQubit;
  * @since 4 July 2024
  */
 public class StateTracker {
-    private ComplexMatrix stateVector = new ComplexMatrix(0, 0);
+    private ComplexMatrix stateVector;
 
     /**
      * Default constructor initializes the system state using one qubit set to a 0 real and 0 imag value.
@@ -139,6 +139,12 @@ public class StateTracker {
         return qubitStates;
     }
 
+    /**
+     * Gets and returns the ComplexNumber located at the specified row and index in teh state vector
+     * @param row the row, 0 based indexing, of where to get
+     * @param column the column to get, will usually be 0
+     * @return returns the ComplexNumber found
+     */
     public ComplexNumber get(int row, int column) {
         return stateVector.get(row, column);
     }

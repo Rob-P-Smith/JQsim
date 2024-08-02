@@ -131,6 +131,12 @@ public final class ComplexQubit {
         return state.get(0,0).getImag();
     }
 
+    /**
+     * Sets the qubit specified to the values provided as parameters.
+     * @param row the row index in the state vector
+     * @param real real component of the ComplexNumber
+     * @param imag imaginary component of the ComplexNumber
+     */
     public void setQubit(int row, double real, double imag) {
         state.set(row,0, new ComplexNumber(real, imag));
     }

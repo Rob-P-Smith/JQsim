@@ -20,7 +20,6 @@ import java.util.Arrays;
  * @since 25 June 2024
  */
 public final class ComplexMatrix {
-    private static final boolean DEBUG = false;
     private int rows;
     private int cols;
     private ComplexNumber[][] data;
