@@ -28,10 +28,18 @@ public class Sandbox {
     public static void main(String[] args) {
         jqs jqs = new jqs(3);
         jqs.X(0);
+        jqs.S(0);
+        jqs.T(0);
+//        jqs.RX(Math.PI/5, 0);
+        jqs.X(1);
+        jqs.T(1);
+        jqs.X(2);
+//        jqs.RY(3*Math.PI/2, 2);
         jqs.getComputationalState();
+        System.out.println("Starting State: " + jqs);
         jqs.QFT();
-        System.out.println(jqs);
+        System.out.println("\nQFT State: "+ jqs);
         jqs.QFTi();
-        System.out.println("\n"+jqs);
+        System.out.println("\nAfter QFTi" +jqs);
     }
 }

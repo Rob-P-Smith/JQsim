@@ -194,6 +194,20 @@ public class MultiQubitGateBuilder {
                 }
                 gateD.tracker.setStateVec(newStateVector);
             }
+            case "CR1i" -> {
+                for(int i = 0; i < stateSize; i++){
+                    int controlBit = (i >> controlQubit) & 1;
+                    if (controlBit == 1){
+                        WorkItem applyR1i = new WorkItem("R1i",targetQubit, work.getTheta());
+                        ComplexMatrix matrix = gateD.getGate(applyR1i);
+                        ComplexMatrix thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
+                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                    } else {
+                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                    }
+                }
+                gateD.tracker.setStateVec(newStateVector);
+            }
             case "SWAP" -> {
                 for (int i = 0; i < stateSize; i++){
                     int bit1 = (i >> controlQubit) & 1;

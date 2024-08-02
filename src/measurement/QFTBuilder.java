@@ -37,49 +37,13 @@ public class QFTBuilder {
     }
 
     /**
-     * Applies the Quantum Fourier Transform Inverse to the current state vector.
-     */
-    public void applyQFTi() {
-        swapQubits();
-        for (int i = numQubits - 1; i >= 0; i--) {
-            applyHadamard(numQubits - 1 - i);
-            int k = 1;
-            for (int j = i - 1; j >= 0; j--) {
-                applyRki(j, i, k++);
-            }
-        }
-    }
-
-    /**
-     * Applies the controlled rotation gate inverse, Rki.
-     * k starts at 2 because the hadamard applied already is the R1 version of Rk and RZ already
-     * cuts theta in half during construction each iteration through the method cuts the degree
-     * of rotation in half by exponentially increasing the divisor for 2 * Math.PI for each
-     * subsequent application of Rk to a given qubit in register having QFT applied.
-     *
-     * @param controlQubit the control qubit
-     * @param targetQubit  the target qubit
-     * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
-     */
-    private void applyRki(int controlQubit, int targetQubit, int k) {
-        double theta = -(2 * Math.PI / Math.pow(2, k) / 2);
-        WorkItem Rk = new WorkItem("CR1i", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
-        gateD.getGate(Rk);
-    }
-
-    /**
      * Applies the controlled rotation gate Rk.
      * <p>
      * theta below examples:
      * 2*Math.PI/Math.pow(2,2) = Math.PI/2
      * 2*Math.PI/Math.pow(2,3) = Math.PI/4
      * </p>
-     * k starts at 2 because the hadamard applied already is the R1 version of Rk and RZ already
-     * cuts theta in half during construction each iteration through the method cuts the degree
-     * of rotation in half by exponentially increasing the divisor for 2 * Math.PI for each
-     * subsequent application of Rk to a given qubit in register having QFT applied.
+     * k starts at 2 because the hadamard applied already
      *
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
@@ -88,9 +52,50 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
+//        System.out.println("In QFT.");
         double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         WorkItem Rk = new WorkItem("CR1", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
         gateD.getGate(Rk);
+    }
+
+    /**
+     * Applies the Quantum Fourier Transform Inverse to the current state vector.
+     */
+    public void applyQFTi() {
+        swapQubits();
+
+//        applyHadamard(0);
+//        applyRki(1, 2, 1);
+//        applyHadamard(1);
+//        applyRki(0, 2, 2);
+//        applyRki(0, 1, 1);
+//        applyHadamard(2);
+
+        for (int i = numQubits-1; i >=0 ; i--) {
+            applyHadamard(numQubits - i-1);
+            int k = 1;
+            for (int j = i - 1; j >=0; j--) {
+                applyRki(j, i, k++);
+            }
+
+        }
+    }
+
+    /**
+     * Applies the controlled rotation gate inverse, Rki.
+     * k starts at 2 because the hadamard applied already
+     *
+     * @param controlQubit the control qubit
+     * @param targetQubit  the target qubit
+     * @see WorkItem
+     * @see ComplexMatrix
+     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     */
+    private void applyRki(int controlQubit, int targetQubit, int k) {
+//        System.out.println("In QFT inverse.");
+        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
+        WorkItem Rki = new WorkItem("CR1i", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
+        gateD.getGate(Rki);
     }
 
     /**
