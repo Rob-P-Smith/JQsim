@@ -3,6 +3,7 @@ package measurement;
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
+import complex_classes.ComplexSparse;
 import state.StateTracker;
 import state.WorkItem;
 
@@ -17,7 +18,7 @@ import static complex_classes.ComplexGateEnums.*;
  * @since 16 July 2024
  */
 public class GateDirector {
-    ComplexMatrix finalGate;
+    ComplexSparse finalGate;
     StateTracker tracker;
 
     /**
@@ -28,7 +29,7 @@ public class GateDirector {
      */
     public GateDirector(StateTracker tracker) {
         this.tracker = tracker;
-        finalGate = new ComplexMatrix(tracker.getStateVec().getHeight(),
+        finalGate = new ComplexSparse(tracker.getStateVec().getHeight(),
                 tracker.getStateVec().getHeight());
     }
 
@@ -38,7 +39,7 @@ public class GateDirector {
      * @param thisGate is a WorkItem from the WorkQueue
      * @return The ComplexMatrix representing the final gate.
      */
-    public ComplexMatrix getGate(WorkItem thisGate) {
+    public ComplexSparse getGate(WorkItem thisGate) {
         calculateGate(thisGate);
         return finalGate;
     }
@@ -48,7 +49,7 @@ public class GateDirector {
      *
      * @param operatorSequence An array of ComplexMatrix operators to be applied.
      */
-    public void executeOperatorSequence(ComplexMatrix[] operatorSequence) {
+    public void executeOperatorSequence(ComplexSparse[] operatorSequence) {
         for (int i = operatorSequence.length - 1; i >= 0; i--) {
             if (i == operatorSequence.length - 1) {
                 this.finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
@@ -65,8 +66,8 @@ public class GateDirector {
      * @param thisGate The WorkItem containing the gate operation to be applied.
      */
     private void calculateGate(WorkItem thisGate) {
-        ComplexMatrix singleOperator = decodeOperator(thisGate);
-        this.finalGate = new ComplexMatrix(tracker.getStateVec().getHeight(),
+        ComplexSparse singleOperator = decodeOperator(thisGate);
+        this.finalGate = new ComplexSparse(tracker.getStateVec().getHeight(),
                 tracker.getStateVec().getHeight());
 
         if (thisGate.isSingleTarget()) {
@@ -84,8 +85,8 @@ public class GateDirector {
      * @param work The WorkItem containing the operator information.
      * @return The ComplexMatrix representing the operator.
      */
-    private static ComplexMatrix decodeOperator(WorkItem work) {
-        ComplexMatrix singleOperator = null;
+    private static ComplexSparse decodeOperator(WorkItem work) {
+        ComplexSparse singleOperator = null;
         String worker = work.getOperator();
         switch (worker) {
             case ("X"), ("CX"), ("CXX"), ("TOFFOLI") -> singleOperator = PAULI_X.getMatrix();
@@ -117,8 +118,8 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
-    private static ComplexMatrix buildR1Gate(WorkItem work) {
-        ComplexMatrix builtGate = new ComplexMatrix(2, 2);
+    private static ComplexSparse buildR1Gate(WorkItem work) {
+        ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         builtGate.set(0, 0, new ComplexNumber(1, 0));
         builtGate.set(0, 1, new ComplexNumber(0, 0));
@@ -137,9 +138,9 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
-    private static ComplexMatrix buildR1Gatei(WorkItem work) {
+    private static ComplexSparse buildR1Gatei(WorkItem work) {
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
-        ComplexMatrix builtGate = new ComplexMatrix(2, 2);
+        ComplexSparse builtGate = new ComplexSparse(2, 2);
         builtGate.set(0, 0, new ComplexNumber(1, 0));
         builtGate.set(0, 1, new ComplexNumber(0, 0));
         builtGate.set(1, 0, new ComplexNumber(0, 0));
@@ -158,8 +159,8 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
-    private static ComplexMatrix buildRXGate(WorkItem work) {
-        ComplexMatrix builtGate = new ComplexMatrix(2, 2);
+    private static ComplexSparse buildRXGate(WorkItem work) {
+        ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta() / 2);
         double sinTheta = Math.sin(work.getTheta() / 2);
         builtGate.set(0, 0, new ComplexNumber(cosTheta, 0));
@@ -177,8 +178,8 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RY gate operator
      */
-    private static ComplexMatrix buildRYGate(WorkItem work) {
-        ComplexMatrix builtGate = new ComplexMatrix(2, 2);
+    private static ComplexSparse buildRYGate(WorkItem work) {
+        ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta() / 2);
         double sinTheta = Math.sin(work.getTheta() / 2);
         builtGate.set(0, 0, new ComplexNumber(cosTheta, 0));
@@ -197,8 +198,8 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RZ gate operator
      */
-    private static ComplexMatrix buildRZGate(WorkItem work) {
-        ComplexMatrix RZ = new ComplexMatrix(2, 2);
+    private static ComplexSparse buildRZGate(WorkItem work) {
+        ComplexSparse RZ = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         RZ.set(0, 0, new ComplexNumber(cosTheta / 2, -Math.sin(work.getTheta() / 2)));
         RZ.set(1, 1, new ComplexNumber(cosTheta / 2, Math.sin(work.getTheta() / 2)));

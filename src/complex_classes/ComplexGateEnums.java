@@ -102,14 +102,14 @@ public enum ComplexGateEnums {
     /**
      * The complex matrix associated with each gate.
      */
-    private final ComplexMatrix matrix;
+    private final ComplexSparse matrix;
 
     /**
      * Constructs a ComplexGateEnums instance with the specified complex matrix.
      *
      * @param matrix the complex matrix associated with the gate
      */
-    ComplexGateEnums(ComplexMatrix matrix) {
+    ComplexGateEnums(ComplexSparse matrix) {
         this.matrix = matrix;
     }
 
@@ -118,7 +118,7 @@ public enum ComplexGateEnums {
      *
      * @return the complex matrix associated with the gate
      */
-    public ComplexMatrix getMatrix() {
+    public ComplexSparse getMatrix() {
         return matrix;
     }
 

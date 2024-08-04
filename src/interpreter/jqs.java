@@ -3,6 +3,7 @@ package interpreter;
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
+import complex_classes.ComplexSparse;
 import measurement.Backend;
 import measurement.GateDirector;
 import measurement.QFTBuilder;
@@ -155,7 +156,7 @@ public class jqs {
      *
      * @return tracker's state vector which is a 2^nqubits x 1 ComplexMatrix.
      */
-    public ComplexMatrix getStateVec() {
+    public ComplexSparse getStateVec() {
         return tracker.getStateVec();
     }
 
@@ -169,7 +170,7 @@ public class jqs {
      * Setter for the state vector to make setting it shorter from outside jqs.
      * @param newState the state to set the tracker system vector to.
      */
-    public void setState(ComplexMatrix newState) {
+    public void setState(ComplexSparse newState) {
         tracker.setStateVec(newState);
     }
 

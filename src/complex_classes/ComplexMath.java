@@ -11,22 +11,21 @@ import static supportClasses.GreekEnums.*;
  * @since 29 June 2024
  */
 public final class ComplexMath {
-    private static final boolean DEBUG = false;
 
     /**
      * Computes the tensor product of the control and target matrices using the provided matrices.
      *
      * @param firstMatrix  The first matrix.
      * @param secondMatrix The second matrix.
-     * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
+     * @return A new {@code ComplexSparse} object that is the result of the tensor product.
      */
-    public static ComplexMatrix tensorMultiply(ComplexMatrix firstMatrix, ComplexMatrix secondMatrix) {
+    public static ComplexSparse tensorMultiply(ComplexSparse firstMatrix, ComplexSparse secondMatrix) {
         int firstHeight = firstMatrix.getHeight();
         int firstWidth = firstMatrix.getWidth();
         int secondHeight = secondMatrix.getHeight();
         int secondWidth = secondMatrix.getWidth();
 
-        ComplexMatrix result = new ComplexMatrix((firstHeight * secondHeight), (firstWidth * secondWidth));
+        ComplexSparse result = new ComplexSparse((firstHeight * secondHeight), (firstWidth * secondWidth));
         for (int i = 0; i < firstHeight; i++) {
             for (int j = 0; j < firstWidth; j++) {
                 for (int k = 0; k < secondHeight; k++) {
@@ -48,49 +47,48 @@ public final class ComplexMath {
      * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
      * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
      */
-    public static ComplexMatrix multiplyMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
+    public static ComplexSparse multiplyMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
         if (matrixOne.getWidth() != matrixTwo.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication: "
                     + matrixOne.getHeight() + "x" + matrixOne.getWidth()
                     + " cannot be multiplied with " + matrixTwo.getHeight()
                     + "x" + matrixTwo.getWidth());
         }
-        ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixTwo.getWidth()];
+        ComplexSparse result = new ComplexSparse(matrixOne.getHeight(), matrixTwo.getWidth());
         for (int i = 0; i < matrixOne.getHeight(); i++) {
             for (int j = 0; j < matrixTwo.getWidth(); j++) {
-                result[i][j] = new ComplexNumber();
                 for (int k = 0; k < matrixOne.getWidth(); k++) {
-                    result[i][j] = addComplexNumbers(
-                            result[i][j], multiplyComplexNumbers(
-                                    matrixOne.get(i, k), matrixTwo.get(k, j)));
+                    result.put(i,j, addComplexNumbers(
+                            result.get(i,j), multiplyComplexNumbers(
+                                    matrixOne.get(i,k), matrixTwo.get(k,j))));
                 }
             }
         }
-        return new ComplexMatrix(result);
+        return result;
     }
 
     /**
-     * Adds two matrices and returns the result as a new matrix.
+     * Adds two matrices and returns the result as a new sparse matrix.
      *
      * @param matrixOne The first matrix.
      * @param matrixTwo The second matrix.
      * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
-    public static ComplexMatrix addMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
+    public static ComplexSparse addMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
         if (matrixOne.getHeight() != matrixTwo.getHeight() || matrixOne.getWidth() != matrixTwo.getWidth()) {
             throw new IllegalArgumentException("Matrix dimensions must be the same for addition: "
                     + matrixOne.getHeight() + "x" + matrixOne.getWidth()
                     + " cannot be added with " + matrixTwo.getHeight()
                     + "x" + matrixTwo.getWidth());
         }
-        ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixOne.getWidth()];
+        ComplexSparse result = new ComplexSparse(matrixOne.getHeight(), matrixTwo.getWidth());
         for (int i = 0; i < matrixOne.getHeight(); i++) {
             for (int j = 0; j < matrixOne.getWidth(); j++) {
-                result[i][j] = addComplexNumbers(matrixOne.get(i, j), matrixTwo.get(i, j));
+                result.put(i,j,addComplexNumbers(matrixOne.get(i,j), matrixTwo.get(i,j)));
             }
         }
-        return new ComplexMatrix(result);
+        return result;
     }
 
     /**
@@ -104,12 +102,6 @@ public final class ComplexMath {
     public static ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
         double real = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag());
         double imag = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal());
-        if (DEBUG) {
-            System.out.println("Real result: " + real);
-        }
-        if (DEBUG) {
-            System.out.println("Imag result: " + imag);
-        }
         return new ComplexNumber(real, imag);
     }
 
@@ -142,9 +134,9 @@ public final class ComplexMath {
      * @param vector The input vector, usually a qubit state
      * @return The outer product as matrix
      */
-    public static ComplexMatrix outerProduct(ComplexMatrix vector) {
-        ComplexMatrix transpose = getTranspose(vector);
-        ComplexMatrix outerProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
+    public static ComplexSparse outerProduct(ComplexSparse vector) {
+        ComplexSparse transpose = getTranspose(vector);
+        ComplexSparse outerProduct = new ComplexSparse(vector.getHeight(), vector.getHeight());
         for (int i = 0; i < vector.getHeight(); i++) {
             ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
             for (int j = 0; j < vector.getHeight(); j++) {
@@ -160,19 +152,19 @@ public final class ComplexMath {
      * @param originMatrix The matrix to transpose.
      * @return A new {@code ComplexMatrix} that is the transpose of the original matrix.
      */
-    public static ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
+    public static ComplexSparse getTranspose(ComplexSparse originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
-        ComplexMatrix resultMatrix;
+        ComplexSparse resultMatrix;
         if (height == width) {
-            resultMatrix = new ComplexMatrix(height, width);
+            resultMatrix = new ComplexSparse(height, width);
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     resultMatrix.set(i, j, originMatrix.get(j, i));
                 }
             }
         } else {
-            resultMatrix = new ComplexMatrix(width, height);
+            resultMatrix = new ComplexSparse(width, height);
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     resultMatrix.set(i, j, originMatrix.get(j, i));
@@ -188,19 +180,19 @@ public final class ComplexMath {
      * @param originMatrix The matrix to compute the conjugate transpose of.
      * @return A new {@code ComplexMatrix} that is the conjugate transpose of the original matrix.
      */
-    public static ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
+    public static ComplexSparse getConjugateTranspose(ComplexSparse originMatrix) {
         int height = originMatrix.getHeight();
         int width = originMatrix.getWidth();
-        ComplexMatrix resultMatrix;
+        ComplexSparse resultMatrix;
         if (height == width) {
-            resultMatrix = new ComplexMatrix(height, width);
+            resultMatrix = new ComplexSparse(height, width);
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
                 }
             }
         } else {
-            resultMatrix = new ComplexMatrix(width, height);
+            resultMatrix = new ComplexSparse(width, height);
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
@@ -215,7 +207,7 @@ public final class ComplexMath {
      * @param stateVector the current system state vector
      * @return A string of the dirac notation representation
      */
-    public static String complexMatrixToDiracNotation(ComplexMatrix stateVector) {
+    public static String complexMatrixToDiracNotation(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
         }
@@ -256,7 +248,7 @@ public final class ComplexMath {
      * @param stateVector the current system state vector
      * @return A string of the dirac notation representation
      */
-    public static String complexMatrixToBasisStates(ComplexMatrix stateVector) {
+    public static String complexMatrixToBasisStates(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
         }

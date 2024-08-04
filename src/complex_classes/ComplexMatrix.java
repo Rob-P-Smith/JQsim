@@ -42,6 +42,7 @@ public final class ComplexMatrix {
     }
 
     /**
+     * TODO: Determine if the equivalent to this needs to be added to ComplexSparse.
      * Constructs a matrix from a two-dimensional array of complex numbers.
      *
      * <p>
@@ -97,6 +98,7 @@ public final class ComplexMatrix {
     }
 
     /**
+     * TODO: Determine if the equivalent to this needs to be added to ComplexSparse.
      * Retrieves the underlying two-dimensional array representation of the matrix.
      *
      * @return The two-dimensional array of complex numbers representing the matrix.
@@ -106,6 +108,7 @@ public final class ComplexMatrix {
     }
 
     /**
+     * TODO: Determine if the equivalent to this needs to be added to ComplexSparse.
      * Sets the value of the matrix data to the new ComplexNumber[][]
      * @param data the data of this class
      */
