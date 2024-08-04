@@ -216,7 +216,8 @@ state vector of the system.
 ## Phase 5: 
 &#x2705;Ensure control gates apply correctly across superposition system states when multiple gates are applied, preserving  
 both amplitude and phase of each qubit.  
-&#x2705; ***Currently Working*** Implement QFT as a black-box/oracle callable on a register of qubits which have a user prepared input state and Fourier Transformed output state.    &#x274C;Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
+&#x2705;Implement QFT as a black-box/oracle callable on a register of qubits which have a user prepared input state and Fourier Transformed output state.   
+&#x274C; ***Currently Working*** Implement simulations measurement of each qubit and implement measurement of single qubit and cast result into  
 a classical bit.  
 &#x274C;Implement deriving expectation values for the whole system upon simulated system collapse.
 
@@ -227,15 +228,14 @@ a classical bit.
 front end construction.  
 
 ## Phase X (aka indeterminately far into the future tasks): 
-&#x274C;Continue implementing the more complex gates, e.g. RXX, QFT, etc.  
+&#x274C;Continue implementing the more complex gates, e.g. RXX, ~~QFT~~, etc.  
 &#x274C;Convert all outputs to JSON in preparation for front end construction.  
 &#x274C;Build the front end (oh boy!)  
 
 # Issues  
 <ol>
-<li>The current critical bug is the jqs.M() method triggering a string error during the WorkQueue execution and requires debugging to slightly
-adjust the way jqs is handling jqs.M() and stop it from treating it like an unassigned gate type value in the decoder switch.
-<li>
-</li>
+<li>Currently all known bugs are resolved, however, there are definitely unknown bugs to be fixed.</li>  
+<li>The system being limited to a low number of qubits is the result of needing to implement sparse storage of the matricies and modifying  
+  the matrix math functions to use sparse matrix while calculating to avoid storing the whole matrix in memory.</li>  
 </ol>
 
