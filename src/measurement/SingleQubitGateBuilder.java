@@ -1,6 +1,7 @@
 package measurement;
 
 import complex_classes.ComplexMatrix;
+import complex_classes.ComplexSparse;
 import state.WorkItem;
 
 import static complex_classes.ComplexGateEnums.IDENTITY;
@@ -29,11 +30,11 @@ public class SingleQubitGateBuilder{
      * @param work           The WorkItem containing the gate information.
      * @param singleOperator The single-qubit operator matrix.
      */
-    void buildSingleQubitOperator(WorkItem work, ComplexMatrix singleOperator) {
+    void buildSingleQubitOperator(WorkItem work, ComplexSparse singleOperator) {
 
         int stateLength = gateD.tracker.getStateVecSize();
         int numQubits = (int) (Math.log(stateLength) / Math.log(2));
-        ComplexMatrix[] operatorSequence = new ComplexMatrix[numQubits];
+        ComplexSparse[] operatorSequence = new ComplexSparse[numQubits];
         for (int i = 0; i < numQubits; i++) {
             if (i != work.getTarget()) {
                 operatorSequence[i] = IDENTITY.getMatrix();

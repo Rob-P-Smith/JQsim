@@ -11,7 +11,7 @@ public enum ComplexGateEnums {
     /**
      * Pauli-X gate matrix.
      */
-    PAULI_X(new ComplexMatrix(new ComplexNumber[][]{
+    PAULI_X(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(0), new ComplexNumber(1)},
             {new ComplexNumber(1), new ComplexNumber(0)}
     })),
@@ -19,7 +19,7 @@ public enum ComplexGateEnums {
     /**
      * Pauli-Z gate matrix.
      */
-    PAULI_Z(new ComplexMatrix(new ComplexNumber[][]{
+    PAULI_Z(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(-1)}
     })),
@@ -27,7 +27,7 @@ public enum ComplexGateEnums {
     /**
      * Pauli-Y gate matrix.
      */
-    PAULI_Y(new ComplexMatrix(new ComplexNumber[][]{
+    PAULI_Y(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(0), new ComplexNumber(0, -1)},
             {new ComplexNumber(0, 1), new ComplexNumber(0)}
     })),
@@ -35,7 +35,7 @@ public enum ComplexGateEnums {
     /**
      * Hadamard gate matrix.
      */
-    HADAMARD(new ComplexMatrix(new ComplexNumber[][]{
+    HADAMARD(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1 / Math.sqrt(2)), new ComplexNumber(1 / Math.sqrt(2))},
             {new ComplexNumber(1 / Math.sqrt(2)), new ComplexNumber(-(1 / Math.sqrt(2)))}
     })),
@@ -43,7 +43,7 @@ public enum ComplexGateEnums {
     /**
      * Identity gate matrix.
      */
-    IDENTITY(new ComplexMatrix(new ComplexNumber[][]{
+    IDENTITY(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(1)}
     })),
@@ -51,7 +51,7 @@ public enum ComplexGateEnums {
     /**
      * S gate matrix.
      */
-    S_GATE(new ComplexMatrix(new ComplexNumber[][]{
+    S_GATE(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0, 1)}
     })),
@@ -59,7 +59,7 @@ public enum ComplexGateEnums {
     /**
      * Si gate matrix.
      */
-    SI_GATE(new ComplexMatrix(new ComplexNumber[][]{
+    SI_GATE(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0, -1)}
     })),
@@ -67,19 +67,19 @@ public enum ComplexGateEnums {
     /**
      * T gate matrix.
      */
-    T_GATE(new ComplexMatrix(new ComplexNumber[][]{
+    T_GATE(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), getTValue()}
     })),
     /**
      * Ti gate matrix.
      */
-    TI_GATE(new ComplexMatrix(new ComplexNumber[][]{
+    TI_GATE(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), getTIValue()}
     })),
 
-    SWAP(new ComplexMatrix(new ComplexNumber[][]{
+    SWAP(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0)},
@@ -92,7 +92,7 @@ public enum ComplexGateEnums {
      * 0 -i  0  0
      * 0  0  0  1
      */
-    ISWAP(new ComplexMatrix(new ComplexNumber[][]{
+    ISWAP(new ComplexSparse(new ComplexNumber[][]{
             {new ComplexNumber(1), new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0), new ComplexNumber(0, -1), new ComplexNumber(0)},
             {new ComplexNumber(0), new ComplexNumber(0, -1), new ComplexNumber(0), new ComplexNumber(0)},

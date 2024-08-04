@@ -73,6 +73,19 @@ public final class ComplexSparse {
         }
     }
 
+    public ComplexSparse(ComplexNumber[][] matrix){
+        rowsMap = new HashMap<>();
+        this.rows = matrix.length;
+        this.cols = matrix[0].length;
+        for(int i = 0; i < rows; i++){
+            Map<Integer, ComplexNumber> aRowMap = new HashMap<>();
+            rowsMap.put(i, aRowMap);
+            for(int j = 0; j < cols; j++){
+                rowsMap.get(i).put(j,new ComplexNumber(matrix[i][j].getReal(), matrix[i][j].getImag()));
+            }
+        }
+    }
+
     /**
      * Returns a string representation of the sparse matrix.
      *
@@ -81,7 +94,7 @@ public final class ComplexSparse {
     @Override
     public String toString() {
         Set<Integer> rowMapKeys = rowsMap.keySet();
-        String result = "RowMap={\n";
+        String result = "RowMap"+"("+rows+"x"+cols+")"+"={\n";
         for (Integer key : rowMapKeys) {
             result += "Row " + key + " = " + rowsMap.get(key) + "\n";
         }
@@ -210,6 +223,9 @@ public final class ComplexSparse {
      * @param imag   the imaginary portion of the complex number
      */
     public void put(int row, int column, double real, double imag) {
+        if(real == 0.0 && imag == 0.0){
+            return;
+        }
         if (rowsMap.containsKey(row)) {
             rowsMap.get(row).put(column, new ComplexNumber(real, imag));
         } else {
@@ -217,7 +233,7 @@ public final class ComplexSparse {
             thisRow.put(column, new ComplexNumber(real, imag));
             rowsMap.put(row, thisRow);
         }
-        condenseSparse();
+//        condenseSparse();
         this.rowsMapKeySet = rowsMap.keySet();
     }
 
@@ -229,6 +245,9 @@ public final class ComplexSparse {
      * @param value  the value to store
      */
     public void put(int row, int column, ComplexNumber value) {
+        if(value.getReal() == 0.0 && value.getImag() == 0.0){
+            return;
+        }
         if (rowsMap.containsKey(row)) {
             rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
         } else {
@@ -236,7 +255,7 @@ public final class ComplexSparse {
             thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
             rowsMap.put(row, thisRow);
         }
-        condenseSparse();
+//        condenseSparse();
         this.rowsMapKeySet = rowsMap.keySet();
     }
 
@@ -253,6 +272,9 @@ public final class ComplexSparse {
      * @param imag   the imaginary part of the complex number
      */
     public void set(int row, int column, double real, double imag) {
+        if(real == 0.0 && imag == 0.0){
+            return;
+        }
         if (rowsMap.containsKey(row)) {
             rowsMap.get(row).put(column, new ComplexNumber(real, imag));
         } else {
@@ -260,7 +282,6 @@ public final class ComplexSparse {
             thisRow.put(column, new ComplexNumber(real, imag));
             rowsMap.put(row, thisRow);
         }
-        condenseSparse();
         this.rowsMapKeySet = rowsMap.keySet();
     }
 
@@ -272,6 +293,9 @@ public final class ComplexSparse {
      * @param value  the ComplexNumber to put in the row/column location
      */
     public void set(int row, int column, ComplexNumber value) {
+        if(value.getReal() == 0.0 && value.getImag() == 0.0){
+            return;
+        }
         if (rowsMap.containsKey(row)) {
             rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
         } else {
@@ -279,7 +303,6 @@ public final class ComplexSparse {
             thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
             rowsMap.put(row, thisRow);
         }
-        condenseSparse();
         this.rowsMapKeySet = rowsMap.keySet();
     }
 
@@ -331,168 +354,8 @@ public final class ComplexSparse {
         eyd.put(0, 0, 1.0, 0.0);
         eyd.put(1, 1, 1.0, 0.0);
 
-        ComplexSparse tensorTest = ComplexSparse.ComplexMath.multiplyMatrix(exx, eyd);
+        ComplexSparse tensorTest = ComplexMath.multiplyMatrix(exx, eyd);
         System.out.println(tensorTest);
         System.out.println(tensorTest.printMatrix());
-    }
-
-    private final class ComplexMath {
-        private static final double PRECISION_LIMIT = 1e-10;
-        
-        /**
-         * Computes the tensor product of the control and target matrices using the provided matrices.
-         *
-         * @param firstMatrix  The first matrix.
-         * @param secondMatrix The second matrix.
-         * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
-         */
-        public static ComplexSparse tensorMultiply(ComplexSparse firstMatrix, ComplexSparse secondMatrix) {
-            int firstHeight = firstMatrix.getHeight();
-            int firstWidth = firstMatrix.getWidth();
-            int secondHeight = secondMatrix.getHeight();
-            int secondWidth = secondMatrix.getWidth();
-
-            ComplexSparse result = new ComplexSparse((firstHeight * secondHeight), (firstWidth * secondWidth));
-            for (int i = 0; i < firstHeight; i++) {
-                for (int j = 0; j < firstWidth; j++) {
-                    for (int k = 0; k < secondHeight; k++) {
-                        for (int l = 0; l < secondWidth; l++) {
-                            result.set((i * secondHeight + k), (j * secondWidth + l),
-                                    multiplyComplexNumbers(firstMatrix.get(i, j), secondMatrix.get(k, l)));
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
-        /**
-         * Multiplies two matrices and returns the result as a new matrix.
-         *
-         * @param matrixOne The first matrix.
-         * @param matrixTwo The second matrix.
-         * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
-         * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
-         */
-        public static ComplexSparse multiplyMatrix(ComplexMatrix matrixOne, ComplexSparse matrixTwo) {
-            if (matrixOne.getWidth() != matrixTwo.getHeight()) {
-                throw new IllegalArgumentException("Matrix dimensions do not match for multiplication");
-            }
-            ComplexSparse product = new ComplexSparse(matrixOne.getHeight(), matrixTwo.getWidth());
-            for (int i = 0; i < matrixOne.getHeight(); i++) {
-                for (int j = 0; j < matrixTwo.getWidth(); j++) {
-                    for (int k = 0; k < matrixOne.getWidth(); k++) {
-                        product.put(i, j, addComplexNumbers(product.get(i, j), multiplyComplexNumbers(
-                                matrixOne.get(i, k), matrixTwo.get(k, j))));
-                    }
-                }
-            }
-            return product;
-        }
-
-        /**
-         * Multiplies two matrices and returns the result as a new matrix.
-         *
-         * @param matrixOne The first matrix.
-         * @param matrixTwo The second matrix.
-         * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
-         * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
-         */
-        public static ComplexSparse multiplyMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
-            if (matrixOne.getWidth() != matrixTwo.getHeight()) {
-                throw new IllegalArgumentException("Matrix dimensions do not match for multiplication");
-            }
-            ComplexSparse product = new ComplexSparse(matrixOne.getHeight(), matrixTwo.getWidth());
-            for (int i = 0; i < matrixOne.getHeight(); i++) {
-                for (int j = 0; j < matrixTwo.getWidth(); j++) {
-                    for (int k = 0; k < matrixOne.getWidth(); k++) {
-                        product.put(i, j, addComplexNumbers(product.get(i, j), multiplyComplexNumbers(
-                                matrixOne.get(i, k), matrixTwo.get(k, j))));
-                    }
-                }
-            }
-            return product;
-        }
-
-        /**
-         * Adds two matrices and returns the result as a new matrix.
-         *
-         * @param matrixOne The first matrix.
-         * @param matrixTwo The second matrix.
-         * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
-         * @throws IllegalArgumentException If the matrices have different dimensions.
-         */
-        public static ComplexSparse addMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
-            if (matrixOne.getHeight() != matrixTwo.getHeight() || matrixOne.getWidth() != matrixTwo.getWidth()) {
-                throw new IllegalArgumentException("Matrix dimensions must be the same for addition: "
-                        + matrixOne.getHeight() + "x" + matrixOne.getWidth()
-                        + " cannot be added with " + matrixTwo.getHeight()
-                        + "x" + matrixTwo.getWidth());
-            }
-            ComplexSparse result = new ComplexSparse(matrixOne.getHeight(), matrixOne.getWidth());
-            for (int i = 0; i < matrixOne.getHeight(); i++) {
-                for (int j = 0; j < matrixOne.getWidth(); j++) {
-                    result.put(i,j, addComplexNumbers(matrixOne.get(i,j), matrixTwo.get(i,j)));
-                }
-            }
-            return result;
-        }
-
-        /**
-         * Multiplies two complex numbers.
-         * If the result came back as 0.9999999999999998 it is changed to 1.0
-         *
-         * @param aVec The first complex number.
-         * @param bVec The second complex number.
-         * @return The complex number result of the multiplication.
-         */
-        private static ComplexNumber multiplyComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
-            double real = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getReal() - aVec.getImag() * bVec.getImag());
-            double imag = testResultForFloatErrorBuildup(aVec.getReal() * bVec.getImag() + aVec.getImag() * bVec.getReal());
-            return new ComplexNumber(real, imag);
-        }
-
-        private static double testResultForFloatErrorBuildup(double number) {
-            if (number > 0.9999999 && number < 1.0) {
-                return 1.0;
-            } else if (number < -0.9999999 && number > -1.0) {
-                return -1.0;
-            } else {
-                return number;
-            }
-        }
-
-        /**
-         * Adds two complex numbers.
-         *
-         * @param aVec The first complex number.
-         * @param bVec The second complex number.
-         * @return The complex number result of the addition.
-         */
-        public static ComplexNumber addComplexNumbers(ComplexNumber aVec, ComplexNumber bVec) {
-            double real = testResultForFloatErrorBuildup(aVec.getReal() + bVec.getReal());
-            double imag = testResultForFloatErrorBuildup(aVec.getImag() + bVec.getImag());
-            return new ComplexNumber(real, imag);
-        }
-
-        private static String complexToString(ComplexNumber number) {
-            if (Math.abs(number.getImag()) < PRECISION_LIMIT) {
-                return String.format("%.3f", number.getReal());
-            } else if (Math.abs(number.getReal()) < PRECISION_LIMIT) {
-                return String.format("%.3fi", number.getImag());
-            } else {
-                return String.format("(%.3f + %.3fi)", number.getReal(), number.getImag());
-            }
-        }
-
-        /**
-         * Computes the conjugate of a complex number.
-         *
-         * @param sampleNumber The complex number to conjugate.
-         * @return The conjugated complex number.
-         */
-        private static ComplexNumber conjugate(ComplexNumber sampleNumber) {
-            return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
-        }
     }
 }

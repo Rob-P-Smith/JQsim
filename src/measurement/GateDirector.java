@@ -54,8 +54,10 @@ public class GateDirector {
             if (i == operatorSequence.length - 1) {
                 this.finalGate = ComplexMath.tensorMultiply(operatorSequence[i], operatorSequence[i - 1]);
                 i--;
+                //System.out.println("executeOperatorSequence if" + finalGate);//for debug
             } else {
                 this.finalGate = ComplexMath.tensorMultiply(finalGate, operatorSequence[i]);
+                //System.out.println("executeOperatorSequence else" + finalGate);//for debug
             }
         }
     }
@@ -69,7 +71,7 @@ public class GateDirector {
         ComplexSparse singleOperator = decodeOperator(thisGate);
         this.finalGate = new ComplexSparse(tracker.getStateVec().getHeight(),
                 tracker.getStateVec().getHeight());
-
+        //System.out.println("Operator: " + thisGate.getOperator() + " ,Target: " + thisGate.getTarget()); //for debug
         if (thisGate.isSingleTarget()) {
             SingleQubitGateBuilder sqgb = new SingleQubitGateBuilder(this);
             sqgb.buildSingleQubitOperator(thisGate, singleOperator);

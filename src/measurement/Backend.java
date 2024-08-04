@@ -3,6 +3,7 @@ package measurement;
 import complex_classes.ComplexMath;
 import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
+import complex_classes.ComplexSparse;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
@@ -47,7 +48,8 @@ public class Backend {
     public void getComputationalState() {
         while (workQueue.hasWork()) {
             WorkItem nextItem = workQueue.peek();
-            ComplexMatrix matrix = gateD.getGate(workQueue.getNextGate());
+            ComplexSparse matrix = gateD.getGate(workQueue.getNextGate());
+
             if (nextItem.isSingleTarget()) { // TODO: temporary, adjust this for non Control multi-qubit gates
                 tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
             }
@@ -119,7 +121,7 @@ public class Backend {
             while (workQueue.hasWork()) {
                 GateDirector gdd = new GateDirector(this.tracker);
                 WorkItem nextItem = workQueue.peek();
-                ComplexMatrix matrix = gdd.getGate(workQueue.getNextGate());
+                ComplexSparse matrix = gdd.getGate(workQueue.getNextGate());
                 if (nextItem.isSingleTarget()) {
                     tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
                 }

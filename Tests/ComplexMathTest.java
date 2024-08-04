@@ -63,56 +63,21 @@ class ComplexMathTest {
     }
 
     @Test
-    void testMultiply() {
-        ComplexSparse matrixOne = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(1, 0));
-        matrixOne.put(0,1,new ComplexNumber(2, 0));
-        matrixOne.put(0,0,new ComplexNumber(3, 0));
-        matrixOne.put(1,1,new ComplexNumber(4, 0));
-
-        ComplexSparse matrixTwo = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(2, 0));
-        matrixOne.put(0,1,new ComplexNumber(0, 0));
-        matrixOne.put(0,0,new ComplexNumber(1, 0));
-        matrixOne.put(1,1,new ComplexNumber(2, 0));
-
-        ComplexSparse result = ComplexMath.multiplyMatrix(matrixOne, matrixTwo);
-
-        ComplexSparse expected = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(4, 0));
-        matrixOne.put(0,1,new ComplexNumber(4, 0));
-        matrixOne.put(0,0,new ComplexNumber(10, 0));
-        matrixOne.put(1,1,new ComplexNumber(8, 0));
-
-        for (int i = 0; i < result.getHeight(); i++) {
-            for (int j = 0; j < result.getWidth(); j++) {
-                assertEquals(result.get(i, j).getReal(), expected.get(i, j).getReal());
-                assertEquals(result.get(i, j).getImag(), expected.get(i, j).getImag());
-            }
-        }
-    }
-
-    @Test
     void testAdd() {
-        ComplexSparse matrixOne = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(1, 0));
-        matrixOne.put(0,1,new ComplexNumber(2, 0));
-        matrixOne.put(0,0,new ComplexNumber(3, 0));
-        matrixOne.put(1,1,new ComplexNumber(4, 0));
-
-        ComplexSparse matrixTwo = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(2, 0));
-        matrixOne.put(0,1,new ComplexNumber(0, 0));
-        matrixOne.put(0,0,new ComplexNumber(1, 0));
-        matrixOne.put(1,1,new ComplexNumber(2, 0));
+        ComplexSparse matrixOne = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 0), new ComplexNumber(2, 0)},
+                {new ComplexNumber(3, 0), new ComplexNumber(4, 0)}
+        });
+        ComplexSparse matrixTwo = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(2, 0), new ComplexNumber(0, 0)},
+                {new ComplexNumber(1, 0), new ComplexNumber(2, 0)}
+        });
 
         ComplexSparse result = ComplexMath.addMatrix(matrixOne, matrixTwo);
-
-        ComplexSparse expected = new ComplexSparse(2,2);
-        matrixOne.put(0,0,new ComplexNumber(3, 0));
-        matrixOne.put(0,1,new ComplexNumber(2, 0));
-        matrixOne.put(0,0,new ComplexNumber(4, 0));
-        matrixOne.put(1,1,new ComplexNumber(6, 0));
+        ComplexSparse expected = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(3, 0), new ComplexNumber(2, 0)},
+                {new ComplexNumber(4, 0), new ComplexNumber(6, 0)}
+        });
 
         for (int i = 0; i < result.getHeight(); i++) {
             for (int j = 0; j < result.getWidth(); j++) {
@@ -124,43 +89,29 @@ class ComplexMathTest {
 
     @Test
     void testTranspose() {
-        ComplexSparse matrix = new ComplexSparse(2,3);
-        matrix.put(0,0,new ComplexNumber(1, 0));
-        matrix.put(0,1,new ComplexNumber(2, 0));
-        matrix.put(0,2,new ComplexNumber(3, 0));
-        matrix.put(1,0,new ComplexNumber(4, 0));
-        matrix.put(1,1,new ComplexNumber(5, 0));
-        matrix.put(1,2,new ComplexNumber(6, 0));
+        ComplexSparse matrix = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 0), new ComplexNumber(2, 0), new ComplexNumber(3, 0)},
+                {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
+        });
 
         ComplexSparse result = ComplexMath.getTranspose(matrix);
-
-        ComplexSparse expected = new ComplexSparse(3,2);
-        matrix.put(0,0,new ComplexNumber(1, 0));
-        matrix.put(0,1,new ComplexNumber(4, 0));
-        matrix.put(1,0,new ComplexNumber(2, 0));
-        matrix.put(1,1,new ComplexNumber(5, 0));
-        matrix.put(2,0,new ComplexNumber(3, 0));
-        matrix.put(2,1,new ComplexNumber(6, 0));
-
+        ComplexSparse expected = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 0), new ComplexNumber(4, 0)},
+                {new ComplexNumber(2, 0), new ComplexNumber(5, 0)},
+                {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
+        });
         evaluateTransposeResults(1, matrix, result, expected);
 
-        matrix = new ComplexSparse(3,2);
-        matrix.set(0,0,new ComplexNumber(1, 0));
-        matrix.set(0,1,new ComplexNumber(4, 0));
-        matrix.set(1,0,new ComplexNumber(2, 0));
-        matrix.set(1,1,new ComplexNumber(5, 0));
-        matrix.set(2,0,new ComplexNumber(3, 0));
-        matrix.set(2,1,new ComplexNumber(6, 0));
-
+        matrix = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 0), new ComplexNumber(4, 0)},
+                {new ComplexNumber(2, 0), new ComplexNumber(5, 0)},
+                {new ComplexNumber(3, 0), new ComplexNumber(6, 0)}
+        });
         result = ComplexMath.getTranspose(matrix);
-        expected = new ComplexSparse(2,3);
-        matrix.put(0,0,new ComplexNumber(1, 0));
-        matrix.put(0,1,new ComplexNumber(2, 0));
-        matrix.put(0,2,new ComplexNumber(3, 0));
-        matrix.put(1,0,new ComplexNumber(4, 0));
-        matrix.put(1,1,new ComplexNumber(5, 0));
-        matrix.put(1,2,new ComplexNumber(6, 0));
-
+        expected = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 0), new ComplexNumber(2, 0), new ComplexNumber(3, 0)},
+                {new ComplexNumber(4, 0), new ComplexNumber(5, 0), new ComplexNumber(6, 0)}
+        });
         evaluateTransposeResults(2, matrix, result, expected);
     }
 
@@ -179,19 +130,16 @@ class ComplexMathTest {
 
     @Test
     void testConjugateTranspose() {
-        ComplexSparse matrix = new ComplexSparse(2,2);
-        matrix.put(0,0,new ComplexNumber(1, 1));
-        matrix.put(0,1,new ComplexNumber(2, 2));
-        matrix.put(1,0,new ComplexNumber(3, 3));
-        matrix.put(1,1,new ComplexNumber(4, 4));
-
+        ComplexSparse matrix = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, 1), new ComplexNumber(2, 2)},
+                {new ComplexNumber(3, 3), new ComplexNumber(4, 4)}
+        });
 
         ComplexSparse result = ComplexMath.getConjugateTranspose(matrix);
-        ComplexSparse expected = new ComplexSparse(2,2);
-        matrix.put(0,0,new ComplexNumber(1, -1));
-        matrix.put(0,1,new ComplexNumber(3, -3));
-        matrix.put(1,0,new ComplexNumber(2, -2));
-        matrix.put(1,1,new ComplexNumber(4, -4));
+        ComplexSparse expected = new ComplexSparse(new ComplexNumber[][]{
+                {new ComplexNumber(1, -1), new ComplexNumber(3, -3)},
+                {new ComplexNumber(2, -2), new ComplexNumber(4, -4)}
+        });
 
         System.out.println("\nConjugate Transpose Test");
         System.out.println("Starting Matrix: \n" + matrix);

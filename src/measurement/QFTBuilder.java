@@ -1,7 +1,7 @@
 package measurement;
 
 import complex_classes.ComplexMath;
-import complex_classes.ComplexMatrix;
+import complex_classes.ComplexSparse;
 import state.WorkItem;
 
 /**
@@ -58,8 +58,8 @@ public class QFTBuilder {
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
      * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     * @see ComplexSparse
+     * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
 //        System.out.println("In QFT.");
@@ -89,8 +89,8 @@ public class QFTBuilder {
      * @param controlQubit the control qubit
      * @param targetQubit  the target qubit
      * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     * @see ComplexSparse
+     * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRki(int controlQubit, int targetQubit, int k) {
 //        System.out.println("In QFT inverse.");
@@ -114,12 +114,12 @@ public class QFTBuilder {
      *
      * @param targetQubit the qubit to apply the Hadamard gate to
      * @see WorkItem
-     * @see ComplexMatrix
-     * @see ComplexMath#multiplyMatrix(ComplexMatrix, ComplexMatrix)
+     * @see ComplexSparse
+     * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyHadamard(int targetQubit) {
         WorkItem applyHadamard = new WorkItem("H", targetQubit);
-        ComplexMatrix matrix = gateD.getGate(applyHadamard);
+        ComplexSparse matrix = gateD.getGate(applyHadamard);
         gateD.tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec()));
     }
 
