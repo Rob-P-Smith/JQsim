@@ -199,13 +199,9 @@ public class GateDirector {
      */
     private static ComplexMatrix buildRZGate(WorkItem work) {
         ComplexMatrix RZ = new ComplexMatrix(2, 2);
-        if (Math.abs(work.getTheta()) != Math.PI) {
-            RZ.set(0, 0, new ComplexNumber(Math.cos(work.getTheta() / 2), -Math.sin(work.getTheta() / 2)));
-            RZ.set(1, 1, new ComplexNumber(Math.cos(work.getTheta() / 2), Math.sin(work.getTheta() / 2)));
-        } else {
-            RZ.set(0, 0, new ComplexNumber(0.0, -1.0));
-            RZ.set(1, 1, new ComplexNumber(0.0, 1));
-        }
+        double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
+        RZ.set(0, 0, new ComplexNumber(cosTheta / 2, -Math.sin(work.getTheta() / 2)));
+        RZ.set(1, 1, new ComplexNumber(cosTheta / 2, Math.sin(work.getTheta() / 2)));
         RZ.set(0, 1, new ComplexNumber(0, 0));
         RZ.set(1, 0, new ComplexNumber(0, 0));
         return RZ;

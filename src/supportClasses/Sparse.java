@@ -8,85 +8,64 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static supportClasses.GreekEnums.PSI;
+import static complex_classes.ComplexGateEnums.*;
+import static supportClasses.GreekEnums.*;
 
 /**
  * Represents a sparse matrix using a map of maps to store non-zero values.
+ *
+ * @author Robert Smith
+ * @version 0.1
+ * @since 3 August 2024
  */
 public class Sparse {
-    private Map<Integer, Map<Integer, ComplexNumber>> rowMap;
+    private Map<Integer, Map<Integer, ComplexNumber>> rowsMap;
     private int rowCount;
+    private int columnCount;
 
     /**
      * Constructs an empty sparse matrix.
      */
     public Sparse() {
-        rowMap = new HashMap<>();
+        rowsMap = new HashMap<>();
         rowCount = 0;
     }
 
     /**
-     * Returns the row map of the sparse matrix.
+     * Constructs a sparse matrix to serve as the system state vector. It places a 1 in the 0 index to
+     * represent a freshly initialized state vector with a |0> value and an empty column map in each other
+     * row to facilitate working with setter methods.
      *
-     * @return the row map
+     * @param numQubits the number of qubits to represent in the state vector.
      */
-    public Map<Integer, Map<Integer, ComplexNumber>> getRowMap() {
-        return rowMap;
-    }
+    public Sparse(int numQubits) {
+        rowsMap = new HashMap<>();
+        rowCount = numQubits;
+        columnCount = 1;
+        Map<Integer, ComplexNumber> aMap = new HashMap<>();
+        aMap.put(0, new ComplexNumber(1.0, 0.0));
+        rowsMap.put(0, aMap);
 
-    /**
-     * Puts a column map into the sparse matrix.
-     *
-     * @param columnMap the column map to be put
-     */
-    public void putColumn(Map<Integer, ComplexNumber> columnMap) {
-        rowMap.put(rowCount++, columnMap);
-    }
-
-
-    /**
-     * Sets the value at the specified position in the matrix.
-     *
-     * @param row    the row index
-     * @param column the column index
-     * @param real   the real part of the complex number
-     * @param imag   the imaginary part of the complex number
-     */
-    public void setValue(int row, int column, double real, double imag) {
-        try {
-            Map<Integer, ComplexNumber> rowsMap = rowMap.get(row);
-            rowsMap.put(column, new ComplexNumber(real, imag));
-        } catch (Exception e) {
-            System.out.println("Row not found in map.");
-            throw new RuntimeException(e);
+        for (int i = 1; i < numQubits; i++) {
+            Map<Integer, ComplexNumber> g_Map = new HashMap<>();
+            rowsMap.put(i, g_Map);
         }
     }
 
     /**
-     * Sets the value at the specified position in the matrix.
+     * Constructs a sparse matrix for use as a standard matrix of ComplexNumbers
      *
-     * @param row    the row index
-     * @param column the column index
-     * @param value  the complex number value
+     * @param height the height of the matrix
+     * @param width  the width of the matrix
      */
-    public void setValue(int row, int column, ComplexNumber value) {
-        try {
-            Map<Integer, ComplexNumber> rowsMap = rowMap.get(row);
-            rowsMap.put(column, value);
-        } catch (Exception e) {
-            System.out.println("Row not found in map.");
-            throw new RuntimeException(e);
+    public Sparse(int height, int width) {
+        rowsMap = new HashMap<>();
+        rowCount = height;
+        columnCount = width;
+        for (int i = 0; i < height; i++) {
+            Map<Integer, ComplexNumber> g_Map = new HashMap<>();
+            rowsMap.put(i, g_Map);
         }
-    }
-
-    /**
-     * Returns the size of the sparse matrix it represents the number of rows the map contains as
-     * Map<Integer, ComplexNumber>>.
-     *
-     * @return the size of the matrix
-     */
-    private int size() {
-        return rowMap.size();
     }
 
     /**
@@ -96,28 +75,228 @@ public class Sparse {
      */
     @Override
     public String toString() {
-        Set<Integer> rowMapKeys = rowMap.keySet();
+        Set<Integer> rowMapKeys = rowsMap.keySet();
         String result = "RowMap={\n";
         for (Integer key : rowMapKeys) {
-            result += "Row " + key + " = " + rowMap.get(key) + "\n";
+            result += "Row " + key + " = " + rowsMap.get(key) + "\n";
         }
         result += "}";
         return result;
     }
 
     /**
-     * Retreives the ComplexNumber located at (row, column) of the matrix.
+     * Print the entire matrix, including zero values.
+     *
+     * @return the string of the entire matrix
+     */
+    public String printMatrix() {
+        String result = "Matrix\n";
+        for(int rowidx = 0; rowidx < this.getHeight(); rowidx++){
+            result += "[";
+            for(int colidx = 0; colidx < this.getWidth(); colidx++){
+                Map<Integer, ComplexNumber> currentRow = rowsMap.get(rowidx);
+                if(!currentRow.containsKey(colidx)){
+                    result += 0.0;
+                } else {
+                    result += currentRow.get(colidx);
+                }
+                if(colidx != this.getWidth()-1){
+                    result += ", ";
+                }
+            }
+            result +="]\n";
+        }
+        return result;
+    }
+
+    /**
+     * Returns the row map of maps representing the sparse matrix.
+     *
+     * @return the row map
+     */
+    public Map<Integer, Map<Integer, ComplexNumber>> getSparseMatrix() {
+        return rowsMap;
+    }
+
+    /**
+     * Puts a row map into the rowsMap Map.
+     *
+     * @param rowMap   the column map to be put
+     * @param rowIndex the row to place the map
+     */
+    public void putRow(Map<Integer, ComplexNumber> rowMap, int rowIndex) {
+        if (!rowsMap.containsKey(rowIndex)) {
+            rowsMap.put(rowIndex, rowMap);
+        } else {
+            System.out.println("Row index not empty.");
+        }
+    }
+
+    /**
+     * Gets a row
+     *
+     * @param row the row to look up
+     * @return the map representing the row
+     */
+    public Map<Integer, ComplexNumber> getRow(int row) {
+        return rowsMap.get(row);
+    }
+
+    /**
+     * Sets the value at the specified position in the matrix.
+     *
+     * @param row    the row index
+     * @param column the column index
+     * @param real   the real part of the complex number
+     * @param imag   the imaginary part of the complex number
+     */
+    public void set(int row, int column, double real, double imag) {
+        if (rowsMap.containsKey(row)) {
+            rowsMap.get(row).put(column, new ComplexNumber(real, imag));
+        } else {
+            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+            thisRow.put(column, new ComplexNumber(real, imag));
+            rowsMap.put(row, thisRow);
+        }
+        condenseSparse();
+    }
+
+    /**
+     * Sets the value at the specified position in the matrix.
+     *
+     * @param row    the row index
+     * @param column the column index
+     * @param value  the ComplexNumber to put in the row/column location
+     */
+    public void set(int row, int column, ComplexNumber value) {
+        if (rowsMap.containsKey(row)) {
+            rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
+        } else {
+            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+            thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
+            rowsMap.put(row, thisRow);
+        }
+        condenseSparse();
+    }
+
+    /**
+     * Returns the size of the sparse matrix it represents the number of rows the map contains as
+     * Map<Integer, ComplexNumber>>.
+     *
+     * @return the size of the matrix
+     */
+    private int size() {
+        int size = 0;
+        for (Integer row : rowsMap.keySet()) {
+            size += rowsMap.get(row).size();
+        }
+        return size;
+    }
+
+    /**
+     * returns the number of rows in the sparse matrix Map
+     *
+     * @return the integer value of how many rows are present
+     */
+    private int getHeight() {
+        return rowCount;
+    }
+
+    /**
+     * returns the number of columns in the sparse matrix Map
+     *
+     * @return the integer value of how many columns are present
+     */
+    private int getWidth() {
+        return columnCount;
+    }
+
+    /**
+     * Inserts the ComplexNumber in the row/column location in the sparse storage structure.
+     *
+     * @param row    the row
+     * @param column the column
+     * @param real   the real portion of the complex number
+     * @param imag   the imaginary portion of the complex number
+     */
+    public void put(int row, int column, double real, double imag) {
+        if (rowsMap.containsKey(row)) {
+            rowsMap.get(row).put(column, new ComplexNumber(real, imag));
+        } else {
+            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+            thisRow.put(column, new ComplexNumber(real, imag));
+            rowsMap.put(row, thisRow);
+        }
+        condenseSparse();
+    }
+
+    /**
+     * Inserts the ComplexNumber in the row/column location in the sparse storage structure.
+     *
+     * @param row    the row
+     * @param column the column
+     * @param value  the value to store
+     */
+    public void put(int row, int column, ComplexNumber value) {
+        if (rowsMap.containsKey(row)) {
+            rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
+        } else {
+            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+            thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
+            rowsMap.put(row, thisRow);
+        }
+        condenseSparse();
+    }
+
+    /**
+     * Retrieves the ComplexNumber located at (row, column) of the matrix.
      *
      * @param rowMapKey    the row index
      * @param columnMapKey the column index
      * @return the ComplexNumber or null;
      */
-    public ComplexNumber getValue(int rowMapKey, int columnMapKey) {
-        if (!rowMap.keySet().contains(rowMapKey) || !rowMap.get(rowMapKey).keySet().contains(columnMapKey)) {
-            System.out.println("No ComplexNumber at the provided index of: [" + rowMapKey + ", " + columnMapKey+"]");
-            return null;
+    public ComplexNumber get(int rowMapKey, int columnMapKey) {
+        if (!entryNotEmpty(rowMapKey, columnMapKey)) {
+            return new ComplexNumber(0.0, 0.0);
+        } else {
+            return rowsMap.get(rowMapKey).get(columnMapKey);
         }
-        return rowMap.get(rowMapKey).get(columnMapKey);
+    }
+
+    /**
+     * Removes the value at the location specified.
+     *
+     * @param row    row index
+     * @param column column index
+     */
+    public void remove(int row, int column) {
+        if (rowsMap.containsKey(row) && rowsMap.get(row).containsKey(column)) {
+            rowsMap.get(row).remove(column);
+        }
+    }
+
+    /**
+     * Checks if location in matrix sparse storage is empty/null or if a value is present.
+     *
+     * @param rowMapKey    row index to look up.
+     * @param columnMapKey column index to look up.
+     * @return true if value found, otherwise false.
+     */
+    private boolean entryNotEmpty(int rowMapKey, int columnMapKey) {
+        return rowsMap.containsKey(rowMapKey) && rowsMap.get(rowMapKey).containsKey(columnMapKey);
+    }
+
+    private void condenseSparse() {
+        Set<Integer> rowMapKeys = rowsMap.keySet();
+        for (Integer rowKey : rowMapKeys) {
+            Set<Integer> columnKeys = rowsMap.get(rowKey).keySet();
+            for (Integer columnKey : columnKeys) {
+                if (rowsMap.get(rowKey).get(columnKey).getReal() == 0.0 &&
+                        rowsMap.get(rowKey).get(columnKey).getImag() == 0.0) {
+                    rowsMap.get(rowKey).remove(columnKey);
+                }
+            }
+        }
     }
 
     /**
@@ -126,20 +305,22 @@ public class Sparse {
      * @param args command line arguments
      */
     public static void main(String[] args) {
-        Sparse newSparse = new Sparse();
-        Map<Integer, ComplexNumber> columnOne = new HashMap<>();
-        Map<Integer, ComplexNumber> columnTwo = new HashMap<>();
-        columnOne.put(0, new ComplexNumber(1, 1));
-        columnOne.put(1, new ComplexNumber(.707, -.707));
-        columnTwo.put(0, new ComplexNumber(0, 1));
-        columnTwo.put(1, new ComplexNumber(1, 0));
-        newSparse.putColumn(columnOne);
-        newSparse.putColumn(columnTwo);
-        newSparse.setValue(0, 1, new ComplexNumber(0.6, 0.4));
-        newSparse.setValue(0, 0, .44, .41);
-        System.out.println(newSparse);
-        System.out.println("Size: " + newSparse.size());
-        System.out.println("Value at 0,1: " + newSparse.getValue(1, 5));
+        Sparse ns = new Sparse(2);
+        ns.put(1, 0, 1.0, 0.0);
+        ns.remove(0, 0);
+        System.out.println(ns);
+
+        Sparse exx = new Sparse(2, 2);
+        exx.put(0, 1, 1.0, 0.0);
+        exx.put(1, 0, 1.0, 0.0);
+
+        Sparse eyd = new Sparse(2, 2);
+        eyd.put(0, 0, 1.0, 0.0);
+        eyd.put(1, 1, 1.0, 0.0);
+
+        Sparse tensorTest = ComplexMath.multiplyMatrix(exx, exx);
+        System.out.println(tensorTest);
+        System.out.println(tensorTest.printMatrix());
     }
 
     /**
@@ -161,13 +342,13 @@ public class Sparse {
          * @param secondMatrix The second matrix.
          * @return A new {@code ComplexMatrix} object that is the result of the tensor product.
          */
-        public static ComplexMatrix tensorMultiply(ComplexMatrix firstMatrix, ComplexMatrix secondMatrix) {
+        public static Sparse tensorMultiply(Sparse firstMatrix, Sparse secondMatrix) {
             int firstHeight = firstMatrix.getHeight();
             int firstWidth = firstMatrix.getWidth();
             int secondHeight = secondMatrix.getHeight();
             int secondWidth = secondMatrix.getWidth();
 
-            ComplexMatrix result = new ComplexMatrix((firstHeight * secondHeight), (firstWidth * secondWidth));
+            Sparse result = new Sparse((firstHeight * secondHeight), (firstWidth * secondWidth));
             for (int i = 0; i < firstHeight; i++) {
                 for (int j = 0; j < firstWidth; j++) {
                     for (int k = 0; k < secondHeight; k++) {
@@ -189,25 +370,44 @@ public class Sparse {
          * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
          * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
          */
-        public static ComplexMatrix multiplyMatrix(ComplexMatrix matrixOne, ComplexMatrix matrixTwo) {
+        public static Sparse multiplyMatrix(ComplexMatrix matrixOne, Sparse matrixTwo) {
             if (matrixOne.getWidth() != matrixTwo.getHeight()) {
-                throw new IllegalArgumentException("Matrix dimensions do not match for multiplication: "
-                        + matrixOne.getHeight() + "x" + matrixOne.getWidth()
-                        + " cannot be multiplied with " + matrixTwo.getHeight()
-                        + "x" + matrixTwo.getWidth());
+                throw new IllegalArgumentException("Matrix dimensions do not match for multiplication");
             }
-            ComplexNumber[][] result = new ComplexNumber[matrixOne.getHeight()][matrixTwo.getWidth()];
+            Sparse product = new Sparse(matrixOne.getHeight(), matrixTwo.getWidth());
             for (int i = 0; i < matrixOne.getHeight(); i++) {
                 for (int j = 0; j < matrixTwo.getWidth(); j++) {
-                    result[i][j] = new ComplexNumber();
                     for (int k = 0; k < matrixOne.getWidth(); k++) {
-                        result[i][j] = addComplexNumbers(
-                                result[i][j], multiplyComplexNumbers(
-                                        matrixOne.get(i, k), matrixTwo.get(k, j)));
+                        product.put(i, j, addComplexNumbers(product.get(i, j), multiplyComplexNumbers(
+                                matrixOne.get(i, k), matrixTwo.get(k, j))));
                     }
                 }
             }
-            return new ComplexMatrix(result);
+            return product;
+        }
+
+        /**
+         * Multiplies two matrices and returns the result as a new matrix.
+         *
+         * @param matrixOne The first matrix.
+         * @param matrixTwo The second matrix.
+         * @return A new {@code ComplexMatrix} object that is the result of the matrix multiplication.
+         * @throws IllegalArgumentException If the matrices have incompatible dimensions for multiplication.
+         */
+        public static Sparse multiplyMatrix(Sparse matrixOne, Sparse matrixTwo) {
+            if (matrixOne.getWidth() != matrixTwo.getHeight()) {
+                throw new IllegalArgumentException("Matrix dimensions do not match for multiplication");
+            }
+            Sparse product = new Sparse(matrixOne.getHeight(), matrixTwo.getWidth());
+            for (int i = 0; i < matrixOne.getHeight(); i++) {
+                for (int j = 0; j < matrixTwo.getWidth(); j++) {
+                    for (int k = 0; k < matrixOne.getWidth(); k++) {
+                        product.put(i, j, addComplexNumbers(product.get(i, j), multiplyComplexNumbers(
+                                matrixOne.get(i, k), matrixTwo.get(k, j))));
+                    }
+                }
+            }
+            return product;
         }
 
         /**
@@ -277,142 +477,6 @@ public class Sparse {
             return new ComplexNumber(real, imag);
         }
 
-        /**
-         * Calculates the tensor product of two input qubits to create the state vector used for two-qubit gate application.
-         *
-         * @param control The control qubit.
-         * @param target  The target qubit.
-         * @return A {@code ComplexNumber[]} with length 4,
-         * containing the state vector resultant from the tensor multiplication.
-         */
-        public static ComplexMatrix deriveStateVector(ComplexMatrix control, ComplexMatrix target) {
-            ComplexMatrix stateVector = new ComplexMatrix(4, 1);
-            int numStates = 2; // Number of states for each qubit (|0> and |1>)
-            int index = 0;
-            for (int i = 0; i < numStates; i++) {
-                for (int j = 0; j < numStates; j++) {
-                    stateVector.set(index, 0, multiplyComplexNumbers(control.get(i, 0), target.get(j, 0)));
-                    index++;
-                }
-            }
-
-            if (DEBUG) {
-                System.out.println("StateVector is: \n" + stateVector);
-            }
-            return stateVector;
-        }
-
-        /**
-         * Multiplies a vector against it's transpose and returns a matrix that is 2*vector.getHeight() wide and tall
-         *
-         * @param vector The input vector, usually a qubit state
-         * @return The outer product as matrix
-         */
-        public static ComplexMatrix outerProduct(ComplexMatrix vector) {
-            ComplexMatrix transpose = getTranspose(vector);
-            ComplexMatrix outerProduct = new ComplexMatrix(vector.getHeight(), vector.getHeight());
-            for (int i = 0; i < vector.getHeight(); i++) {
-                ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
-                for (int j = 0; j < vector.getHeight(); j++) {
-                    outerProduct.set(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
-                }
-            }
-            return outerProduct;
-        }
-
-        /**
-         * Transposes a given matrix.
-         *
-         * @param originMatrix The matrix to transpose.
-         * @return A new {@code ComplexMatrix} that is the transpose of the original matrix.
-         */
-        public static ComplexMatrix getTranspose(ComplexMatrix originMatrix) {
-            int height = originMatrix.getHeight();
-            int width = originMatrix.getWidth();
-            ComplexMatrix resultMatrix;
-            if (height == width) {
-                resultMatrix = new ComplexMatrix(height, width);
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        resultMatrix.set(i, j, originMatrix.get(j, i));
-                    }
-                }
-            } else {
-                resultMatrix = new ComplexMatrix(width, height);
-                for (int i = 0; i < width; i++) {
-                    for (int j = 0; j < height; j++) {
-                        resultMatrix.set(i, j, originMatrix.get(j, i));
-                    }
-                }
-            }
-            return resultMatrix;
-        }
-
-        /**
-         * Computes the conjugate transpose (Hermitian transpose) of a given matrix.
-         *
-         * @param originMatrix The matrix to compute the conjugate transpose of.
-         * @return A new {@code ComplexMatrix} that is the conjugate transpose of the original matrix.
-         */
-        public static ComplexMatrix getConjugateTranspose(ComplexMatrix originMatrix) {
-            int height = originMatrix.getHeight();
-            int width = originMatrix.getWidth();
-            ComplexMatrix resultMatrix;
-            if (height == width) {
-                resultMatrix = new ComplexMatrix(height, width);
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
-                    }
-                }
-            } else {
-                resultMatrix = new ComplexMatrix(width, height);
-                for (int i = 0; i < width; i++) {
-                    for (int j = 0; j < height; j++) {
-                        resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
-                    }
-                }
-            }
-            return resultMatrix;
-        }
-
-        public static String complexMatrixToDiracNotation(ComplexMatrix stateVector) {
-            if (stateVector.getWidth() != 1) {
-                throw new IllegalArgumentException("State vector must be a column vector");
-            }
-
-            int numQubits = (int) (Math.log(stateVector.getHeight()) / Math.log(2));
-            StringBuilder result = new StringBuilder();
-            boolean firstTerm = true;
-
-            for (int i = 0; i < stateVector.getHeight(); i++) {
-                ComplexNumber amplitude = stateVector.get(i, 0);
-                if (amplitude.magnitudeSquared() > 1e-7) {  // Threshold for considering non-zero amplitudes
-                    if (firstTerm) {
-                        result.append("|" + PSI.lower() + "⟩ = ");
-                    }
-
-                    if (!firstTerm && (amplitude.getReal() > 0 || (amplitude.getReal() == 0 && amplitude.getImag() > 0))) {
-                        result.append(" + ");
-                    } else if (!firstTerm) {
-                        result.append(" - ");
-                    }
-
-                    String coeffString = complexToString(amplitude);
-                    if (!coeffString.equals("1") && !coeffString.equals("-1")) {
-                        result.append(coeffString);
-                    } else if (coeffString.equals("-1") && firstTerm) {
-                        result.append("-");
-                    }
-
-                    result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩");
-                    firstTerm = false;
-                }
-            }
-
-            return result.toString();
-        }
-
         private static String complexToString(ComplexNumber c) {
             if (Math.abs(c.getImag()) < 1e-10) {
                 return String.format("%.3f", c.getReal());
@@ -433,6 +497,4 @@ public class Sparse {
             return new ComplexNumber(sampleNumber.getReal(), -sampleNumber.getImag());
         }
     }
-
-
 }
