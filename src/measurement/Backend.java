@@ -89,7 +89,7 @@ public class Backend {
             if (keepState) {
                 normalizationFactor += tracker.get(i, 0).magnitudeSquared();
             } else {
-                tracker.getStateVec().set(i, 0, new ComplexNumber());
+                tracker.getStateVec().put(i, 0, new ComplexNumber());
             }
         }
 
@@ -100,7 +100,7 @@ public class Backend {
                 double denominator = normalizationFactor * normalizationFactor;
                 double newReal = (tracker.get(i, 0).getReal() * normalizationFactor) / denominator;
                 double newImag = (tracker.get(i, 0).getImag() * normalizationFactor) / denominator;
-                tracker.getStateVec().set(i, 0, new ComplexNumber(newReal, newImag));
+                tracker.getStateVec().put(i, 0, new ComplexNumber(newReal, newImag));
             }
         }
         return result;

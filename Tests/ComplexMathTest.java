@@ -16,10 +16,10 @@ class ComplexMathTest {
         ComplexSparse control = new ComplexSparse(2, 1);
         ComplexSparse target = new ComplexSparse(2, 1);
 
-        control.set(0, 0, ONE);
-        control.set(1, 0, ZERO);
-        target.set(0, 0, ONE);
-        target.set(1, 0, ZERO);
+        control.put(0, 0, ONE);
+        control.put(1, 0, ZERO);
+        target.put(0, 0, ONE);
+        target.put(1, 0, ZERO);
 
         ComplexSparse result00 = ComplexMath.tensorMultiply(control, target);
         assertEquals(1.0, result00.get(0, 0).getReal());
@@ -27,11 +27,10 @@ class ComplexMathTest {
         assertEquals(0.0, result00.get(2, 0).getReal());
         assertEquals(0.0, result00.get(3, 0).getReal());
 
-
-        control.set(0, 0, ZERO);
-        control.set(1, 0, ONE);
-        target.set(0, 0, ONE);
-        target.set(1, 0, ZERO);
+        control.put(0, 0, ZERO);
+        control.put(1, 0, ONE);
+        target.put(0, 0, ONE);
+        target.put(1, 0, ZERO);
 
         ComplexSparse result10 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result10.get(0, 0).getReal());
@@ -40,20 +39,20 @@ class ComplexMathTest {
         assertEquals(0.0, result10.get(3, 0).getReal());
 
 
-        control.set(0, 0, ZERO);
-        control.set(1, 0, ONE);
-        target.set(0, 0, ZERO);
-        target.set(1, 0, ONE);
+        control.put(0, 0, ZERO);
+        control.put(1, 0, ONE);
+        target.put(0, 0, ZERO);
+        target.put(1, 0, ONE);
         ComplexSparse result11 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result11.get(0, 0).getReal());
         assertEquals(0.0, result11.get(1, 0).getReal());
         assertEquals(0.0, result11.get(2, 0).getReal());
         assertEquals(1.0, result11.get(3, 0).getReal());
 
-        control.set(0, 0, ONE);
-        control.set(1, 0, ZERO);
-        target.set(0, 0, ZERO);
-        target.set(1, 0, ONE);
+        control.put(0, 0, ONE);
+        control.put(1, 0, ZERO);
+        target.put(0, 0, ZERO);
+        target.put(1, 0, ONE);
 
         ComplexSparse result01 = ComplexMath.tensorMultiply(control, target);
         assertEquals(0.0, result01.get(0, 0).getReal());

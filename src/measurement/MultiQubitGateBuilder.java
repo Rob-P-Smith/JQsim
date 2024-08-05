@@ -91,9 +91,9 @@ public class MultiQubitGateBuilder {
                         WorkItem applyX = new WorkItem("X",targetQubit);
                         ComplexSparse matrix = gateD.getGate(applyX);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -111,7 +111,7 @@ public class MultiQubitGateBuilder {
             }
             case "CY" -> {
                 for (int i = 0; i < stateSize; i++) {
-                    newStateVector.set(i, 0, new ComplexNumber());
+                    newStateVector.put(i, 0, new ComplexNumber());
                 }
                 for (int i = 0; i < stateSize; i++) {
                     int controlBit = (i >> controlQubit) & 1;
@@ -121,21 +121,21 @@ public class MultiQubitGateBuilder {
                         int flippedState = i ^ (1 << targetQubit);
                         if (targetBit == 0) {
                             // |0> -> i|1>
-                            newStateVector.set(flippedState, 0, ComplexMath.multiplyComplexNumbers(new ComplexNumber(0, 1), gateD.tracker.getStateVec().get(i, 0)));
+                            newStateVector.put(flippedState, 0, ComplexMath.multiplyComplexNumbers(new ComplexNumber(0, 1), gateD.tracker.getStateVec().get(i, 0)));
                         } else {
                             // |1> -> -i|0>
-                            newStateVector.set(flippedState, 0, ComplexMath.multiplyComplexNumbers(new ComplexNumber(0, -1), gateD.tracker.getStateVec().get(i, 0)));
+                            newStateVector.put(flippedState, 0, ComplexMath.multiplyComplexNumbers(new ComplexNumber(0, -1), gateD.tracker.getStateVec().get(i, 0)));
                         }
                     } else {
                         // Control qubit is |0>, do nothing
-                        newStateVector.set(i, 0, gateD.tracker.get(i, 0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i, 0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
             }
             case "CS" -> {
                 for (int i = 0; i < stateSize; i++) {
-                    newStateVector.set(i, 0, new ComplexNumber());
+                    newStateVector.put(i, 0, new ComplexNumber());
                 }
                 for(int i = 0; i < stateSize; i++){
                     int controlBit = (i >> controlQubit) & 1;
@@ -143,16 +143,16 @@ public class MultiQubitGateBuilder {
                         WorkItem applyS = new WorkItem("S",targetQubit);
                         ComplexSparse matrix = gateD.getGate(applyS);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
             }
             case "CT" -> {
                 for (int i = 0; i < stateSize; i++) {
-                    newStateVector.set(i, 0, new ComplexNumber());
+                    newStateVector.put(i, 0, new ComplexNumber());
                 }
                 for(int i = 0; i < stateSize; i++){
                     int controlBit = (i >> controlQubit) & 1;
@@ -160,9 +160,9 @@ public class MultiQubitGateBuilder {
                         WorkItem applyT = new WorkItem("T",targetQubit);
                         ComplexSparse matrix = gateD.getGate(applyT);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -174,9 +174,9 @@ public class MultiQubitGateBuilder {
                         WorkItem applyRZ = new WorkItem("RZ",targetQubit, work.getTheta());
                         ComplexSparse matrix = gateD.getGate(applyRZ);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -188,9 +188,9 @@ public class MultiQubitGateBuilder {
                         WorkItem applyR1 = new WorkItem("R1",targetQubit, work.getTheta());
                         ComplexSparse matrix = gateD.getGate(applyR1);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -202,9 +202,9 @@ public class MultiQubitGateBuilder {
                         WorkItem applyR1i = new WorkItem("R1i",targetQubit, work.getTheta());
                         ComplexSparse matrix = gateD.getGate(applyR1i);
                         ComplexSparse thisMatrix = ComplexMath.multiplyMatrix(matrix, gateD.tracker.getStateVec());
-                        newStateVector.set(i, 0, thisMatrix.get(i,0));
+                        newStateVector.put(i, 0, thisMatrix.get(i,0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -215,9 +215,9 @@ public class MultiQubitGateBuilder {
                     int bit2 = (i >> targetQubit) & 1;
                     if(bit1 != bit2){
                         int swappedIndex = i ^ (1 << controlQubit) ^ (1 << targetQubit);
-                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
+                        newStateVector.put(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
                     } else {
-                        newStateVector.set(i,0,gateD.tracker.getStateVec().get(i,0));
+                        newStateVector.put(i,0,gateD.tracker.getStateVec().get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -238,10 +238,10 @@ public class MultiQubitGateBuilder {
                     if (controlBitOne == 1 && controlBitTwo == 1) {
                         // Flip the target bit
                         int newState = i ^ (1 << targetQubit);
-                        newStateVector.set(newState, 0, gateD.tracker.get(i, 0));
+                        newStateVector.put(newState, 0, gateD.tracker.get(i, 0));
                     } else {
                         // Keep the state as is
-                        newStateVector.set(i, 0, gateD.tracker.get(i, 0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i, 0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -255,10 +255,10 @@ public class MultiQubitGateBuilder {
                     if (controlBit == 1){
                         //Flip the target bits
                         int newState = i ^ (1 << targetQubitOne) ^ (1 << targetQubitTwo);
-                        newStateVector.set(newState, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(newState, 0, gateD.tracker.get(i,0));
                     } else {
                         // Don't flip the target bits
-                        newStateVector.set(i, 0, gateD.tracker.get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.get(i,0));
                     }
                 }
                 gateD.tracker.setStateVec(newStateVector);
@@ -274,9 +274,9 @@ public class MultiQubitGateBuilder {
 
                     if(bit1 == 1 && (bit2 != bit3)){
                         int swappedIndex = i ^ (1 << targetQubitOne) ^ (1 << targetQubitTwo);
-                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
+                        newStateVector.put(i, 0, gateD.tracker.getStateVec().get(swappedIndex, 0));
                     } else {
-                        newStateVector.set(i, 0, gateD.tracker.getStateVec().get(i,0));
+                        newStateVector.put(i, 0, gateD.tracker.getStateVec().get(i,0));
                     }
                 }
             }

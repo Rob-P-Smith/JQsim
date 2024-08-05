@@ -73,15 +73,15 @@ public final class ComplexSparse {
         }
     }
 
-    public ComplexSparse(ComplexNumber[][] matrix){
+    public ComplexSparse(ComplexNumber[][] matrix) {
         rowsMap = new HashMap<>();
         this.rows = matrix.length;
         this.cols = matrix[0].length;
-        for(int i = 0; i < rows; i++){
+        for (int i = 0; i < rows; i++) {
             Map<Integer, ComplexNumber> aRowMap = new HashMap<>();
             rowsMap.put(i, aRowMap);
-            for(int j = 0; j < cols; j++){
-                rowsMap.get(i).put(j,new ComplexNumber(matrix[i][j].getReal(), matrix[i][j].getImag()));
+            for (int j = 0; j < cols; j++) {
+                rowsMap.get(i).put(j, new ComplexNumber(matrix[i][j].getReal(), matrix[i][j].getImag()));
             }
         }
     }
@@ -94,7 +94,7 @@ public final class ComplexSparse {
     @Override
     public String toString() {
         Set<Integer> rowMapKeys = rowsMap.keySet();
-        String result = "RowMap"+"("+rows+"x"+cols+")"+"={\n";
+        String result = "RowMap" + "(" + rows + "x" + cols + ")" + "={\n";
         for (Integer key : rowMapKeys) {
             result += "Row " + key + " = " + rowsMap.get(key) + "\n";
         }
@@ -109,20 +109,20 @@ public final class ComplexSparse {
      */
     public String printMatrix() {
         String result = "Matrix\n";
-        for(int rowIdx = 0; rowIdx < this.getHeight(); rowIdx++){
+        for (int rowIdx = 0; rowIdx < this.getHeight(); rowIdx++) {
             result += "[";
-            for(int colIdx = 0; colIdx < this.getWidth(); colIdx++){
+            for (int colIdx = 0; colIdx < this.getWidth(); colIdx++) {
                 Map<Integer, ComplexNumber> currentRow = rowsMap.get(rowIdx);
-                if(!currentRow.containsKey(colIdx)){
+                if (!currentRow.containsKey(colIdx)) {
                     result += 0.0;
                 } else {
                     result += currentRow.get(colIdx);
                 }
-                if(colIdx != this.getWidth()-1){
+                if (colIdx != this.getWidth() - 1) {
                     result += ", ";
                 }
             }
-            result +="]\n";
+            result += "]\n";
         }
         return result;
     }
@@ -174,7 +174,7 @@ public final class ComplexSparse {
             }
         }
     }
-    
+
     /**
      * Checks if location in matrix sparse storage is empty/null or if a value is present.
      *
@@ -193,12 +193,12 @@ public final class ComplexSparse {
      * @param column column index
      */
     public void remove(int row, int column) {
-        if (rowsMapKeySet.contains(row) && rowsMap.get(row).containsKey(column)){
+        if (rowsMapKeySet.contains(row) && rowsMap.get(row).containsKey(column)) {
             rowsMap.get(row).remove(column);
         }
         this.rowsMapKeySet = rowsMap.keySet();
     }
-    
+
     /**
      * Puts a row map into the rowsMap Map.
      *
@@ -223,10 +223,11 @@ public final class ComplexSparse {
      * @param imag   the imaginary portion of the complex number
      */
     public void put(int row, int column, double real, double imag) {
-        if(real == 0.0 && imag == 0.0){
-            return;
-        }
         if (rowsMap.containsKey(row)) {
+            if (real == 0.0 && imag == 0.0) {
+                rowsMap.get(row).remove(column);
+                return;
+            }
             rowsMap.get(row).put(column, new ComplexNumber(real, imag));
         } else {
             Map<Integer, ComplexNumber> thisRow = new HashMap<>();
@@ -245,10 +246,11 @@ public final class ComplexSparse {
      * @param value  the value to store
      */
     public void put(int row, int column, ComplexNumber value) {
-        if(value.getReal() == 0.0 && value.getImag() == 0.0){
-            return;
-        }
         if (rowsMap.containsKey(row)) {
+            if (value.getReal() == 0.0 && value.getImag() == 0.0) {
+                rowsMap.get(row).remove(column);
+                return;
+            }
             rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
         } else {
             Map<Integer, ComplexNumber> thisRow = new HashMap<>();
@@ -259,52 +261,52 @@ public final class ComplexSparse {
         this.rowsMapKeySet = rowsMap.keySet();
     }
 
-    public void setData(ComplexSparse data){
+    public void setData(ComplexSparse data) {
         this.rowsMap = data.getSparseMatrix();
     }
 
-    /**
-     * Sets the value at the specified position in the matrix.
-     *
-     * @param row    the row index
-     * @param column the column index
-     * @param real   the real part of the complex number
-     * @param imag   the imaginary part of the complex number
-     */
-    public void set(int row, int column, double real, double imag) {
-        if(real == 0.0 && imag == 0.0){
-            return;
-        }
-        if (rowsMap.containsKey(row)) {
-            rowsMap.get(row).put(column, new ComplexNumber(real, imag));
-        } else {
-            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
-            thisRow.put(column, new ComplexNumber(real, imag));
-            rowsMap.put(row, thisRow);
-        }
-        this.rowsMapKeySet = rowsMap.keySet();
-    }
-
-    /**
-     * Sets the value at the specified position in the matrix.
-     *
-     * @param row    the row index
-     * @param column the column index
-     * @param value  the ComplexNumber to put in the row/column location
-     */
-    public void set(int row, int column, ComplexNumber value) {
-        if(value.getReal() == 0.0 && value.getImag() == 0.0){
-            return;
-        }
-        if (rowsMap.containsKey(row)) {
-            rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
-        } else {
-            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
-            thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
-            rowsMap.put(row, thisRow);
-        }
-        this.rowsMapKeySet = rowsMap.keySet();
-    }
+//    /**
+//     * Sets the value at the specified position in the matrix.
+//     *
+//     * @param row    the row index
+//     * @param column the column index
+//     * @param real   the real part of the complex number
+//     * @param imag   the imaginary part of the complex number
+//     */
+//    public void set(int row, int column, double real, double imag) {
+//        if(real == 0.0 && imag == 0.0){
+//            return;
+//        }
+//        if (rowsMap.containsKey(row)) {
+//            rowsMap.get(row).put(column, new ComplexNumber(real, imag));
+//        } else {
+//            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+//            thisRow.put(column, new ComplexNumber(real, imag));
+//            rowsMap.put(row, thisRow);
+//        }
+//        this.rowsMapKeySet = rowsMap.keySet();
+//    }
+//
+//    /**
+//     * Sets the value at the specified position in the matrix.
+//     *
+//     * @param row    the row index
+//     * @param column the column index
+//     * @param value  the ComplexNumber to put in the row/column location
+//     */
+//    public void set(int row, int column, ComplexNumber value) {
+//        if(value.getReal() == 0.0 && value.getImag() == 0.0){
+//            return;
+//        }
+//        if (rowsMap.containsKey(row)) {
+//            rowsMap.get(row).put(column, new ComplexNumber(value.getReal(), value.getImag()));
+//        } else {
+//            Map<Integer, ComplexNumber> thisRow = new HashMap<>();
+//            thisRow.put(column, new ComplexNumber(value.getReal(), value.getImag()));
+//            rowsMap.put(row, thisRow);
+//        }
+//        this.rowsMapKeySet = rowsMap.keySet();
+//    }
 
     /**
      * Returns the row map of maps representing the sparse matrix.
@@ -324,7 +326,7 @@ public final class ComplexSparse {
     public Map<Integer, ComplexNumber> getRow(int row) {
         return rowsMap.get(row);
     }
-    
+
     /**
      * Retrieves the ComplexNumber located at (row, column) of the matrix.
      *
@@ -344,7 +346,7 @@ public final class ComplexSparse {
         ComplexSparse ns = new ComplexSparse(2);
         ns.put(1, 0, 1.0, 0.0);
         ns.remove(0, 0);
-        System.out.println("Starting Matrix: \n"+ns);
+        System.out.println("Starting Matrix: \n" + ns);
 
         ComplexSparse exx = new ComplexSparse(2, 2);
         exx.put(0, 1, 1.0, 0.0);

@@ -25,7 +25,7 @@ public class StateTracker {
     public StateTracker() {
         stateVector = new ComplexSparse(1,1);
 //        stateVector = new ComplexMatrix(1, 1);
-        stateVector.set(0, 0, new ComplexNumber(0, 0));
+        stateVector.put(0, 0, new ComplexNumber(0, 0));
     }
 
     /**
@@ -37,9 +37,9 @@ public class StateTracker {
     public StateTracker(int numQubits) {
         stateVector = new ComplexSparse((int) Math.pow(2, numQubits), 1);
 //        stateVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
-        stateVector.set(0, 0, new ComplexNumber(1, 0));
+        stateVector.put(0, 0, new ComplexNumber(1, 0));
         for (int i = 1; i < numQubits; i++) {
-            stateVector.set(i, 0, new ComplexNumber(0, 0));
+            stateVector.put(i, 0, new ComplexNumber(0, 0));
         }
     }
 
@@ -56,7 +56,7 @@ public class StateTracker {
 //        ComplexMatrix copy = new ComplexMatrix(this.getStateVecSize(), 1);
         for(int i = 0; i < this.getStateVecSize(); i++){
             ComplexNumber rowCopy = new ComplexNumber(this.get(i,0).getReal(),this.get(i,0).getImag());
-            copy.set(i,0, rowCopy);
+            copy.put(i,0, rowCopy);
         }
         return new StateTracker(copy);
     }
@@ -197,13 +197,13 @@ public class StateTracker {
 
             for (int j = 0; j < rows; j++) {
                 if ((j & (1 << i)) == 0) {
-                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                    qubitStates.put(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
                 } else {
-                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                    qubitStates.put(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
                 }
             }
-            qubitStates.set(i, 0, zeroState);
-            qubitStates.set(i, 1, oneState);
+            qubitStates.put(i, 0, zeroState);
+            qubitStates.put(i, 1, oneState);
         }
         return qubitStates;
     }

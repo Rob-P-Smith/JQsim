@@ -123,10 +123,10 @@ public class GateDirector {
     private static ComplexSparse buildR1Gate(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
-        builtGate.set(0, 0, new ComplexNumber(1, 0));
-        builtGate.set(0, 1, new ComplexNumber(0, 0));
-        builtGate.set(1, 0, new ComplexNumber(0, 0));
-        builtGate.set(1, 1, new ComplexNumber(cosTheta, Math.sin(work.getTheta())));
+        builtGate.put(0, 0, new ComplexNumber(1, 0));
+        builtGate.put(0, 1, new ComplexNumber(0, 0));
+        builtGate.put(1, 0, new ComplexNumber(0, 0));
+        builtGate.put(1, 1, new ComplexNumber(cosTheta, Math.sin(work.getTheta())));
         return builtGate;
     }
 
@@ -143,10 +143,10 @@ public class GateDirector {
     private static ComplexSparse buildR1Gatei(WorkItem work) {
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         ComplexSparse builtGate = new ComplexSparse(2, 2);
-        builtGate.set(0, 0, new ComplexNumber(1, 0));
-        builtGate.set(0, 1, new ComplexNumber(0, 0));
-        builtGate.set(1, 0, new ComplexNumber(0, 0));
-        builtGate.set(1, 1, new ComplexNumber(cosTheta, -Math.sin(work.getTheta())));
+        builtGate.put(0, 0, new ComplexNumber(1, 0));
+        builtGate.put(0, 1, new ComplexNumber(0, 0));
+        builtGate.put(1, 0, new ComplexNumber(0, 0));
+        builtGate.put(1, 1, new ComplexNumber(cosTheta, -Math.sin(work.getTheta())));
         return builtGate;
     }
 
@@ -165,10 +165,10 @@ public class GateDirector {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta() / 2);
         double sinTheta = Math.sin(work.getTheta() / 2);
-        builtGate.set(0, 0, new ComplexNumber(cosTheta, 0));
-        builtGate.set(0, 1, new ComplexNumber(0, -sinTheta));
-        builtGate.set(1, 0, new ComplexNumber(0, -sinTheta));
-        builtGate.set(1, 1, new ComplexNumber(cosTheta, 0));
+        builtGate.put(0, 0, new ComplexNumber(cosTheta, 0));
+        builtGate.put(0, 1, new ComplexNumber(0, -sinTheta));
+        builtGate.put(1, 0, new ComplexNumber(0, -sinTheta));
+        builtGate.put(1, 1, new ComplexNumber(cosTheta, 0));
         return builtGate;
     }
 
@@ -184,10 +184,10 @@ public class GateDirector {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta() / 2);
         double sinTheta = Math.sin(work.getTheta() / 2);
-        builtGate.set(0, 0, new ComplexNumber(cosTheta, 0));
-        builtGate.set(0, 1, new ComplexNumber(-sinTheta, 0));
-        builtGate.set(1, 0, new ComplexNumber(sinTheta, 0));
-        builtGate.set(1, 1, new ComplexNumber(cosTheta, 0));
+        builtGate.put(0, 0, new ComplexNumber(cosTheta, 0));
+        builtGate.put(0, 1, new ComplexNumber(-sinTheta, 0));
+        builtGate.put(1, 0, new ComplexNumber(sinTheta, 0));
+        builtGate.put(1, 1, new ComplexNumber(cosTheta, 0));
         return builtGate;
     }
 
@@ -203,10 +203,10 @@ public class GateDirector {
     private static ComplexSparse buildRZGate(WorkItem work) {
         ComplexSparse RZ = new ComplexSparse(2, 2);
         double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
-        RZ.set(0, 0, new ComplexNumber(cosTheta / 2, -Math.sin(work.getTheta() / 2)));
-        RZ.set(1, 1, new ComplexNumber(cosTheta / 2, Math.sin(work.getTheta() / 2)));
-        RZ.set(0, 1, new ComplexNumber(0, 0));
-        RZ.set(1, 0, new ComplexNumber(0, 0));
+        RZ.put(0, 0, new ComplexNumber(cosTheta / 2, -Math.sin(work.getTheta() / 2)));
+        RZ.put(1, 1, new ComplexNumber(cosTheta / 2, Math.sin(work.getTheta() / 2)));
+        RZ.put(0, 1, new ComplexNumber(0, 0));
+        RZ.put(1, 0, new ComplexNumber(0, 0));
         return RZ;
     }
 

@@ -16,28 +16,34 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        System.out.println("Onward and upward to QPE!");
-        long totalRunsTime = 0;
+        benchmark();
+    }
+
+    public static void benchmark() {
+        int maxQubits = 10;
         int runsCount = 5;
-        int numQubits = 11;
-        for(int r = 0; r < runsCount; r++) {
-            long startTime = System.currentTimeMillis();
 
+        for (int qubits = 2; qubits <= maxQubits; qubits++) {
+            long totalRunsTime = 0;
+            System.out.println("\nTesting "+qubits+" qubits.");
+            for (int r = 0; r < runsCount; r++) {
+                long startTime = System.currentTimeMillis();
 
-            jqs jqs = new jqs(numQubits);
+                jqs jqs = new jqs(qubits);
+                for (int i = 0; i < qubits - 1; i++) {
+                    jqs.X(i);
+                }
+                jqs.getComputationalState();
+                jqs.CX(0, qubits - 1);
+                jqs.getComputationalState();
 
-            for (int i = 0; i < numQubits - 1; i++) {
-                jqs.X(i);
+                long endTime = System.currentTimeMillis();
+                System.out.println("Run Time: " + (endTime - startTime));
+                totalRunsTime += endTime - startTime;
             }
-            jqs.getComputationalState();
-//            System.out.println("\n" + jqs + "\n");
-            jqs.CX(0, numQubits - 1);
-            jqs.getComputationalState();
-//            System.out.println("\n" + jqs + "\n");
-            long endTime = System.currentTimeMillis();
-            System.out.println("Run Time: " + (endTime-startTime));
-            totalRunsTime += endTime - startTime;
+
+            System.out.println("Average execution time using Sparse: " + (totalRunsTime / runsCount) + "ms");
         }
-        System.out.println("Average execution time using Sparse: " + (totalRunsTime/runsCount) + "ms");
     }
 }
+

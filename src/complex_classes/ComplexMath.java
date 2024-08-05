@@ -30,7 +30,7 @@ public final class ComplexMath {
             for (int j = 0; j < firstWidth; j++) {
                 for (int k = 0; k < secondHeight; k++) {
                     for (int l = 0; l < secondWidth; l++) {
-                        result.set((i * secondHeight + k), (j * secondWidth + l),
+                        result.put((i * secondHeight + k), (j * secondWidth + l),
                                 multiplyComplexNumbers(firstMatrix.get(i, j), secondMatrix.get(k, l)));
                     }
                 }
@@ -140,7 +140,7 @@ public final class ComplexMath {
         for (int i = 0; i < vector.getHeight(); i++) {
             ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
             for (int j = 0; j < vector.getHeight(); j++) {
-                outerProduct.set(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
+                outerProduct.put(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
             }
         }
         return outerProduct;
@@ -160,14 +160,14 @@ public final class ComplexMath {
             resultMatrix = new ComplexSparse(height, width);
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    resultMatrix.set(i, j, originMatrix.get(j, i));
+                    resultMatrix.put(i, j, originMatrix.get(j, i));
                 }
             }
         } else {
             resultMatrix = new ComplexSparse(width, height);
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    resultMatrix.set(i, j, originMatrix.get(j, i));
+                    resultMatrix.put(i, j, originMatrix.get(j, i));
                 }
             }
         }
@@ -188,14 +188,14 @@ public final class ComplexMath {
             resultMatrix = new ComplexSparse(height, width);
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
+                    resultMatrix.put(i, j, conjugate(originMatrix.get(j, i)));
                 }
             }
         } else {
             resultMatrix = new ComplexSparse(width, height);
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    resultMatrix.set(i, j, conjugate(originMatrix.get(j, i)));
+                    resultMatrix.put(i, j, conjugate(originMatrix.get(j, i)));
                 }
             }
         }
