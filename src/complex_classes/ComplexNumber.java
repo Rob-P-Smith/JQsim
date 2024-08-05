@@ -136,4 +136,21 @@ public final class ComplexNumber {
         }
         return "No values found";
     }
+
+    public void setZero() {
+        this.real = 0.0;
+        this.imag = 0.0;
+    }
+
+    /**
+     * Adds another complex number to this one, modifying this instance.
+     *
+     * @param other The complex number to add to this one
+     * @return This complex number, after addition
+     */
+    public ComplexNumber addInPlace(ComplexNumber other) {
+        this.real += other.real;
+        this.imag += other.imag;
+        return this;
+    }
 }

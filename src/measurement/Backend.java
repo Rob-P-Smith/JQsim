@@ -51,7 +51,9 @@ public class Backend {
             ComplexSparse matrix = gateD.getGate(workQueue.getNextGate());
 
             if (nextItem.isSingleTarget()) { // TODO: temporary, adjust this for non Control multi-qubit gates
-                tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+                ComplexSparse tempVec = ComplexMath.multiplyMatrix(matrix, tracker.getStateVec());
+//                tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+                tracker.setStateVec(tempVec);
             }
         }
     }

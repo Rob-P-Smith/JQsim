@@ -65,7 +65,8 @@ public class MultiQubitGateBuilder {
         } else {
             controlQubit = work.getControl();
             targetQubit = work.getTarget();
-            if (controlQubit == targetQubit || controlQubit >= numQubits || targetQubit >= numQubits || controlQubit < 0 || targetQubit < 0) {
+            if (controlQubit >= numQubits || targetQubit >= numQubits || controlQubit < 0 || targetQubit < 0) {
+//            if (controlQubit == targetQubit || controlQubit >= numQubits || targetQubit >= numQubits || controlQubit < 0 || targetQubit < 0) {
                 throw new IllegalArgumentException("Invalid control or target qubit.");
             }
             applyDualQubitGate(work, numQubits);
