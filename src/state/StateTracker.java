@@ -24,7 +24,6 @@ public class StateTracker {
      */
     public StateTracker() {
         stateVector = new ComplexSparse(1,1);
-//        stateVector = new ComplexMatrix(1, 1);
         stateVector.put(0, 0, new ComplexNumber(0, 0));
     }
 
@@ -36,7 +35,6 @@ public class StateTracker {
      */
     public StateTracker(int numQubits) {
         stateVector = new ComplexSparse((int) Math.pow(2, numQubits), 1);
-//        stateVector = new ComplexMatrix((int) Math.pow(2, numQubits), 1);
         stateVector.put(0, 0, new ComplexNumber(1, 0));
         for (int i = 1; i < numQubits; i++) {
             stateVector.put(i, 0, new ComplexNumber(0, 0));
@@ -47,13 +45,8 @@ public class StateTracker {
         this.stateVector = matrix;
     }
 
-//    public StateTracker(ComplexMatrix matrix){
-//        this.stateVector = matrix;
-//    }
-
     public StateTracker makeClone(){
         ComplexSparse copy = new ComplexSparse(this.getStateVecSize(), 1);
-//        ComplexMatrix copy = new ComplexMatrix(this.getStateVecSize(), 1);
         for(int i = 0; i < this.getStateVecSize(); i++){
             ComplexNumber rowCopy = new ComplexNumber(this.get(i,0).getReal(),this.get(i,0).getImag());
             copy.put(i,0, rowCopy);
@@ -84,22 +77,6 @@ public class StateTracker {
         return stateVector.getHeight();
     }
 
-//    /**
-//     * Setter for the state vector.
-//     *
-//     * @param newState the new column vector to assign to the system state
-//     * @return The boolean true if setting the new stateVector was successful or false if it fails.
-//     */
-//    public boolean setStateVec(ComplexMatrix newState) {
-//        try {
-//            stateVector.setData(newState.getData());
-//            return true;
-//        } catch (Exception e) {
-//            System.out.println("Setting new state failed.");
-//            return false;
-//        }
-//    }
-
     /**
      * Setter for the state vector.
      *
@@ -119,50 +96,6 @@ public class StateTracker {
     public int getQubitCount(){
         return (int) (Math.log(stateVector.getHeight()) / Math.log(2));
     }
-
-//    /**
-//     * Converts a quantum state vector represented as a ComplexMatrix to individual qubit probabilities.
-//     *
-//     * <p>This method uses the class's state vector represented as a ComplexMatrix (which is composed of and calculates\
-//     * the probability of each qubit being in the |0⟩ or |1⟩ state. It can handle superposition states and complex
-//     * amplitudes.</p>
-//     *
-//     * <p>The returned ComplexMatrix contains the probabilities for each qubit's |0⟩ and |1⟩ states.
-//     * The probabilities are stored in the real part of the ComplexNumber objects, as
-//     * probabilities are always real numbers.</p>
-//     *
-//     * @return A ComplexMatrix as Math.pow(2, numQubits) x 1 of ComplexNumber objects. The first dimension represents
-//     * the qubits (indexed from 0 to n-1), and the second dimension represents the |0⟩ and |1⟩ states (indexed 0 and 1
-//     * respectively). The real part of each ComplexNumber contains the probability of the qubit being in that state.
-//     * @throws IllegalArgumentException If the dimensions of the stateVector are not Nx1, or if N is not a power of 2.
-//     */
-//    public ComplexMatrix stateVectorToQubits() {
-//        int rows = stateVector.getHeight();
-//        int cols = stateVector.getWidth();
-//
-//        if (rows < 1 || cols != 1) {
-//            throw new IllegalArgumentException("Incorrect format for state vector. It should be Math.pow(2, numQubits) x 1");
-//        }
-//
-//        int numQubits = (int) (Math.log(rows) / Math.log(2));
-//        ComplexMatrix qubitStates = new ComplexMatrix(numQubits, 2);
-//
-//        for (int i = 0; i < numQubits; i++) {
-//            ComplexNumber zeroState = new ComplexNumber(0, 0);
-//            ComplexNumber oneState = new ComplexNumber(0, 0);
-//
-//            for (int j = 0; j < rows; j++) {
-//                if ((j & (1 << i)) == 0) {
-//                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
-//                } else {
-//                    qubitStates.set(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
-//                }
-//            }
-//            qubitStates.set(i, 0, zeroState);
-//            qubitStates.set(i, 1, oneState);
-//        }
-//        return qubitStates;
-//    }
 
     /**
      * Converts a quantum state vector represented as a ComplexSparse to individual qubit probabilities.
