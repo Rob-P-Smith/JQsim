@@ -1,4 +1,3 @@
-import complex_classes.ComplexMath;
 import interpreter.jqs;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,8 +20,16 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        simulateTest();
-        benchmark("QFT");
+        jqs jqs = new jqs(4, "registerOne");
+
+        jqs.X(0);
+        jqs.H(1);
+        jqs.H(2);
+        jqs.buildCircuit();
+        System.out.println(jqs);
+        System.out.println(jqs.measureQubit(1));
+        jqs.buildCircuit();
+        System.out.println(jqs);
     }
 
     /**
@@ -43,9 +50,9 @@ public class Sandbox {
                         for (int i = 0; i < qubits - 1; i++) {
                             jqs.X(i);
                         }
-                        jqs.getComputationalState();
+                        jqs.buildCircuit();
                         jqs.CX(0, qubits - 1);
-                        jqs.getComputationalState();
+                        jqs.buildCircuit();
 
                         long endTime = System.currentTimeMillis();
                         System.out.println("Run Time: " + (endTime - startTime));
@@ -72,7 +79,7 @@ public class Sandbox {
                             jqs.T(i);
                         }
                         jqs.H(qubits / 2);
-                        jqs.getComputationalState();
+                        jqs.buildCircuit();
                         jqs.QFT();
                         jqs.QFTi();
 
@@ -96,7 +103,7 @@ public class Sandbox {
                         for(int i = 0; i < qubits; i++){
                             jqs.X(i);
                         }
-                        jqs.getComputationalState();
+                        jqs.buildCircuit();
                         jqs.QFT();
                         jqs.QFTi();
 
@@ -127,7 +134,7 @@ public class Sandbox {
         jqs.H(0);
         jqs.H(2);
         jqs.T(0);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.simulate();
         System.out.println(jqs);
     }

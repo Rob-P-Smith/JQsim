@@ -1,8 +1,6 @@
 package interpreter;
 
 import complex_classes.ComplexMath;
-import complex_classes.ComplexMatrix;
-import complex_classes.ComplexNumber;
 import complex_classes.ComplexSparse;
 import measurement.Backend;
 import measurement.GateDirector;
@@ -548,7 +546,7 @@ public class jqs {
     /**
      * Returns the computational basis states + the amplitude corresponding to that state and the phase corresponding to the amplitudes of the state.
      */
-    public void getComputationalState() {
+    public void buildCircuit() {
         backend.getComputationalState();
     }
 

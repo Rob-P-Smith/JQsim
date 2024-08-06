@@ -14,7 +14,7 @@ public class QuantumBehaviorTests {
         System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
         jqs.X(0);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -28,7 +28,7 @@ public class QuantumBehaviorTests {
         jqs.CX(0, 1);
         jqs.CX(1, 2);
         jqs.CX(2, 0);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -41,7 +41,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.S(0);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -54,7 +54,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.CX(0, 1);
         jqs.CX(1, 2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -67,7 +67,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.CX(0, 1);
         jqs.CX(0, 3);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -78,7 +78,7 @@ public class QuantumBehaviorTests {
         jqs = new jqs();
         jqs.device(4);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -90,7 +90,7 @@ public class QuantumBehaviorTests {
         jqs.device(4);
         jqs.CX(0, 1);
         jqs.CX(0, 3);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -104,7 +104,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.X(2);
         jqs.CSWAP(0, 1, 2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -114,7 +114,7 @@ public class QuantumBehaviorTests {
         jqs = new jqs(3);
         jqs.X(2);
         jqs.CSWAP(0, 1, 2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -126,7 +126,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.X(2);
         jqs.T(2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -139,7 +139,7 @@ public class QuantumBehaviorTests {
         jqs.X(2);
         jqs.T(2);
         jqs.CSWAP(0, 1, 2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -155,7 +155,7 @@ public class QuantumBehaviorTests {
         jqs.H(0);
         jqs.X(1);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -169,7 +169,7 @@ public class QuantumBehaviorTests {
         jqs2.H(0);
         jqs2.X(1);
         jqs2.CZ(0, 1);
-        jqs2.getComputationalState();
+        jqs2.buildCircuit();
 //        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -185,7 +185,7 @@ public class QuantumBehaviorTests {
         jqs3.CX(0, 1);
         jqs3.H(0);
         jqs3.CX(0, 2);
-        jqs3.getComputationalState();
+        jqs3.buildCircuit();
 //        System.out.println(jqs3);
         assertEquals("|ψ⟩ = \n" +
                         "{phase} amplitude |basis⟩ \n" +
@@ -224,7 +224,7 @@ public class QuantumBehaviorTests {
         jqs.T(2);
         jqs.S(2);
         jqs.X(3);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
@@ -255,7 +255,7 @@ public class QuantumBehaviorTests {
         jqs.T(2);
         jqs.S(2);
         jqs.X(3);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
@@ -285,7 +285,7 @@ public class QuantumBehaviorTests {
         jqs.X(1);
         jqs.X(2);
         jqs.X(3);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
@@ -324,7 +324,7 @@ public class QuantumBehaviorTests {
         jqs.Si(6);
         jqs.Z(6);
         jqs.T(6);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
 //        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
@@ -471,7 +471,7 @@ public class QuantumBehaviorTests {
         jqs.T(0);
         jqs.H(1);
         jqs.S(2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -497,7 +497,7 @@ public class QuantumBehaviorTests {
         jqs.X(3);
         jqs.X(4);
         jqs.X(5);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
         jqs.QFT();
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -660,7 +660,7 @@ public class QuantumBehaviorTests {
         jqs.H(1);
         jqs.H(2);
         jqs.S(2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -675,7 +675,7 @@ public class QuantumBehaviorTests {
         jqs.X(0);
         jqs.H(0);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -693,7 +693,7 @@ public class QuantumBehaviorTests {
         jqs.S(2);
         jqs.H(2);
         jqs.S(2);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
@@ -709,7 +709,7 @@ public class QuantumBehaviorTests {
         jqs.H(1);
         jqs.CX(1, 2);
         jqs.CX(0, 1);
-        jqs.getComputationalState();
+        jqs.buildCircuit();
 //        System.out.println(ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
