@@ -171,7 +171,6 @@ public class WorkItem {
      * Gets the array of target values.
      *
      * @return The array of target values.
-     * @see #setTargets(Integer[])
      * @see #getTarget()
      */
     public Integer[] getTargets() {
@@ -245,17 +244,6 @@ public class WorkItem {
      */
     public void setControls(Integer[] controls) {
         this.controls = controls;
-    }
-
-    /**
-     * Sets the array of target values.
-     *
-     * @param targets The new array of target values.
-     * @see #getTargets()
-     * @see #setTarget(int)
-     */
-    public void setTargets(Integer[] targets) {
-        this.targets = targets;
     }
 
     /**

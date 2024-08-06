@@ -375,4 +375,46 @@ Results after implementing CSC, Gustavson's Algorithm, and multi-threading.
     Run Time: 107539
     Average execution time using Sparse: 108167ms
 
-    Process finished with exit code 0
+Results after implementing CSC, Gustavson's Algorithm for multiply and tensor multiply, and streamlined put/get methods Single Threaded
+    Testing 6 qubits.
+    Run Time: 63
+    Run Time: 2
+    Run Time: 2
+    Run Time: 2
+    Run Time: 1
+    Average execution time using Sparse: 1 ms
+    Testing 7 qubits.
+    Run Time: 12
+    Run Time: 8
+    Run Time: 8
+    Run Time: 5
+    Run Time: 6
+    Average execution time using Sparse: 6 ms
+    Testing 8 qubits.
+    Run Time: 46
+    Run Time: 58
+    Run Time: 55
+    Run Time: 56
+    Run Time: 53
+    Average execution time using Sparse: 55 ms
+    Testing 9 qubits.
+    Run Time: 252
+    Run Time: 238
+    Run Time: 241
+    Run Time: 241
+    Run Time: 236
+    Average execution time using Sparse: 239 ms
+    Testing 10 qubits.
+    Run Time: 1833
+    Run Time: 1832
+    Run Time: 1830
+    Run Time: 1831
+    Run Time: 1830
+    Average execution time using Sparse: 1830 ms
+    Testing 11 qubits.
+    Run Time: 14373
+    Run Time: 14384
+    Run Time: 18309
+    Run Time: 14160
+    Run Time: 14325
+    Average execution time using Sparse: 15294 ms

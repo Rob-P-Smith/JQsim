@@ -1,87 +1,90 @@
 package state;
 
-import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
-import complex_classes.ComplexQubit;
 import complex_classes.ComplexSparse;
 
 /**
- * The class tracks the state of the quantum system {@link ComplexQubit}s as a column vector stored in a
- * {@link ComplexMatrix} of nx1 dimensions where n is 2 to the power of the number of {@link ComplexQubit}s.
- * This is used to provide the state vector to multiply by gate matrix operators to determine the system state
- * after applying gates.
+ * Tracks the state of a quantum system's qubits as a column vector stored in a
+ * {@link ComplexSparse} of nx1 dimensions, where n is 2 to the power of the number of qubits.
+ * This state vector is used to determine the system state after applying quantum gates.
  *
  * @author Robert Smith
- * @version 0.1
- * @since 4 July 2024
+ * @version 0.3
+ * @since 6 August 2024
  */
 public class StateTracker {
     private ComplexSparse stateVector;
-//    private ComplexMatrix stateVector;
 
     /**
-     * Default constructor initializes the system state using one qubit set to a 0 real and 0 imag value.
+     * Default constructor initializes the system state with one qubit set to |0⟩ state (1+0i).
      */
     public StateTracker() {
-        stateVector = new ComplexSparse(1,1);
-        stateVector.put(0, 0, new ComplexNumber(0, 0));
+        stateVector = new ComplexSparse(2, 1);
+        stateVector.put(0, 0, new ComplexNumber(1, 0));
+        stateVector.put(1, 0, new ComplexNumber(0, 0));
     }
 
     /**
-     * Parameterized constructor initializes the system state using the number of qubits provided as the
-     * parameter and sets all qubits to 0 real and 0 imag values.
+     * Parameterized constructor initializes the system state with the specified number of qubits,
+     * setting all qubits to the |0⟩ state.
      *
      * @param numQubits the number of qubits to set up the system with
      */
     public StateTracker(int numQubits) {
         stateVector = new ComplexSparse((int) Math.pow(2, numQubits), 1);
         stateVector.put(0, 0, new ComplexNumber(1, 0));
-        for (int i = 1; i < numQubits; i++) {
+        for (int i = 1; i < Math.pow(2, numQubits); i++) {
             stateVector.put(i, 0, new ComplexNumber(0, 0));
         }
     }
 
-    public StateTracker(ComplexSparse matrix){
+    /**
+     * Constructor that initializes the state tracker with a given state vector.
+     *
+     * @param matrix the {@link ComplexSparse} matrix representing the initial state vector
+     */
+    public StateTracker(ComplexSparse matrix) {
         this.stateVector = matrix;
     }
 
-    public StateTracker makeClone(){
+    /**
+     * Creates and returns a deep copy of the current StateTracker.
+     *
+     * @return a new StateTracker instance with the same state as the current one
+     */
+    public StateTracker makeClone() {
         ComplexSparse copy = new ComplexSparse(this.getStateVecSize(), 1);
-        for(int i = 0; i < this.getStateVecSize(); i++){
-            ComplexNumber rowCopy = new ComplexNumber(this.get(i,0).getReal(),this.get(i,0).getImag());
-            copy.put(i,0, rowCopy);
+        for (int i = 0; i < this.getStateVecSize(); i++) {
+            ComplexNumber rowCopy = new ComplexNumber(this.get(i, 0).getReal(), this.get(i, 0).getImag());
+            copy.put(i, 0, rowCopy);
         }
         return new StateTracker(copy);
     }
 
     /**
-     * Getter for the current stateVector as a column vector in a {@link ComplexSparse}  of n,1 where n is
-     * 2 to the power of N, where is N is the number of {@link ComplexQubit} in the system.
-     * <p>
-     * Example:
-     * 2 {@link ComplexQubit} as N means the state vector will be 2 to the 2nd power, resulting in a 4x1
-     * {@link ComplexSparse}state vector.
-     * </p>
-     * <p>
-     * 3 {@link ComplexQubit} as N means the state vector will be 2 to the 3rd power, resulting in a 8x1
-     * {@link ComplexSparse} state vector.
-     * </p>
+     * Retrieves the current state vector as a column vector in a {@link ComplexSparse} of n x 1,
+     * where n is 2 to the power of N, and N is the number of qubits in the system.
      *
-     * @return the current stateVector as a {@link ComplexSparse} in column vector format.
+     * @return the current state vector as a {@link ComplexSparse} in column vector format
      */
     public ComplexSparse getStateVec() {
         return stateVector;
     }
 
+    /**
+     * Returns the size of the state vector, which is 2^n where n is the number of qubits.
+     *
+     * @return the number of rows in the state vector
+     */
     public int getStateVecSize() {
         return stateVector.getHeight();
     }
 
     /**
-     * Setter for the state vector.
+     * Sets a new state vector for the quantum system.
      *
      * @param newState the new column vector to assign to the system state
-     * @return The boolean true if setting the new stateVector was successful or false if it fails.
+     * @return true if setting the new state vector was successful, false otherwise
      */
     public boolean setStateVec(ComplexSparse newState) {
         try {
@@ -93,25 +96,23 @@ public class StateTracker {
         }
     }
 
-    public int getQubitCount(){
+    /**
+     * Calculates and returns the number of qubits in the system based on the size of the state vector.
+     *
+     * @return the number of qubits in the quantum system
+     */
+    public int getQubitCount() {
         return (int) (Math.log(stateVector.getHeight()) / Math.log(2));
     }
 
     /**
-     * Converts a quantum state vector represented as a ComplexSparse to individual qubit probabilities.
+     * Converts the quantum state vector to individual qubit probabilities.
      *
-     * <p>This method uses the class's state vector represented as a ComplexSparse (which is composed of and calculates\
-     * the probability of each qubit being in the |0⟩ or |1⟩ state. It can handle superposition states and complex
-     * amplitudes.</p>
+     * <p>This method calculates the probability of each qubit being in the |0⟩ or |1⟩ state,
+     * handling superposition states and complex amplitudes.</p>
      *
-     * <p>The returned ComplexSparse contains the probabilities for each qubit's |0⟩ and |1⟩ states.
-     * The probabilities are stored in the real part of the ComplexNumber objects, as
-     * probabilities are always real numbers.</p>
-     *
-     * @return A ComplexSparse as Math.pow(2, numQubits) x 1 of ComplexNumber objects. The first dimension represents
-     * the qubits (indexed from 0 to n-1), and the second dimension represents the |0⟩ and |1⟩ states (indexed 0 and 1
-     * respectively). The real part of each ComplexNumber contains the probability of the qubit being in that state.
-     * @throws IllegalArgumentException If the dimensions of the stateVector are not Nx1, or if N is not a power of 2.
+     * @return A ComplexSparse of size (numQubits x 2) containing the probabilities for each qubit's |0⟩ and |1⟩ states
+     * @throws IllegalArgumentException if the state vector dimensions are invalid
      */
     public ComplexSparse stateVectorToQubits() {
         int rows = stateVector.getHeight();
@@ -130,9 +131,9 @@ public class StateTracker {
 
             for (int j = 0; j < rows; j++) {
                 if ((j & (1 << i)) == 0) {
-                    qubitStates.put(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                    qubitStates.put(i, 0, new ComplexNumber(stateVector.get(j, 0).getReal(), stateVector.get(j, 0).getImag()));
                 } else {
-                    qubitStates.put(i,j,new ComplexNumber(stateVector.get(i,j).getReal(), stateVector.get(i,j).getImag()));
+                    qubitStates.put(i, 1, new ComplexNumber(stateVector.get(j, 0).getReal(), stateVector.get(j, 0).getImag()));
                 }
             }
             qubitStates.put(i, 0, zeroState);
@@ -142,10 +143,11 @@ public class StateTracker {
     }
 
     /**
-     * Gets and returns the ComplexNumber located at the specified row and index in teh state vector
-     * @param row the row, 0 based indexing, of where to get
-     * @param column the column to get, will usually be 0
-     * @return returns the ComplexNumber found
+     * Retrieves the ComplexNumber at the specified position in the state vector.
+     *
+     * @param row the row index (0-based) in the state vector
+     * @param column the column index (usually 0 for state vectors)
+     * @return the ComplexNumber at the specified position
      */
     public ComplexNumber get(int row, int column) {
         return stateVector.get(row, column);

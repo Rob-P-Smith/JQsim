@@ -11,41 +11,47 @@ import static supportClasses.GreekEnums.*;
 /**
  * ComplexObject serves as the parent class for other complex classes, providing a single location for linear algebra
  * functions to be collected and giving universal access to those methods on each complex class.
+ * <br>
+ * Multithreaded functionality disabled via if/else statements in the tensor multiply and complex multiply methods
+ * because the threaded overhead outweighs the performance gains.
  *
  * @author Robert Smith
- * @version 0.2
- * @since 29 June 2024
+ * @version 0.3
+ * @since 06 August 2024
  */
 public final class ComplexMath {
+    private static final double EPSILON = 1e-10;
     /**
      * Threshold for matrix height below which single-threaded execution is used.
      * Matrices with height less than or equal to this value will use single-threaded multiplication.
      */
-    public static int SINGLE_THREAD_THRESHOLD = Integer.MAX_VALUE;
-    public static int BLOCK_SIZE = 128;
+    private static int SINGLE_THREAD_THRESHOLD = Integer.MAX_VALUE;
+    private static int BLOCK_SIZE = 128;
     /**
      * Number of threads to use for parallel execution. Default is virtual cores /2 to limit it to physical core count on machines with SMT on all cores.
      */
-    public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
+//    public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
+    private static int NUM_THREADS = 4;
 
     /**
      * Computes the tensor product of two matrices using Gustavson's algorithm for sparse matrices.
      * This method is optimized for sparse matrices and uses parallel computation for large matrices.
      *
-     * @param firstMatrix  The first {@link ComplexSparse} matrix.
-     * @param secondMatrix The second {@link ComplexSparse} matrix.
+     * @param leftMatrix  The first {@link ComplexSparse} matrix.
+     * @param rightMatrix The second {@link ComplexSparse} matrix.
      * @return A new {@link ComplexSparse} object that is the result of the tensor product.
      * @see ComplexSparse
      */
-    public static ComplexSparse tensorMultiply(ComplexSparse firstMatrix, ComplexSparse secondMatrix) {
-        int m1 = firstMatrix.getHeight();
-        int m2 = secondMatrix.getHeight();
+    public static ComplexSparse tensorMultiply(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
+//        int leftHeight = leftMatrix.getHeight();
+//        int rightHeight = rightMatrix.getHeight();
 
-        if (m1 * m2 >= SINGLE_THREAD_THRESHOLD) {
-            return tensorMultiplyParallel(firstMatrix, secondMatrix);
-        } else {
-            return tensorMultiplySequential(firstMatrix, secondMatrix);
-        }
+//        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)*999) {
+//            return tensorMultiplyParallel(leftMatrix, rightMatrix);
+//        } else {
+//            return tensorMultiplySequential(leftMatrix, rightMatrix);
+//        }
+        return tensorMultiplySequential(leftMatrix, rightMatrix);
     }
 
     /**
@@ -58,32 +64,32 @@ public final class ComplexMath {
      * using multiple threads. This can lead to improved performance on multi-core systems
      * for large matrices.</p>
      *
-     * @param leftMatrix The first {@link ComplexSparse} matrix in the tensor product.
+     * @param leftMatrix  The first {@link ComplexSparse} matrix in the tensor product.
      * @param rightMatrix The second {@link ComplexSparse} matrix in the tensor product.
      * @return A new {@link ComplexSparse} matrix representing the tensor product of A and B.
+     * @throws RuntimeException if an error occurs during parallel execution
      * @see ComplexSparse
      * @see #tensorMultiply(ComplexSparse, ComplexSparse)
      * @see #tensorMultiplySequential(ComplexSparse, ComplexSparse)
-     * @throws RuntimeException if an error occurs during parallel execution
      */
     private static ComplexSparse tensorMultiplySequential(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
-        int m1 = leftMatrix.getHeight();
-        int n1 = leftMatrix.getWidth();
-        int m2 = rightMatrix.getHeight();
-        int n2 = rightMatrix.getWidth();
+        int leftHeight = leftMatrix.getHeight();
+        int leftWidth = leftMatrix.getWidth();
+        int rightHeight = rightMatrix.getHeight();
+        int rightWidth = rightMatrix.getWidth();
 
-        ComplexSparse result = new ComplexSparse(m1 * m2, n1 * n2);
+        ComplexSparse result = new ComplexSparse(leftHeight * rightHeight, leftWidth * rightWidth);
 
-        for (int i1 = 0; i1 < m1; i1++) {
-            for (int j1 = 0; j1 < n1; j1++) {
+        for (int i1 = 0; i1 < leftHeight; i1++) {
+            for (int j1 = 0; j1 < leftWidth; j1++) {
                 ComplexNumber leftNumber = leftMatrix.get(i1, j1);
                 if (!isZero(leftNumber)) {
-                    for (int i2 = 0; i2 < m2; i2++) {
-                        for (int j2 = 0; j2 < n2; j2++) {
+                    for (int i2 = 0; i2 < rightHeight; i2++) {
+                        for (int j2 = 0; j2 < rightWidth; j2++) {
                             ComplexNumber rightNumber = rightMatrix.get(i2, j2);
                             if (!isZero(rightNumber)) {
-                                int i = i1 * m2 + i2;
-                                int j = j1 * n2 + j2;
+                                int i = i1 * rightHeight + i2;
+                                int j = j1 * rightWidth + j2;
                                 result.put(i, j, multiplyComplexNumbers(leftNumber, rightNumber));
                             }
                         }
@@ -101,41 +107,41 @@ public final class ComplexMath {
      * without parallelization, suitable for smaller matrices or when parallel
      * execution is not beneficial.
      *
-     * @param A The first {@link ComplexSparse} matrix in the tensor product.
-     * @param B The second {@link ComplexSparse} matrix in the tensor product.
+     * @param leftMatrix The first {@link ComplexSparse} matrix in the tensor product.
+     * @param rightMatrix The second {@link ComplexSparse} matrix in the tensor product.
      * @return A new {@link ComplexSparse} matrix representing the tensor product of A and B.
      * @see ComplexSparse
      * @see #tensorMultiply(ComplexSparse, ComplexSparse)
      * @see #tensorMultiplyParallel(ComplexSparse, ComplexSparse)
      */
-    private static ComplexSparse tensorMultiplyParallel(ComplexSparse A, ComplexSparse B) {
-        int m1 = A.getHeight();
-        int n1 = A.getWidth();
-        int m2 = B.getHeight();
-        int n2 = B.getWidth();
+    private static ComplexSparse tensorMultiplyParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
+        int leftHeight = leftMatrix.getHeight();
+        int leftWidth = leftMatrix.getWidth();
+        int rightHeight = rightMatrix.getHeight();
+        int rightWidth = rightMatrix.getWidth();
 
-        ComplexSparse result = new ComplexSparse(m1 * m2, n1 * n2);
+        ComplexSparse result = new ComplexSparse(leftHeight * rightHeight, leftWidth * rightWidth);
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<?>> futures = new ArrayList<>();
 
-        int blockSize = Math.max(1, m1 / NUM_THREADS);
-        for (int block = 0; block < m1; block += blockSize) {
+        int blockSize = Math.max(1, leftHeight / NUM_THREADS);
+        for (int block = 0; block < leftHeight; block += blockSize) {
             final int startRow = block;
-            final int endRow = Math.min(startRow + blockSize, m1);
+            final int endRow = Math.min(startRow + blockSize, leftHeight);
 
             futures.add(executor.submit(() -> {
                 for (int i1 = startRow; i1 < endRow; i1++) {
-                    for (int j1 = 0; j1 < n1; j1++) {
-                        ComplexNumber a = A.get(i1, j1);
-                        if (!isZero(a)) {
-                            for (int i2 = 0; i2 < m2; i2++) {
-                                for (int j2 = 0; j2 < n2; j2++) {
-                                    ComplexNumber b = B.get(i2, j2);
-                                    if (!isZero(b)) {
-                                        int i = i1 * m2 + i2;
-                                        int j = j1 * n2 + j2;
-                                        result.put(i, j, multiplyComplexNumbers(a, b));
+                    for (int j1 = 0; j1 < leftWidth; j1++) {
+                        ComplexNumber leftElement = leftMatrix.get(i1, j1);
+                        if (!isZero(leftElement)) {
+                            for (int i2 = 0; i2 < rightHeight; i2++) {
+                                for (int j2 = 0; j2 < rightWidth; j2++) {
+                                    ComplexNumber rightElement = rightMatrix.get(i2, j2);
+                                    if (!isZero(rightElement)) {
+                                        int i = i1 * rightHeight + i2;
+                                        int j = j1 * rightWidth + j2;
+                                        result.put(i, j, multiplyComplexNumbers(leftElement, rightElement));
                                     }
                                 }
                             }
@@ -149,6 +155,7 @@ public final class ComplexMath {
             try {
                 future.get();
             } catch (Exception e) {
+                System.out.println("Error in parallel Tensor Multiply.");
                 throw new RuntimeException("Error in parallel tensor multiplication", e);
             }
         }
@@ -158,24 +165,28 @@ public final class ComplexMath {
         return result;
     }
 
-    //TODO START EXPERIMENTAL GUSTAVSON'S MULTIPLY MATRIX CODE HERE
-
     public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
         }
         int height = leftMatrix.getHeight();
 
-        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
-            // If the right matrix is a column vector, use the optimized method
-            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
-        } else if (rightMatrix.getWidth() == 1){
+        if (rightMatrix.getWidth() == 1) {
             return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-        }else if (height >= SINGLE_THREAD_THRESHOLD) {
-            return multiplyMatrixParallel(leftMatrix, rightMatrix);
         } else {
             return multiplyMatrixSequential(leftMatrix, rightMatrix);
         }
+
+
+//        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
+//            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
+//        } else if (rightMatrix.getWidth() == 1) {
+//            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
+//        } else if (height >= SINGLE_THREAD_THRESHOLD) {
+//            return multiplyMatrixParallel(leftMatrix, rightMatrix);
+//        } else {
+//            return multiplyMatrixSequential(leftMatrix, rightMatrix);
+//        }
     }
 
     /**
@@ -183,7 +194,7 @@ public final class ComplexMath {
      * This method is optimized for the case where the right matrix is a column vector,
      * which is common in quantum computing operations.
      *
-     * @param leftMatrix The sparse matrix to be multiplied.
+     * @param leftMatrix  The sparse matrix to be multiplied.
      * @param rightMatrix The sparse column vector to be multiplied.
      * @return A new {@code ComplexSparse} object representing the result of the multiplication.
      * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
@@ -195,7 +206,6 @@ public final class ComplexMath {
         }
 
         int leftHeight = leftMatrix.getHeight();
-        int leftWidth = leftMatrix.getWidth();
 
         ComplexSparse resultMatrix = new ComplexSparse(leftHeight, 1);
 
@@ -206,29 +216,29 @@ public final class ComplexMath {
         }
 
         // Array to keep track of which rows in the dense vector are non-zero
-        int[] w = new int[leftHeight];
-        int wLen = 0;
+        int[] nnzTracker = new int[leftHeight];
+        int nnzTrackerLength = 0;
 
         // For each non-zero element in the column vector (rightMatrix)
         for (int pb = rightMatrix.colPointers.get(0); pb < rightMatrix.colPointers.get(1); pb++) {
-            int k = rightMatrix.rowIndices.get(pb);
-            ComplexNumber bVal = rightMatrix.values.get(pb);
+            int rightRowIndex = rightMatrix.rowIndices.get(pb);
+            ComplexNumber rightValue = rightMatrix.values.get(pb);
 
             // For each non-zero element in column k of leftMatrix
-            for (int pa = leftMatrix.colPointers.get(k); pa < leftMatrix.colPointers.get(k + 1); pa++) {
-                int i = leftMatrix.rowIndices.get(pa);
-                ComplexNumber aVal = leftMatrix.values.get(pa);
+            for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
+                int leftRowIndex = leftMatrix.rowIndices.get(pa);
+                ComplexNumber leftValue = leftMatrix.values.get(pa);
 
-                if (isZero(dense[i])) {
-                    w[wLen++] = i;
+                if (isZero(dense[leftRowIndex])) {
+                    nnzTracker[nnzTrackerLength++] = leftRowIndex;
                 }
-                dense[i].addInPlace(ComplexMath.multiplyComplexNumbers(aVal, bVal));
+                dense[leftRowIndex].addInPlace(ComplexMath.multiplyComplexNumbers(leftValue, rightValue));
             }
         }
 
         // Store the non-zero results in resultMatrix
-        for (int s = 0; s < wLen; s++) {
-            int i = w[s];
+        for (int s = 0; s < nnzTrackerLength; s++) {
+            int i = nnzTracker[s];
             if (!isZero(dense[i])) {
                 resultMatrix.put(i, 0, dense[i]);
             }
@@ -278,6 +288,7 @@ public final class ComplexMath {
             try {
                 future.get();
             } catch (Exception e) {
+                System.out.println("Error in matrix-vector multiplication parallel.");
                 throw new RuntimeException("Error in parallel matrix-vector multiplication", e);
             }
         }
@@ -287,7 +298,7 @@ public final class ComplexMath {
         return resultMatrix;
     }
 
-    public static ComplexSparse multiplyMatrixSequential(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
+    private static ComplexSparse multiplyMatrixSequential(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
         }
@@ -303,37 +314,37 @@ public final class ComplexMath {
         }
 
         // Array to keep track of which rows in the dense vector are non-zero
-        int[] w = new int[leftHeight];
-        int wLen = 0;
+        int[] nnzTracker = new int[leftHeight];
+        int nnzTrackerIndex = 0;
 
         // For each column j of B
         for (int j = 0; j < rightWidth; j++) {
             // For each non-zero element in column j of B
             for (int pb = rightMatrix.colPointers.get(j); pb < rightMatrix.colPointers.get(j + 1); pb++) {
-                int k = rightMatrix.rowIndices.get(pb);
+                int rightRowIndex = rightMatrix.rowIndices.get(pb);
                 ComplexNumber bVal = rightMatrix.values.get(pb);
 
                 // For each non-zero element in column k of A
-                for (int pa = leftMatrix.colPointers.get(k); pa < leftMatrix.colPointers.get(k + 1); pa++) {
-                    int i = leftMatrix.rowIndices.get(pa);
+                for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
+                    int leftRowIndex = leftMatrix.rowIndices.get(pa);
                     ComplexNumber aVal = leftMatrix.values.get(pa);
 
-                    if (isZero(dense[i])) {
-                        w[wLen++] = i;
+                    if (isZero(dense[leftRowIndex])) {
+                        nnzTracker[nnzTrackerIndex++] = leftRowIndex;
                     }
-                    dense[i] = ComplexMath.addComplexNumbers(dense[i], ComplexMath.multiplyComplexNumbers(aVal, bVal));
+                    dense[leftRowIndex] = ComplexMath.addComplexNumbers(dense[leftRowIndex], ComplexMath.multiplyComplexNumbers(aVal, bVal));
                 }
             }
 
             // Store the non-zero results in C
-            for (int s = 0; s < wLen; s++) {
-                int i = w[s];
+            for (int s = 0; s < nnzTrackerIndex; s++) {
+                int i = nnzTracker[s];
                 if (!isZero(dense[i])) {
                     resultMatrix.put(i, j, dense[i]);
                     dense[i] = new ComplexNumber(0, 0);  // Reset for next iteration
                 }
             }
-            wLen = 0;  // Reset for next column
+            nnzTrackerIndex = 0;  // Reset for next column
         }
 
         return resultMatrix;
@@ -351,6 +362,12 @@ public final class ComplexMath {
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<?>> futures = new ArrayList<>();
 
+        // Reuse these arrays for each block
+        ComplexNumber[] dense = new ComplexNumber[leftHeight];
+        for (int i = 0; i < leftHeight; i++) {
+            dense[i] = new ComplexNumber(0, 0);
+        }
+
         // Divide work into blocks
         int numBlocks = (rightWidth + BLOCK_SIZE - 1) / BLOCK_SIZE;
         for (int block = 0; block < numBlocks; block++) {
@@ -358,41 +375,37 @@ public final class ComplexMath {
             final int endCol = Math.min(startCol + BLOCK_SIZE, rightWidth);
 
             futures.add(executor.submit(() -> {
-                int threadId = (int) (Thread.currentThread().getId() % NUM_THREADS);
+                int threadId = (int) (Thread.currentThread().threadId() % NUM_THREADS);
                 ComplexSparse localResult = partialResults.get(threadId);
+                ComplexNumber[] thisDense = dense.clone();
 
-                // Reuse these arrays for each block
-                ComplexNumber[] dense = new ComplexNumber[leftHeight];
-                for (int i = 0; i < leftHeight; i++) {
-                    dense[i] = new ComplexNumber(0, 0);
-                }
-                int[] w = new int[leftHeight];
-                int wLen = 0;
+                int[] nnzTracker = new int[leftHeight];
+                int nnzTrackerIndex = 0;
 
                 for (int j = startCol; j < endCol; j++) {
                     for (int pb = rightMatrix.colPointers.get(j); pb < rightMatrix.colPointers.get(j + 1); pb++) {
-                        int k = rightMatrix.rowIndices.get(pb);
-                        ComplexNumber bVal = rightMatrix.values.get(pb);
+                        int rightRowIndex = rightMatrix.rowIndices.get(pb);
+                        ComplexNumber rightValue = rightMatrix.values.get(pb);
 
-                        for (int pa = leftMatrix.colPointers.get(k); pa < leftMatrix.colPointers.get(k + 1); pa++) {
-                            int i = leftMatrix.rowIndices.get(pa);
-                            ComplexNumber aVal = leftMatrix.values.get(pa);
+                        for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
+                            int leftRowIndex = leftMatrix.rowIndices.get(pa);
+                            ComplexNumber leftValue = leftMatrix.values.get(pa);
 
-                            if (isZero(dense[i])) {
-                                w[wLen++] = i;
+                            if (isZero(thisDense[leftRowIndex])) {
+                                nnzTracker[nnzTrackerIndex++] = leftRowIndex;
                             }
-                            dense[i].addInPlace(ComplexMath.multiplyComplexNumbers(aVal, bVal));
+                            thisDense[leftRowIndex].addInPlace(ComplexMath.multiplyComplexNumbers(leftValue, rightValue));
                         }
                     }
 
-                    for (int s = 0; s < wLen; s++) {
-                        int i = w[s];
-                        if (!isZero(dense[i])) {
-                            localResult.put(i, j, dense[i]);
-                            dense[i].setZero();
+                    for (int s = 0; s < nnzTrackerIndex; s++) {
+                        int i = nnzTracker[s];
+                        if (!isZero(thisDense[i])) {
+                            localResult.put(i, j, thisDense[i]);
+                            thisDense[i].setZero();
                         }
                     }
-                    wLen = 0;
+                    nnzTrackerIndex = 0;
                 }
             }));
         }
@@ -408,23 +421,24 @@ public final class ComplexMath {
         executor.shutdown();
 
         // Combine partial results
-        ComplexSparse C = new ComplexSparse(leftHeight, rightWidth);
+        ComplexSparse collectorMatrix = new ComplexSparse(leftHeight, rightWidth);
         for (ComplexSparse partial : partialResults) {
             for (int j = 0; j < rightWidth; j++) {
                 for (int r = partial.colPointers.get(j); r < partial.colPointers.get(j + 1); r++) {
                     int i = partial.rowIndices.get(r);
-                    C.put(i, j, ComplexMath.addComplexNumbers(C.get(i, j), partial.values.get(r)));
+                    collectorMatrix.put(i, j, ComplexMath.addComplexNumbers(collectorMatrix.get(i, j), partial.values.get(r)));
                 }
             }
         }
-
-        return C;
+        return collectorMatrix;
     }
 
-    //TODO END EXPERIMENTAL CODE HERE
-
+    /**
+     * Checks passed number to be "essentially zero", and returns true if it is.
+     * @param value the ComplexNumber to check
+     * @return true if essentially zero, false otherwise
+     */
     public static boolean isZero(ComplexNumber value) {
-        // Using a small epsilon value for floating-point comparison
         final double EPSILON = 1e-10;
         return Math.abs(value.getReal()) < EPSILON && Math.abs(value.getImag()) < EPSILON;
     }
@@ -581,7 +595,7 @@ public final class ComplexMath {
 
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
-            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
+            if (amplitude.magnitudeSquared() > EPSILON) {  // Threshold for considering non-zero amplitudes
                 if (firstTerm) {
                     result.append("|").append(PSI.lower()).append("⟩ = \n");
                     result.append("{phase} " + "amplitude" + " |basis⟩ \n-------------------------\n");
@@ -623,9 +637,9 @@ public final class ComplexMath {
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
             String phaseString = complexPhaseToString(amplitude);
-            if (amplitude.magnitudeSquared() > 1e-10) {  // Threshold for considering non-zero amplitudes
-                result.append("|").append(PSI.lower()).append("⟩ = ");
-                result.append(phaseString);
+            if (amplitude.magnitudeSquared() > EPSILON) {  // Threshold for considering non-zero amplitudes
+//                result.append("|").append(PSI.lower()).append("⟩ = ");
+//                result.append(phaseString);
                 result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩").append('$');
             }
         }
@@ -640,9 +654,9 @@ public final class ComplexMath {
      * @return the string in a special format
      */
     public static String complexToString(ComplexNumber compNum) {
-        if (Math.abs(compNum.getImag()) < 1e-10) {
+        if (Math.abs(compNum.getImag()) < EPSILON) {
             return String.format("%.5f", compNum.getReal());
-        } else if (Math.abs(compNum.getReal()) < 1e-10) {
+        } else if (Math.abs(compNum.getReal()) < EPSILON) {
             return String.format("%.5fi", compNum.getImag());
         } else {
             return String.format("(%.5f + %.5fi)", compNum.getReal(), compNum.getImag());
@@ -659,11 +673,11 @@ public final class ComplexMath {
         double real = compNum.getReal();
         double imag = compNum.getImag();
 
-        if (real < 1e-10 && imag < 1e-10) {
+        if (real < EPSILON && imag < EPSILON) {
             return String.format("(%.1f + %.1fi)", compNum.getReal(), compNum.getImag());
-        } else if (real < 1e-10) {
+        } else if (real < EPSILON) {
             return String.format("%.1fi", compNum.getImag());
-        } else if (imag < 1e-10) {
+        } else if (imag < EPSILON) {
             return String.format("%.1f", compNum.getReal());
         } else {
             return "";

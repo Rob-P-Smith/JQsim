@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 
 public class Sandbox {
+    private static int maxQubits = 8;
+    private static int runsCount = 5;
 
     /**
      * Main method for testing out quantum circuits while building the simulator.
@@ -19,24 +21,21 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        System.out.println((long)1048576*1048576 * 8);
-//        long startTime = System.currentTimeMillis();
-//        jqs jqs = new jqs(11);
-//        jqs.X(0);
-//        jqs.getComputationalState();
-////        jqs.QFT();
-//        long endTime = System.currentTimeMillis();
-//        System.out.println(jqs);
-//        System.out.println("Time: " + (endTime - startTime) + " ms");
+//        simulateTest();
+//        benchmark("QFTi");
     }
 
-    public static void benchmark(String type, int maxQubits, int runsCount, int threadLimit) {
+    /**
+     * Benchmark method for testing various configurations against different circuits to find hot spots
+     * @param type the type of benchmark to run.
+     */
+    public static void benchmark(String type) {
 
         switch (type) {
             case "Basic" -> {
-                for (int qubits = 12; qubits <= maxQubits; qubits = qubits + 4) {
-                    long totalRunsTime = 0;
+                for (int qubits = 11; qubits <= maxQubits; qubits++) {
                     System.out.println("Testing " + qubits + " qubits.");
+                    long totalRunsTime = 0;
                     for (int r = 0; r < runsCount; r++) {
                         long startTime = System.currentTimeMillis();
 
@@ -45,16 +44,17 @@ public class Sandbox {
                             jqs.X(i);
                         }
                         jqs.getComputationalState();
-//                        jqs.CX(0, qubits - 1);
-//                        jqs.getComputationalState();
+                        jqs.CX(0, qubits - 1);
+                        jqs.getComputationalState();
 
                         long endTime = System.currentTimeMillis();
-                        if (r > -1) {
+                        System.out.println("Run Time: " + (endTime - startTime));
+                        if (r > 0) {
                             totalRunsTime += endTime - startTime;
                         }
                     }
                     int count = runsCount == 1? runsCount : runsCount -1;
-                    System.out.println("Average time: " + (totalRunsTime / count) + " ms");
+                    System.out.println("Average execution time using Sparse: " + (totalRunsTime / count) + " ms");
                 }
             }
             case "QFT" -> {
@@ -84,7 +84,49 @@ public class Sandbox {
                     System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
                 }
             }
+            case "QFTi" -> {
+                for (int qubits = 3; qubits <= maxQubits; qubits++) {
+                    long totalRunsTime = 0;
+                    System.out.println("Testing " + qubits + " qubits.");
+                    for (int r = 0; r < runsCount; r++) {
+                        long startTime = System.currentTimeMillis();
+
+                        jqs jqs = new jqs(qubits);
+                        for(int i = 0; i < qubits; i++){
+                            jqs.X(i);
+                        }
+                        jqs.getComputationalState();
+                        jqs.QFT();
+                        jqs.QFTi();
+
+                        long endTime = System.currentTimeMillis();
+                        if (r > 0) {
+                            totalRunsTime += endTime - startTime;
+                        }
+                    }
+                    System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
+                }
+            }
         }
+    }
+
+    /**
+     * Test the simulation function. Haven't addressed how to build this as a test yet because of probabilistic results.
+     */
+    public static void simulateTest(){
+        jqs jqs = new jqs(3);
+        jqs.X(0);
+        jqs.H(1);
+        jqs.X(2);
+        jqs.CX(0,1);
+        jqs.T(0);
+        jqs.Z(1);
+        jqs.S(2);
+        jqs.H(0);
+        jqs.H(2);
+        jqs.T(0);
+        jqs.getComputationalState();
+        jqs.simulate();
     }
 }
 

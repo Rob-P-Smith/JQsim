@@ -1,19 +1,17 @@
 package measurement;
 
 import complex_classes.ComplexMath;
-import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
 import complex_classes.ComplexSparse;
 import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
- * The default engine that will execute the WorkQueue for a given jqs quantum circuit.
+ * The default engine that executes the WorkQueue for a given jqs quantum circuit.
+ * This class handles quantum state calculations, measurements, and simulation.
  *
  * @author Robert Smith
  * @version 0.1
@@ -26,13 +24,12 @@ public class Backend {
     private WorkQueue workQueue;
     private int numQubits;
 
-
     /**
-     * Constructor for the backend class.
-     * @param gateD The gateDirector object
-     * @param tracker The tracker object that tracks the state of the system in a StateTracker
-     * @param workQueue the workQueue that contains all the gates to apply
-     * @param shots the number of shots, or iterations, to use for getting expectation values
+     * Constructor for the Backend class.
+     * @param gateD The GateDirector object for managing quantum gates
+     * @param tracker The StateTracker object that tracks the state of the quantum system
+     * @param workQueue The WorkQueue containing all the gates to apply
+     * @param shots The number of shots (iterations) to use for getting expectation values
      */
     public Backend(GateDirector gateD, StateTracker tracker, WorkQueue workQueue, int shots) {
         this.numQubits = tracker.getQubitCount();
@@ -43,7 +40,8 @@ public class Backend {
     }
 
     /**
-     * Calculates the computational basis states of the quantum system, mutates the StateTracker state vector directly.
+     * Calculates the computational basis states of the quantum system by applying gates from the WorkQueue.
+     * This method mutates the StateTracker's state vector directly.
      */
     public void getComputationalState() {
         while (workQueue.hasWork()) {
@@ -52,17 +50,17 @@ public class Backend {
 
             if (nextItem.isSingleTarget()) { // TODO: temporary, adjust this for non Control multi-qubit gates
                 ComplexSparse tempVec = ComplexMath.multiplyMatrix(matrix, tracker.getStateVec());
-//                tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
                 tracker.setStateVec(tempVec);
             }
         }
     }
 
     /**
-     * Will provide a measurement for the system on the specified qubit, not complete yet.
+     * Performs a measurement on the specified qubit of the quantum system.
      *
-     * @param target the qubit to measure
-     * @return the value of the qubit measured
+     * @param target The index of the qubit to measure
+     * @return The measured value of the qubit (0 or 1)
+     * @throws IllegalArgumentException if the target qubit index is invalid
      */
     public int measureQubit(int target) {
         Random random = new Random();
@@ -108,16 +106,24 @@ public class Backend {
         return result;
     }
 
+    /**
+     * Retrieves the viable states of the quantum system as an array of strings.
+     *
+     * @return An array of strings representing the viable states
+     */
     private String[] getViableStates() {
         String states = ComplexMath.complexMatrixToBasisStates(this.tracker.getStateVec());
         return states.split("\\$");
     }
 
+    /**
+     * Performs a simulation of the quantum circuit for the specified number of shots.
+     * This method applies gates, performs measurements, and aggregates results.
+     */
     public void simulate() {
         WorkQueue workCopy = workQueue.makeClone();
         StateTracker stateClone = tracker.makeClone();
         Map<String, Double> resultsMap = new HashMap<>();
-
 
         for (int i = 0; i < shots; i++) {
             while (workQueue.hasWork()) {
@@ -128,8 +134,7 @@ public class Backend {
                     tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
                 }
             }
-            // Need to insert the determined state resulting from the collapse into the resultsMap not the long form dirac or
-            // short form dirac possible results, but a concrete result.
+
             for (int j = 0; j < numQubits; j++) {
                 measureQubit(j);
             }
@@ -143,28 +148,37 @@ public class Backend {
         aggregateResults(resultsMap);
     }
 
-    //enabled commented out code to check the sum values of all probabilities while the method runs and display in console.
-    //used for verifying the sum of all probabilities is ~1.0
+    /**
+     * Aggregates and displays the results of the quantum simulation.
+     * This method sorts the results by the quantum state (key of the resultsMap),
+     * calculates probabilities, and prints them along with a total probability check.
+     *
+     * @param resultsMap A map containing the quantum states as keys and their occurrence counts as values.
+     *                   The keys are typically binary strings representing quantum states (e.g., "000", "001", etc.),
+     *                   and the values are the number of times each state was observed during the simulation.
+     */
     private void aggregateResults(Map<String, Double> resultsMap) {
-        String[] probabilitiesArray = new String[tracker.getStateVecSize() + 2];  //sized for all possibilities + the 2 comments
-        int probArrayIdx = 1;                                                   //tracker position in for each loop
-        probabilitiesArray[0] = "Probabilities over " + shots + " shots:";
-        double perIncident = 1.0 / shots;                                       //weighted value per occurrence of a result
-        double total = 0.0;
+        System.out.println("Probabilities over " + shots + " shots:");
 
-        for (String key : resultsMap.keySet()) {
-            double chance = (resultsMap.get(key) / (shots)) * perIncident * shots;
-            String chanceString = String.format("%.3f", chance);
-            total += chance;
-            probabilitiesArray[probArrayIdx++] = key + ": " + chanceString;
+        // Convert the map to a list and sort it by the quantum state (key)
+        List<Map.Entry<String, Double>> sortedResults = new ArrayList<>(resultsMap.entrySet());
+        sortedResults.sort(Map.Entry.comparingByKey());
+
+        double totalProbability = 0.0;
+
+        // Iterate through the sorted results, calculate and print probabilities
+        for (Map.Entry<String, Double> entry : sortedResults) {
+            // Calculate the probability by dividing the count by the total number of shots
+            double probability = entry.getValue() / shots;
+
+            // Print the quantum state and its probability
+            System.out.printf("%s: %.3f%n", entry.getKey(), probability);
+
+            // Add to the total probability (should sum to approximately 1)
+            totalProbability += probability;
         }
 
-        probabilitiesArray[probArrayIdx] = "\nSum of raw probability values: " + total; //enable if sum of probabilities == 1.0 is in doubt
-        for (String value : probabilitiesArray) {
-            if (value != null) {
-                System.out.println(value);
-            }
-        }
+        // Print the sum of all probabilities as a check (should be very close to 1.0)
+        System.out.printf("%nSum of raw probability values: %.6f%n", totalProbability);
     }
-
 }
