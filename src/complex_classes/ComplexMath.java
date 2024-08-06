@@ -220,14 +220,14 @@ public final class ComplexMath {
         int nnzTrackerLength = 0;
 
         // For each non-zero element in the column vector (rightMatrix)
-        for (int pb = rightMatrix.colPointers.get(0); pb < rightMatrix.colPointers.get(1); pb++) {
-            int rightRowIndex = rightMatrix.rowIndices.get(pb);
-            ComplexNumber rightValue = rightMatrix.values.get(pb);
+        for (int pb = rightMatrix.getColPointers().get(0); pb < rightMatrix.getColPointers().get(1); pb++) {
+            int rightRowIndex = rightMatrix.getRowIndices().get(pb);
+            ComplexNumber rightValue = rightMatrix.getValues().get(pb);
 
             // For each non-zero element in column k of leftMatrix
-            for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
-                int leftRowIndex = leftMatrix.rowIndices.get(pa);
-                ComplexNumber leftValue = leftMatrix.values.get(pa);
+            for (int pa = leftMatrix.getColPointers().get(rightRowIndex); pa < leftMatrix.getColPointers().get(rightRowIndex + 1); pa++) {
+                int leftRowIndex = leftMatrix.getRowIndices().get(pa);
+                ComplexNumber leftValue = leftMatrix.getValues().get(pa);
 
                 if (isZero(dense[leftRowIndex])) {
                     nnzTracker[nnzTrackerLength++] = leftRowIndex;
@@ -320,14 +320,14 @@ public final class ComplexMath {
         // For each column j of B
         for (int j = 0; j < rightWidth; j++) {
             // For each non-zero element in column j of B
-            for (int pb = rightMatrix.colPointers.get(j); pb < rightMatrix.colPointers.get(j + 1); pb++) {
-                int rightRowIndex = rightMatrix.rowIndices.get(pb);
-                ComplexNumber bVal = rightMatrix.values.get(pb);
+            for (int pb = rightMatrix.getColPointers().get(j); pb < rightMatrix.getColPointers().get(j + 1); pb++) {
+                int rightRowIndex = rightMatrix.getRowIndices().get(pb);
+                ComplexNumber bVal = rightMatrix.getValues().get(pb);
 
                 // For each non-zero element in column k of A
-                for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
-                    int leftRowIndex = leftMatrix.rowIndices.get(pa);
-                    ComplexNumber aVal = leftMatrix.values.get(pa);
+                for (int pa = leftMatrix.getColPointers().get(rightRowIndex); pa < leftMatrix.getColPointers().get(rightRowIndex + 1); pa++) {
+                    int leftRowIndex = leftMatrix.getRowIndices().get(pa);
+                    ComplexNumber aVal = leftMatrix.getValues().get(pa);
 
                     if (isZero(dense[leftRowIndex])) {
                         nnzTracker[nnzTrackerIndex++] = leftRowIndex;
@@ -383,13 +383,13 @@ public final class ComplexMath {
                 int nnzTrackerIndex = 0;
 
                 for (int j = startCol; j < endCol; j++) {
-                    for (int pb = rightMatrix.colPointers.get(j); pb < rightMatrix.colPointers.get(j + 1); pb++) {
-                        int rightRowIndex = rightMatrix.rowIndices.get(pb);
-                        ComplexNumber rightValue = rightMatrix.values.get(pb);
+                    for (int pb = rightMatrix.getColPointers().get(j); pb < rightMatrix.getColPointers().get(j + 1); pb++) {
+                        int rightRowIndex = rightMatrix.getRowIndices().get(pb);
+                        ComplexNumber rightValue = rightMatrix.getValues().get(pb);
 
-                        for (int pa = leftMatrix.colPointers.get(rightRowIndex); pa < leftMatrix.colPointers.get(rightRowIndex + 1); pa++) {
-                            int leftRowIndex = leftMatrix.rowIndices.get(pa);
-                            ComplexNumber leftValue = leftMatrix.values.get(pa);
+                        for (int pa = leftMatrix.getColPointers().get(rightRowIndex); pa < leftMatrix.getColPointers().get(rightRowIndex + 1); pa++) {
+                            int leftRowIndex = leftMatrix.getRowIndices().get(pa);
+                            ComplexNumber leftValue = leftMatrix.getValues().get(pa);
 
                             if (isZero(thisDense[leftRowIndex])) {
                                 nnzTracker[nnzTrackerIndex++] = leftRowIndex;
@@ -424,9 +424,9 @@ public final class ComplexMath {
         ComplexSparse collectorMatrix = new ComplexSparse(leftHeight, rightWidth);
         for (ComplexSparse partial : partialResults) {
             for (int j = 0; j < rightWidth; j++) {
-                for (int r = partial.colPointers.get(j); r < partial.colPointers.get(j + 1); r++) {
-                    int i = partial.rowIndices.get(r);
-                    collectorMatrix.put(i, j, ComplexMath.addComplexNumbers(collectorMatrix.get(i, j), partial.values.get(r)));
+                for (int r = partial.getColPointers().get(j); r < partial.getColPointers().get(j + 1); r++) {
+                    int i = partial.getRowIndices().get(r);
+                    collectorMatrix.put(i, j, ComplexMath.addComplexNumbers(collectorMatrix.get(i, j), partial.getValues().get(r)));
                 }
             }
         }
@@ -598,7 +598,10 @@ public final class ComplexMath {
             if (amplitude.magnitudeSquared() > EPSILON) {  // Threshold for considering non-zero amplitudes
                 if (firstTerm) {
                     result.append("|").append(PSI.lower()).append("⟩ = \n");
-                    result.append("{phase} " + "amplitude" + " |basis⟩ \n-------------------------\n");
+                    result.append("""
+                            {phase} amplitude |basis⟩\s
+                            -------------------------
+                            """);
 
                 } else {
                     result.append("\n");
@@ -636,10 +639,7 @@ public final class ComplexMath {
 
         for (int i = 0; i < stateVector.getHeight(); i++) {
             ComplexNumber amplitude = stateVector.get(i, 0);
-            String phaseString = complexPhaseToString(amplitude);
             if (amplitude.magnitudeSquared() > EPSILON) {  // Threshold for considering non-zero amplitudes
-//                result.append("|").append(PSI.lower()).append("⟩ = ");
-//                result.append(phaseString);
                 result.append("|").append(String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0')).append("⟩").append('$');
             }
         }
@@ -693,8 +693,7 @@ public final class ComplexMath {
      */
     public static double getPhase(ComplexNumber amplitude) {
         double decimalPhase = Math.atan2(amplitude.getImag(), amplitude.getReal());
-        double degreePhase = 180 / Math.PI * decimalPhase;
-        return degreePhase;
+        return 180 / Math.PI * decimalPhase;
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.*;
  * Theta values: as a double. e.g Math.PI/2 or 1.57079632679 ; both will work as the parameter when calling R gates.
  * Control values: as an integer of which qubit to use as control.
  * Target values: as an integer of which qubit to use as the target.
- * <br>
+ *
  * For dual-qubit gates, just provide the int value for control and target.
  * For multi-qubit gates, provide an array of int for controls and an array of int[] as targets.
  * </ul>

@@ -5,6 +5,7 @@ package complex_classes;
 import static supportClasses.GreekEnums.*;
 
 /**
+ * TODO Delete when confirmed obsolete.
  * This class represents a single qubit. It uses ComplexNumbers so that 'i' can be used for qubit alpha and beta values
  * to track probabilities.
  *

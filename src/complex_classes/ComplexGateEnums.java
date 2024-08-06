@@ -1,11 +1,11 @@
 package complex_classes;
 
 /**
- * Enum representing various quantum gates using complex matrices.
+ * Enums representing various quantum gates using complex matrices.
  *
  * @author Robert Smith
  * @version 1.0
- * @since 16 July 2024
+ * @since 6 August 2024
  */
 public enum ComplexGateEnums {
     /**

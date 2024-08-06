@@ -22,7 +22,7 @@ public class Sandbox {
      */
     public static void main(String[] args) {
 //        simulateTest();
-//        benchmark("QFTi");
+        benchmark("QFT");
     }
 
     /**
@@ -33,7 +33,7 @@ public class Sandbox {
 
         switch (type) {
             case "Basic" -> {
-                for (int qubits = 11; qubits <= maxQubits; qubits++) {
+                for (int qubits = 6; qubits <= maxQubits; qubits++) {
                     System.out.println("Testing " + qubits + " qubits.");
                     long totalRunsTime = 0;
                     for (int r = 0; r < runsCount; r++) {
@@ -58,7 +58,7 @@ public class Sandbox {
                 }
             }
             case "QFT" -> {
-                for (int qubits = 6; qubits <= maxQubits; qubits++) {
+                for (int qubits = 3; qubits <= maxQubits; qubits++) {
                     long totalRunsTime = 0;
                     System.out.println("Testing " + qubits + " qubits.");
                     for (int r = 0; r < runsCount; r++) {
@@ -77,6 +77,7 @@ public class Sandbox {
                         jqs.QFTi();
 
                         long endTime = System.currentTimeMillis();
+                        System.out.println("Run Time: " + (endTime - startTime));
                         if (r > 0) {
                             totalRunsTime += endTime - startTime;
                         }
@@ -100,6 +101,7 @@ public class Sandbox {
                         jqs.QFTi();
 
                         long endTime = System.currentTimeMillis();
+                        System.out.println("Run Time: " + (endTime - startTime));
                         if (r > 0) {
                             totalRunsTime += endTime - startTime;
                         }
@@ -127,6 +129,7 @@ public class Sandbox {
         jqs.T(0);
         jqs.getComputationalState();
         jqs.simulate();
+        System.out.println(jqs);
     }
 }
 

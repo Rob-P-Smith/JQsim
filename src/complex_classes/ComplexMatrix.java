@@ -3,6 +3,7 @@ package complex_classes;
 import java.util.Arrays;
 
 /**
+ * TODO Delete when confirmed obsolete.
  * This class represents a matrix of complex numbers and supports basic matrix operations.
  *
  * <p>

@@ -20,18 +20,66 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public final class ComplexSparse {
     // CSC format components
-    List<ComplexNumber> values; // Non-zero values
-    List<Integer> rowIndices;   // Row indices for each non-zero value
-    List<Integer> colPointers;  // Pointers to start of each column
-    //TODO START EXPERIMENTAL CODE HERE
-
+    private List<ComplexNumber> values; // Non-zero values
+    private List<Integer> rowIndices;   // Row indices for each non-zero value
+    private List<Integer> colPointers;  // Pointers to start of each column
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    //TODO END EXPERIMENTAL CODE HERE
-
     private int rows;
     private int cols;
 
+    /**
+     * Returns the list of non-zero values in the sparse matrix.
+     *
+     * @return A List of ComplexNumber objects representing the non-zero values in the matrix.
+     */
+    public List<ComplexNumber> getValues() {
+        return values;
+    }
+
+    /**
+     * Returns the list of row indices corresponding to the non-zero values.
+     *
+     * @return A List of Integer objects representing the row indices of non-zero values.
+     */
+    public List<Integer> getRowIndices() {
+        return rowIndices;
+    }
+
+    /**
+     * Returns the list of column pointers in the CSC format.
+     *
+     * @return A List of Integer objects representing the starting indices of each column in the values and rowIndices lists.
+     */
+    public List<Integer> getColPointers() {
+        return colPointers;
+    }
+
+    /**
+     * Sets the list of non-zero values in the sparse matrix.
+     *
+     * @param values A List of ComplexNumber objects representing the new non-zero values.
+     */
+    public void setValues(List<ComplexNumber> values) {
+        this.values = values;
+    }
+
+    /**
+     * Sets the list of row indices corresponding to the non-zero values.
+     *
+     * @param rowIndices A List of Integer objects representing the new row indices of non-zero values.
+     */
+    public void setRowIndices(List<Integer> rowIndices) {
+        this.rowIndices = rowIndices;
+    }
+
+    /**
+     * Sets the list of column pointers in the CSC format.
+     *
+     * @param colPointers A List of Integer objects representing the new starting indices of each column.
+     */
+    public void setColPointers(List<Integer> colPointers) {
+        this.colPointers = colPointers;
+    }
 
     /**
      * Constructs an empty sparse matrix.
@@ -93,38 +141,6 @@ public final class ComplexSparse {
             colPointers.set(j + 1, values.size());
         }
     }
-
-//    /**
-//     * Constructs a sparse matrix from a 2D array of ComplexNumbers.
-//     * Converts the dense matrix representation to CSC format.
-//     *
-//     * @param matrix the 2D array of {@link ComplexNumber} objects representing the matrix
-//     * @see ComplexNumber
-//     */
-//    public ComplexSparse(ComplexNumber[][] matrix) {
-//        this.rows = matrix.length;
-//        this.cols = matrix[0].length;
-//
-//        // Estimate initial capacities (assuming ~10% non-zero elements)
-//        int estimatedNonZero = (int)(rows * cols * 0.1);
-//
-//        // Initialize CSC components with estimated capacities
-//        values = new ArrayList<>(estimatedNonZero);
-//        rowIndices = new ArrayList<>(estimatedNonZero);
-//        colPointers = new ArrayList<>(Collections.nCopies(cols + 1, 0));
-//
-//        int currentCol = 0;
-//        for (int j = 0; j < cols; j++) {
-//            for (int i = 0; i < rows; i++) {
-//                if (!isZero(matrix[i][j])) {
-//                    values.add(new ComplexNumber(matrix[i][j].getReal(), matrix[i][j].getImag()));
-//                    rowIndices.add(i);
-//                    currentCol++;
-//                }
-//            }
-//            colPointers.set(j + 1, currentCol);
-//        }
-//    }
 
     /**
      * Returns a string representation of the sparse matrix in CSC format.
@@ -209,7 +225,21 @@ public final class ComplexSparse {
         return cols;
     }
 
-    //TODO START EXPERIMENTAL CODE HERE
+    /**
+     * Inserts or updates a value at the specified position in the matrix.
+     * If the value is zero, it removes the element from the sparse representation.
+     * This method uses a hybrid approach of linear and binary search for optimal performance.
+     *
+     * @param row   the row index
+     * @param col   the column index
+     * @param value the {@link ComplexNumber} value to insert or update
+     * @throws IndexOutOfBoundsException if the specified indices are out of bounds
+     *
+     * Performance characteristics:
+     * - For columns with 8 or fewer elements, a linear search is used for better cache locality.
+     * - For columns with more than 8 elements, a binary search is employed for faster lookup.
+     * - The method adapts to the sparsity of each column for optimized performance.
+     */
     public void put(int row, int col, ComplexNumber value) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new IndexOutOfBoundsException("Invalid matrix indices");
@@ -217,33 +247,45 @@ public final class ComplexSparse {
 
         lock.writeLock().lock();
         try {
-            int insertPos = colPointers.get(col);
-            int nextColPos = colPointers.get(col + 1);
+            int start = colPointers.get(col);
+            int end = colPointers.get(col + 1) - 1;
+            int pos = start;
 
-            // Binary search to find insertion position
-            while (insertPos < nextColPos) {
-                int mid = (insertPos + nextColPos) >>> 1;
-                if (rowIndices.get(mid) < row) {
-                    insertPos = mid + 1;
-                } else {
-                    nextColPos = mid;
+            // Linear search for small ranges, binary search for larger ones
+            if (end - start > 8) {
+                // Binary search
+                while (start <= end) {
+                    pos = (start + end) >>> 1;
+                    int rowAtPos = rowIndices.get(pos);
+                    if (rowAtPos < row) {
+                        start = pos + 1;
+                    } else if (rowAtPos > row) {
+                        end = pos - 1;
+                    } else {
+                        break;
+                    }
+                }
+                if (rowIndices.get(pos) < row) pos++;
+            } else {
+                // Linear search
+                while (pos <= end && rowIndices.get(pos) < row) {
+                    pos++;
                 }
             }
 
-            if (insertPos < colPointers.get(col + 1) && rowIndices.get(insertPos) == row) {
+            if (pos < colPointers.get(col + 1) && rowIndices.get(pos) == row) {
                 // Update existing value
                 if (isZero(value)) {
-                    // Remove the element if it's zero
-                    values.remove(insertPos);
-                    rowIndices.remove(insertPos);
+                    values.remove(pos);
+                    rowIndices.remove(pos);
                     updateColPointers(col + 1, -1);
                 } else {
-                    values.set(insertPos, value);
+                    values.set(pos, value);
                 }
             } else if (!isZero(value)) {
                 // Insert new non-zero value
-                values.add(insertPos, value);
-                rowIndices.add(insertPos, row);
+                values.add(pos, value);
+                rowIndices.add(pos, row);
                 updateColPointers(col + 1, 1);
             }
         } finally {
@@ -251,63 +293,17 @@ public final class ComplexSparse {
         }
     }
 
+    /**
+     * Updates the column pointers after inserting or removing an element.
+     *
+     * @param startCol the column index to start updating from
+     * @param delta the value to add to each subsequent column pointer
+     */
     private void updateColPointers(int startCol, int delta) {
         for (int j = startCol; j < colPointers.size(); j++) {
             colPointers.set(j, colPointers.get(j) + delta);
         }
     }
-
-//
-//    /**
-//     * Inserts or updates a value in the matrix in a thread-safe manner.
-//     * If the value is zero, it may remove the element from the sparse representation.
-//     *
-//     * @param row   the row index
-//     * @param col   the column index
-//     * @param value the {@link ComplexNumber} to insert or update
-//     * @throws IndexOutOfBoundsException if the specified indices are out of bounds
-//     * @see ComplexNumber
-//     */
-//    public void put(int row, int col, ComplexNumber value) {
-//        if (row < 0 || row >= rows || col < 0 || col >= cols) {
-//            throw new IndexOutOfBoundsException("Invalid matrix indices");
-//        }
-//
-//        lock.writeLock().lock();
-//        try {
-//            int insertPos = colPointers.get(col);
-//            int nextColPos = colPointers.get(col + 1);
-//
-//            // Find the insertion position
-//            while (insertPos < nextColPos && insertPos < rowIndices.size() && rowIndices.get(insertPos) < row) {
-//                insertPos++;
-//            }
-//
-//            if (insertPos < nextColPos && insertPos < rowIndices.size() && rowIndices.get(insertPos) == row) {
-//                // Update existing value
-//                if (isZero(value)) {
-//                    // Remove the element if it's zero
-//                    values.remove(insertPos);
-//                    rowIndices.remove(insertPos);
-//                    for (int j = col + 1; j < colPointers.size(); j++) {
-//                        colPointers.set(j, colPointers.get(j) - 1);
-//                    }
-//                } else {
-//                    values.set(insertPos, value);
-//                }
-//            } else if (!isZero(value)) {
-//                // Insert new non-zero value
-//                values.add(insertPos, value);
-//                rowIndices.add(insertPos, row);
-//                for (int j = col + 1; j < colPointers.size(); j++) {
-//                    colPointers.set(j, colPointers.get(j) + 1);
-//                }
-//            }
-//        } finally {
-//            lock.writeLock().unlock();
-//        }
-//    }
-    //TODO END EXPERIMENTAL CODE HERE
 
     /**
      * Retrieves the value at the specified position in the matrix.

@@ -18,13 +18,12 @@ package complex_classes;
  * </p>
  *
  * @author Robert Smith
- * @version 0.1
- * @since 25 June 2024
+ * @version 0.3
+ * @since 6 August 2024
  */
 public final class ComplexNumber {
     private double real; // Real part of the complex number
     private double imag; // Imaginary part of the complex number
-
 
     /**
      * Constructs a complex number with both real and imaginary parts initialized to 0.0.
@@ -112,7 +111,7 @@ public final class ComplexNumber {
      * <li>If imag is positive and real is not 0.0, it formats as "real + imagⅈ".</li>
      * <li>If imag is negative and real is not 0.0, it formats as "real - imagⅈ".</li>
      * </ul>
-     *
+     * </p>
      *
      * @return A string representation of the complex number.
      */
@@ -129,7 +128,6 @@ public final class ComplexNumber {
         } else {
             if (this.imag < 0) {
                 return String.valueOf(real) + imag + 'ⅈ';
-
             } else {
                 return String.valueOf(real) + "+" + imag + 'ⅈ';
             }
@@ -137,6 +135,9 @@ public final class ComplexNumber {
         return "No values found";
     }
 
+    /**
+     * Sets both the real and imaginary parts of the complex number to zero.
+     */
     public void setZero() {
         this.real = 0.0;
         this.imag = 0.0;
