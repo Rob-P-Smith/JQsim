@@ -20,7 +20,11 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        testQPE();
+//        jqs jqs = new jqs(2);
+//        jqs.RX((11*Math.PI)/30,0);
+//        jqs.buildCircuit();
+//        System.out.println(jqs);
+        testQPE2();
 //        jqs jqs = new jqs(4,100000, "registerOne");
 //
 //        jqs.X(0);
@@ -46,25 +50,76 @@ public class Sandbox {
         jqs.X(3);
         jqs.X(4);
         jqs.X(5);
+        jqs.RX((11*Math.PI)/30, 3);
+        jqs.RX((11*Math.PI)/30, 4);
+        jqs.RX((11*Math.PI)/30, 5);
 
-        jqs.CGate("T", 2, 3);
-        jqs.CGate("T", 1, 4);
-        jqs.CGate("T", 1, 4);
-        jqs.CGate("T", 0, 5);
-        jqs.CGate("T", 0, 5);
-        jqs.CGate("T", 0, 5);
-        jqs.CGate("T", 0, 5);
+        jqs.CGate("S", 2, 3);
+        jqs.CGate("S", 1, 4);
+        jqs.CGate("S", 1, 4);
+        jqs.CGate("S", 0, 5);
+        jqs.CGate("S", 0, 5);
+        jqs.CGate("S", 0, 5);
+        jqs.CGate("S", 0, 5);
 
         jqs.buildCircuit();
         jqs.QFTi(0,2);
-//        System.out.println(jqs);
         jqs.simulate();
-//        jqs.measureQubit(0);
-//        jqs.measureQubit(1);
-//        jqs.measureQubit(2);
-//
 
+        System.out.println("\nSystem State before measuring QFTi subjected qubits: \n"+jqs);
+    }
+
+    public static void testQPE2(){
+        jqs jqs = new jqs(8, 100000, "QPE2 Register");
+
+        jqs.H(0);
+        jqs.H(1);
+        jqs.H(2);
+        jqs.H(3);
+
+        // establish the eigenvector to test
+        jqs.X(4);
+
+        jqs.RX((11*Math.PI)/30, 4);
+        jqs.RX(Math.PI/4, 4);
+//        jqs.RX((11*Math.PI)/30, 5);
+//        jqs.RX((11*Math.PI)/30, 6);
+//        jqs.RX((11*Math.PI)/30, 7);
+
+        //encode the test as QFT onto the examination qubits
+        jqs.CGate("S", 3, 4);
+
+        jqs.CGate("S", 2, 5);
+        jqs.CGate("S", 2, 5);
+
+        jqs.CGate("S", 1, 6);
+        jqs.CGate("S", 1, 6);
+        jqs.CGate("S", 1, 6);
+        jqs.CGate("S", 1, 6);
+
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+        jqs.CGate("S", 0, 7);
+
+        jqs.buildCircuit();
+
+        //decode the examination qubits and measure
+        jqs.QFTi(0,3);
+
+        jqs.simulate();
         System.out.println("\n"+jqs);
+
+        jqs.measureQubit(0);
+        jqs.measureQubit(1);
+        jqs.measureQubit(2);
+        jqs.measureQubit(3);
+
+        System.out.println("\nSingle Measured Outcome\n"+jqs);
     }
 
     /**

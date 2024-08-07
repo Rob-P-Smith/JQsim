@@ -172,13 +172,13 @@ public class Backend {
             double probability = entry.getValue() / shots;
 
             // Print the quantum state and its probability
-            System.out.printf("%s: %.3f%n", entry.getKey(), probability);
+            System.out.printf("%s: %.2f%n", entry.getKey(), probability*100);
 
             // Add to the total probability (should sum to approximately 1)
             totalProbability += probability;
         }
 
         // Print the sum of all probabilities as a check (should be very close to 1.0)
-        System.out.printf("%nSum of raw probability values: %.6f%n", totalProbability);
+        System.out.printf("%nSum of raw probability values: %.4f%n", totalProbability);
     }
 }
