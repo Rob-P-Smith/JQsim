@@ -164,29 +164,29 @@ public class QuantumBehaviorTests {
                 "{0.000°} 0.70711 |10⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22X%22],[%22%E2%80%A2%22,%22Z%22]]}
-        jqs jqs2 = new jqs(2);
+        jqs = new jqs(2);
         //test that kickback occurs on control qubit
-        jqs2.H(0);
-        jqs2.X(1);
-        jqs2.CZ(0, 1);
-        jqs2.buildCircuit();
-//        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
+        jqs.H(0);
+        jqs.X(1);
+        jqs.CZ(0, 1);
+        jqs.buildCircuit();
+//        System.out.println("Final Outcome: " + ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
                 "{0.000°} 0.70711 |10⟩\n" +
-                "{-180.000°} -0.70711 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs2.getStateVec()));
+                "{-180.000°} -0.70711 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22],[1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,%22X%22],[%22H%22],[%22%E2%80%A2%22,1,%22X%22]]}
-        jqs jqs3 = new jqs(4);
-        jqs3.H(0);
-        jqs3.H(1);
-        jqs3.T(1);
-        jqs3.CX(0, 1);
-        jqs3.H(0);
-        jqs3.CX(0, 2);
-        jqs3.buildCircuit();
-//        System.out.println(jqs3);
+        jqs = new jqs(4);
+        jqs.H(0);
+        jqs.H(1);
+        jqs.T(1);
+        jqs.CX(0, 1);
+        jqs.H(0);
+        jqs.CX(0, 2);
+        jqs.buildCircuit();
+//        System.out.println(jqs);
         assertEquals("|ψ⟩ = \n" +
                         "{phase} amplitude |basis⟩ \n" +
                         "-------------------------\n" +
@@ -194,8 +194,35 @@ public class QuantumBehaviorTests {
                         "{22.500°} (0.60355 + 0.25000i) |0010⟩\n" +
                         "{-67.500°} (0.10355 + -0.25000i) |0101⟩\n" +
                         "{112.500°} (-0.10355 + 0.25000i) |0111⟩",
-                ComplexMath.complexMatrixToDiracNotation(jqs3.getStateVec()));
+                ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
+        //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22,%22H%22,%22X%22,%22X%22,%22X%22],[1,1,%22%E2%80%A2%22,%22Z^%C2%BC%22],[1,%22%E2%80%A2%22,1,1,%22Z^%C2%BC%22],[1,%22%E2%80%A2%22,1,1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,1,1,1,1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,1,1,1,1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,1,1,1,1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,1,1,1,1,%22Z^%C2%BC%22],[%22Swap%22,1,%22Swap%22],[%22H%22,%22H%22,%22H%22]]}
+        jqs = new jqs(6, 100000);
+
+        jqs.H(0);
+        jqs.H(1);
+        jqs.H(2);
+        jqs.X(3);
+        jqs.X(4);
+        jqs.X(5);
+        jqs.CGate("T", 3, 2);
+        jqs.CGate("T", 4, 1);
+        jqs.CGate("T", 4, 1);
+        jqs.CGate("T", 5, 0);
+        jqs.CGate("T", 5, 0);
+        jqs.CGate("T", 5, 0);
+        jqs.CGate("T", 5, 0);
+
+        jqs.buildCircuit();
+        jqs.QFTi(0,2);
+//        System.out.println(jqs);
+        assertEquals("|ψ⟩ = \n" +
+                "{phase} amplitude |basis⟩ \n" +
+                "-------------------------\n" +
+                "{67.500°} (0.25000 + 0.60355i) |111100⟩\n" +
+                "{-22.500°} (0.25000 + -0.10355i) |111101⟩\n" +
+                "{-22.500°} (0.60355 + -0.25000i) |111110⟩\n" +
+                "{-112.500°} (-0.10355 + -0.25000i) |111111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
     }
 
     @Test

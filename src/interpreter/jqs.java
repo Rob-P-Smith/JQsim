@@ -576,10 +576,18 @@ public class jqs {
     }
 
     /**
-     * Conduct QFT on the system
+     * Conduct QFTi on the system
      */
     public void QFTi(){
         QFTBuilder qft = new QFTBuilder(gd);
         qft.applyQFTi();
+    }
+
+    /**
+     * Conduct QFTi on the system in a range of startQubit to endQubit, where start and end are inclusive.
+     */
+    public void QFTi(int startQubit, int endQubit){
+        QFTBuilder qft = new QFTBuilder(gd);
+        qft.applyQFTi(startQubit, endQubit);
     }
 }

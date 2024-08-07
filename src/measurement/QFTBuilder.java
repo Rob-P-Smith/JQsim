@@ -47,6 +47,30 @@ public class QFTBuilder {
     }
 
     /**
+     * Applies the Quantum Fourier Transform Inverse to the current state vector.
+     */
+    public void applyQFTi() {
+        swapQubits();
+        for (int i = numQubits-1; i >=0 ; i--) {
+            applyHadamard(numQubits - i-1);
+            int k = 1;
+            for (int j = i - 1; j >=0; j--) {
+                applyRki(j, i, k++);
+            }
+        }
+    }
+
+    /**
+     * Swaps the order of qubits in the state vector.
+     */
+    private void swapQubits() {
+        for (int i = 0; i < numQubits / 2; i++) {
+            WorkItem applySwap = new WorkItem("SWAP", i, numQubits - 1 - i);
+            gateD.getGate(applySwap);
+        }
+    }
+
+    /**
      * Applies the controlled rotation gate Rk.
      * <p>
      * theta below examples:
@@ -69,20 +93,6 @@ public class QFTBuilder {
     }
 
     /**
-     * Applies the Quantum Fourier Transform Inverse to the current state vector.
-     */
-    public void applyQFTi() {
-        swapQubits();
-        for (int i = numQubits-1; i >=0 ; i--) {
-            applyHadamard(numQubits - i-1);
-            int k = 1;
-            for (int j = i - 1; j >=0; j--) {
-                applyRki(j, i, k++);
-            }
-        }
-    }
-
-    /**
      * Applies the controlled rotation gate inverse, Rki.
      * k starts at 1 because the hadamard applied already as the 0 exponent.
      *
@@ -93,20 +103,10 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRki(int controlQubit, int targetQubit, int k) {
-//        System.out.println("In QFT inverse.");
+        System.out.println("In full vector QFT inverse.");
         double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         WorkItem Rki = new WorkItem("CR1i", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
         gateD.getGate(Rki);
-    }
-
-    /**
-     * Swaps the order of qubits in the state vector.
-     */
-    private void swapQubits() {
-        for (int i = 0; i < numQubits / 2; i++) {
-            WorkItem applySwap = new WorkItem("SWAP", i, numQubits - 1 - i);
-            gateD.getGate(applySwap);
-        }
     }
 
     /**
@@ -145,5 +145,56 @@ public class QFTBuilder {
         return gateD.tracker.toString();
     }
 
+    //RANGE LIMITED QFT FUNCTIONALITY
 
+    /**
+     * Applies the Quantum Fourier Transform Inverse to the current state vector.
+     *
+     * @param startQubit start qubit index, inclusive
+     * @param endQubit end qubit index, inclusive
+     */
+    public void applyQFTi(int startQubit, int endQubit) {
+//        System.out.println("Qubits to include in QFTi starting at "+startQubit+", ending at "+endQubit);
+        swapQubits(startQubit, endQubit);
+        for (int i = endQubit; i >=startQubit ; i--) {
+//            System.out.println("WHAT: " + (endQubit - i));
+            applyHadamard(endQubit - i);
+            int k = 1;
+            for (int j = i-1; j >=0; j--) {
+                applyRki(j, i, k++, startQubit, endQubit);
+            }
+        }
+    }
+
+    /**
+     * Applies the controlled rotation gate inverse, Rki.
+     * k starts at 1 because the hadamard applied already as the 0 exponent.
+     *
+     * @param controlQubit the control qubit
+     * @param targetQubit  the target qubit
+     * @see WorkItem
+     * @see ComplexSparse
+     * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
+     */
+    private void applyRki(int controlQubit, int targetQubit, int k, int startQubit, int endQubit) {
+//        System.out.println("In ranged QFT inverse.");
+//        System.out.println("Control: " + controlQubit + ", Target: " + targetQubit + ", k: " + k + ", Start/End Qubits: " + startQubit + ", " + endQubit);
+        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
+        WorkItem Rki = new WorkItem("CR1i", endQubit - controlQubit, endQubit-targetQubit, theta);
+        gateD.getGate(Rki);
+    }
+
+    /**
+     * Swaps the order of qubits in the state vector across the specified range.
+     *
+     * @param startQubit The inclusive value of the qubit to start for the swap operations on.
+     * @param endQubit The inclusive value of the qubit to end at for the swap operations.
+     */
+    private void swapQubits(int startQubit, int endQubit) {
+        int numQubitsToTarget = (endQubit - startQubit)+1;
+        for (int i = startQubit; i < numQubitsToTarget / 2; i++) {
+            WorkItem applySwap = new WorkItem("SWAP", i, endQubit - i);
+            gateD.getGate(applySwap);
+        }
+    }
 }

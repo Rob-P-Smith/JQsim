@@ -20,16 +20,51 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        jqs jqs = new jqs(4, "registerOne");
+        testQPE();
+//        jqs jqs = new jqs(4,100000, "registerOne");
+//
+//        jqs.X(0);
+//        jqs.H(1);
+//        jqs.H(2);
+//        jqs.buildCircuit();
+//        System.out.println(jqs);
+//        System.out.println(jqs.measureQubit(1));
+//        jqs.buildCircuit();
+//        System.out.println(jqs);
+//        jqs.simulate();
+//        System.out.println(jqs);
+    }
 
-        jqs.X(0);
+    public static void testQPE(){
+        jqs jqs = new jqs(6, 100000, "QPE Register");
+
+        jqs.H(0);
         jqs.H(1);
         jqs.H(2);
+
+        // establish the eigenvector to test
+        jqs.X(3);
+        jqs.X(4);
+        jqs.X(5);
+
+        jqs.CGate("T", 2, 3);
+        jqs.CGate("T", 1, 4);
+        jqs.CGate("T", 1, 4);
+        jqs.CGate("T", 0, 5);
+        jqs.CGate("T", 0, 5);
+        jqs.CGate("T", 0, 5);
+        jqs.CGate("T", 0, 5);
+
         jqs.buildCircuit();
-        System.out.println(jqs);
-        System.out.println(jqs.measureQubit(1));
-        jqs.buildCircuit();
-        System.out.println(jqs);
+        jqs.QFTi(0,2);
+//        System.out.println(jqs);
+        jqs.simulate();
+//        jqs.measureQubit(0);
+//        jqs.measureQubit(1);
+//        jqs.measureQubit(2);
+//
+
+        System.out.println("\n"+jqs);
     }
 
     /**
