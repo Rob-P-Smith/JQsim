@@ -30,7 +30,6 @@ import state.WorkItem;
 public class QFTBuilder {
     private final GateDirector gateD;
     private final int numQubits;
-    private final int stateSize;
 
     /**
      * Applies the Quantum Fourier Transform to the current state vector.
@@ -87,9 +86,9 @@ public class QFTBuilder {
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
 //        System.out.println("In QFT.");
-        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
+        double theta = (2 * Math.PI / Math.pow(2, k)/2);
         WorkItem Rk = new WorkItem("CR1", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
-        gateD.getGate(Rk);
+         gateD.getGate(Rk);
     }
 
     /**
@@ -131,7 +130,7 @@ public class QFTBuilder {
      */
     public QFTBuilder(GateDirector gateD) {
         this.gateD = gateD;
-        this.stateSize = gateD.tracker.getStateVecSize();
+        int stateSize = gateD.tracker.getStateVecSize();
         this.numQubits = (int) (Math.log(stateSize) / Math.log(2));
     }
 
@@ -144,8 +143,6 @@ public class QFTBuilder {
     public String toString() {
         return gateD.tracker.toString();
     }
-
-    //RANGE LIMITED QFT FUNCTIONALITY
 
     /**
      * Applies the Quantum Fourier Transform Inverse to the current state vector.
@@ -179,7 +176,7 @@ public class QFTBuilder {
     private void applyRki(int controlQubit, int targetQubit, int k, int startQubit, int endQubit) {
 //        System.out.println("In ranged QFT inverse.");
 //        System.out.println("Control: " + controlQubit + ", Target: " + targetQubit + ", k: " + k + ", Start/End Qubits: " + startQubit + ", " + endQubit);
-        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
+        double theta = (2 * Math.PI / Math.pow(2, k)/2);
         WorkItem Rki = new WorkItem("CR1i", endQubit - controlQubit, endQubit-targetQubit, theta);
         gateD.getGate(Rki);
     }

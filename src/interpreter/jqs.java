@@ -60,6 +60,7 @@ public class jqs {
     public jqs() {
         this.label = "Default";
         device(2);
+        this.numQubits = 2;
     }
 
     /**
@@ -69,6 +70,7 @@ public class jqs {
      */
     public jqs(int numQubits){
         this.label = "Default";
+        this.numQubits = numQubits;
         device(numQubits);
     }
 
@@ -80,6 +82,7 @@ public class jqs {
      */
     public jqs(int numQubits, String label) {
         this.label = label;
+        this.numQubits = numQubits;
         device(numQubits);
     }
 
@@ -92,6 +95,7 @@ public class jqs {
     public jqs(int numQubits, int shots, String label) {
         this.shots = shots;
         this.label = label;
+        this.numQubits = numQubits;
         device(numQubits);
     }
 
@@ -102,7 +106,16 @@ public class jqs {
      */
     public jqs(int numQubits, int shots) {
         this.shots = shots;
+        this.numQubits = numQubits;
         device(numQubits);
+    }
+
+    /**
+     * Returns the number of qubits in the system.
+     * @return int as value for number of qubits.
+     */
+    public int size(){
+        return numQubits;
     }
 
     /**
@@ -563,8 +576,100 @@ public class jqs {
     /**
      * Simulates the quantum circuit running shots times and collects the results and prints them out.
      */
-    public void simulate(){
-        backend.simulate();
+    public Map<String, String> simulate(){
+        return backend.simulate();
+    }
+
+    /**
+     * Simulates the quantum circuit running shots times and collects the results.
+     */
+    public Map<String, String> silentSimulate(){
+        return backend.silentSimulate();
+    }
+
+    /**
+     * Performs Quantum Phase Estimation (QPE) with a specified gate type and phase angle.
+     * This method does not print the probabilistic results, only the two most lilely
+     * phases and their percentage.
+     *
+     * @param gateType      The type of quantum gate to use in the estimation.
+     * @param theta         The phase angle to estimate.
+     * @param lowEstimator  The lower bound of the estimation register.
+     * @param highEstimator The upper bound of the estimation register.
+     * @param target        The target qubit for the controlled operations.
+     *
+     * @see #QPE(String, int, int, int) QPE without theta parameter
+     * @see #QFTi(int, int) Inverse Quantum Fourier Transform
+     * @see #silentSimulate() Simulation method
+     * @see #extractAndPrintQPEResults(Map, int) Result extraction method
+     * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
+     */
+    public void QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target){
+        this.X(target);
+        for(int i = 0; i <= highEstimator; i++){
+            this.H(i);
+        }
+        for(int i = 0; i <= highEstimator; i++){
+            for(int j = 0; j < (int)Math.pow(2,i); j++) {
+                this.CGate(gateType, i, target, theta);
+            }
+        }
+        this.buildCircuit();
+        this.QFTi(lowEstimator,highEstimator);
+        Map<String, String> result = this.silentSimulate();
+        extractAndPrintQPEResults(result, (highEstimator-lowEstimator)+1);
+    }
+
+    /**
+     * Performs Quantum Phase Estimation (QPE) with a specified gate type.
+     * This overload does not require a theta parameter.
+     * This method does not print the probabilistic results, only the two most lilely
+     * phases and their percentage.
+     *
+     * @param gateType      The type of quantum gate to use in the estimation.
+     * @param lowEstimator  The lower bound of the estimation register.
+     * @param highEstimator The upper bound of the estimation register.
+     * @param target        The target qubit for the controlled operations.
+     *
+     * @see #QPE(String, double, int, int, int) QPE with theta parameter
+     * @see #QFTi(int, int) Inverse Quantum Fourier Transform
+     * @see #silentSimulate() Simulation method
+     * @see #extractAndPrintQPEResults(Map, int) Result extraction method
+     * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
+     */
+    public void QPE(String gateType,int lowEstimator, int highEstimator, int target){
+        this.X(target);
+        for(int i = 0; i <= highEstimator; i++){
+            this.H(i);
+        }
+        for(int i = 0; i <= highEstimator; i++){
+            for(int j = 0; j < (int)Math.pow(2,i); j++) {
+                this.CGate(gateType, i, target);
+            }
+        }
+        this.buildCircuit();
+        this.QFTi(lowEstimator,highEstimator);
+        Map<String, String> result = this.silentSimulate();
+        extractAndPrintQPEResults(result, (highEstimator-lowEstimator)+1);
+    }
+
+    /**
+     * Extracts and prints the results of the Quantum Phase Estimation.
+     *
+     * @param result          A map containing the simulation results.
+     * @param estimationCount The number of qubits used for estimation.
+     *
+     * @see #QPE(String, double, int, int, int) QPE method
+     * @see #QPE(String, int, int, int) QPE method without theta
+     */
+    private void extractAndPrintQPEResults(Map<String, String> result, int estimationCount){
+        System.out.println("\nTwo primary phases detected:");
+        for(String key : result.keySet()) {
+            int decimalValue = Integer.parseInt(key,2);
+            double phase = (double) decimalValue /Math.pow(2, estimationCount);
+            String value = String.valueOf(phase);
+            System.out.println(value + ": " + result.get(key)+"%");
+        }
     }
 
     /**
