@@ -2,7 +2,8 @@ package complex_classes;
 
 //TODO clean up obsolete entangled qubit hashmap if it ends up being superfluous
 
-import static supportClasses.GreekEnums.*;
+import static supportClasses.GreekEnums.ALPHA;
+import static supportClasses.GreekEnums.BETA;
 
 /**
  * TODO Delete when confirmed obsolete.

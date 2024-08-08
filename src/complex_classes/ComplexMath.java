@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static supportClasses.GreekEnums.*;
+import static supportClasses.GreekEnums.PSI;
 
 /**
  * ComplexObject serves as the parent class for other complex classes, providing a single location for linear algebra

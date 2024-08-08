@@ -9,7 +9,8 @@ import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
 
 /**
  * This class provides the user interface for jqsim. The commands are similar to other established
