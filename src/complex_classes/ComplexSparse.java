@@ -317,19 +317,41 @@ public final class ComplexSparse {
      * @throws IndexOutOfBoundsException if the specified indices are out of bounds
      * @see ComplexNumber
      */
+//    public ComplexNumber get(int row, int col) {
+//        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+//            throw new IndexOutOfBoundsException("Invalid matrix indices");
+//        }
+//
+//        for (int i = colPointers.get(col); i < colPointers.get(col + 1); i++) {
+//            if (rowIndices.get(i) == row) {
+//                return values.get(i);
+//            } else if (rowIndices.get(i) > row) {
+//                break;
+//            }
+//        }
+//        return new ComplexNumber(0, 0);
+//    }
     public ComplexNumber get(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new IndexOutOfBoundsException("Invalid matrix indices");
         }
 
-        for (int i = colPointers.get(col); i < colPointers.get(col + 1); i++) {
-            if (rowIndices.get(i) == row) {
-                return values.get(i);
-            }
-            if (rowIndices.get(i) > row) {
-                break;
+        int start = colPointers.get(col);
+        int end = colPointers.get(col + 1) - 1;
+
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            int midRow = rowIndices.get(mid);
+
+            if (midRow == row) {
+                return values.get(mid);
+            } else if (midRow < row) {
+                start = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
+
         return new ComplexNumber(0, 0);
     }
 }

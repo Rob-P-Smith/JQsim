@@ -16,7 +16,7 @@ import static supportClasses.GreekEnums.PSI;
  * because the threaded overhead outweighs the performance gains.
  *
  * @author Robert Smith
- * @version 0.3
+ * @version 0.5
  * @since 06 August 2024
  */
 public final class ComplexMath {
@@ -25,13 +25,9 @@ public final class ComplexMath {
      * Threshold for matrix height below which single-threaded execution is used.
      * Matrices with height less than or equal to this value will use single-threaded multiplication.
      */
-    private static int SINGLE_THREAD_THRESHOLD = 2;
-    private static int BLOCK_SIZE = 4096;
-    /**
-     * Number of threads to use for parallel execution. Default is virtual cores /2 to limit it to physical core count on machines with SMT on all cores.
-     */
-//    public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
-    private static int NUM_THREADS = 8;
+    private static int SINGLE_THREAD_THRESHOLD = 2048;
+    public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
+//    private static int BLOCK_SIZE = 16;
 
     /**
      * Computes the tensor product of two matrices using Gustavson's algorithm for sparse matrices.
@@ -46,12 +42,35 @@ public final class ComplexMath {
         int leftHeight = leftMatrix.getHeight();
         int rightHeight = rightMatrix.getHeight();
 
-        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)*999) {
+        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)) {
             return tensorMultiplyParallel(leftMatrix, rightMatrix);
         } else {
             return tensorMultiplySequential(leftMatrix, rightMatrix);
         }
 //        return tensorMultiplySequential(leftMatrix, rightMatrix);
+    }
+
+    public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
+        if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
+            throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
+        }
+        int height = leftMatrix.getHeight();
+
+        if (rightMatrix.getWidth() == 1) {
+            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
+        } else {
+            return multiplyMatrixSequential(leftMatrix, rightMatrix);
+        }
+
+//        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
+//            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
+//        } else if (rightMatrix.getWidth() == 1) {
+//            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
+//        } else if (height >= SINGLE_THREAD_THRESHOLD) {
+//            return multiplyMatrixParallel(leftMatrix, rightMatrix);
+//        } else {
+//            return multiplyMatrixSequential(leftMatrix, rightMatrix);
+//        }
     }
 
     /**
@@ -125,10 +144,10 @@ public final class ComplexMath {
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<?>> futures = new ArrayList<>();
 
-        int blockSize = Math.max(1, leftHeight / NUM_THREADS);
-        for (int block = 0; block < leftHeight; block += blockSize) {
-            final int startRow = block;
-            final int endRow = Math.min(startRow + blockSize, leftHeight);
+        int rowsPerThread = Math.max(1, leftHeight / NUM_THREADS);
+        for (int thread = 0; thread < NUM_THREADS; thread++) {
+            final int startRow = thread * rowsPerThread;
+            final int endRow = (thread == NUM_THREADS - 1) ? leftHeight : (startRow + rowsPerThread);
 
             futures.add(executor.submit(() -> {
                 for (int i1 = startRow; i1 < endRow; i1++) {
@@ -163,30 +182,6 @@ public final class ComplexMath {
         executor.shutdown();
 
         return result;
-    }
-
-    public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
-        if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
-            throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
-        }
-        int height = leftMatrix.getHeight();
-
-//        if (rightMatrix.getWidth() == 1) {
-//            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-//        } else {
-//            return multiplyMatrixSequential(leftMatrix, rightMatrix);
-//        }
-//
-
-        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
-            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
-        } else if (rightMatrix.getWidth() == 1) {
-            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-        } else if (height >= SINGLE_THREAD_THRESHOLD) {
-            return multiplyMatrixParallel(leftMatrix, rightMatrix);
-        } else {
-            return multiplyMatrixSequential(leftMatrix, rightMatrix);
-        }
     }
 
     /**
@@ -362,21 +357,20 @@ public final class ComplexMath {
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<?>> futures = new ArrayList<>();
 
-        // Reuse these arrays for each block
         ComplexNumber[] dense = new ComplexNumber[leftHeight];
         for (int i = 0; i < leftHeight; i++) {
             dense[i] = new ComplexNumber(0, 0);
         }
 
-        // Divide work into blocks
-        int numBlocks = (rightWidth + BLOCK_SIZE - 1) / BLOCK_SIZE;
-        for (int block = 0; block < numBlocks; block++) {
-            final int startCol = block * BLOCK_SIZE;
-            final int endCol = Math.min(startCol + BLOCK_SIZE, rightWidth);
+        // Divide work into NUM_THREADS parts
+        int colsPerThread = (rightWidth + NUM_THREADS - 1) / NUM_THREADS;
+        for (int thread = 0; thread < NUM_THREADS; thread++) {
+            final int startCol = thread * colsPerThread;
+            final int endCol = Math.min(startCol + colsPerThread, rightWidth);
 
+            int finalThread = thread;
             futures.add(executor.submit(() -> {
-                int threadId = (int) (Thread.currentThread().threadId() % NUM_THREADS);
-                ComplexSparse localResult = partialResults.get(threadId);
+                ComplexSparse localResult = partialResults.get(finalThread);
                 ComplexNumber[] thisDense = dense.clone();
 
                 int[] nnzTracker = new int[leftHeight];
