@@ -9,7 +9,7 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 8;
+    private static int maxQubits =12;
     private static int runsCount = 5;
 
     /**
@@ -19,7 +19,8 @@ public class Sandbox {
      */
     public static void main(String[] args) {
 //        qiskitBasicQPE();
-        qiskitMoreComplexQPE();
+//        qiskitMoreComplexQPE();
+        benchmark("Basic");
     }
 
     /**

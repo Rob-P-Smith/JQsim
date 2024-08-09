@@ -25,13 +25,13 @@ public final class ComplexMath {
      * Threshold for matrix height below which single-threaded execution is used.
      * Matrices with height less than or equal to this value will use single-threaded multiplication.
      */
-    private static int SINGLE_THREAD_THRESHOLD = Integer.MAX_VALUE;
-    private static int BLOCK_SIZE = 128;
+    private static int SINGLE_THREAD_THRESHOLD = 2;
+    private static int BLOCK_SIZE = 4096;
     /**
      * Number of threads to use for parallel execution. Default is virtual cores /2 to limit it to physical core count on machines with SMT on all cores.
      */
 //    public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
-    private static int NUM_THREADS = 4;
+    private static int NUM_THREADS = 8;
 
     /**
      * Computes the tensor product of two matrices using Gustavson's algorithm for sparse matrices.
@@ -43,15 +43,15 @@ public final class ComplexMath {
      * @see ComplexSparse
      */
     public static ComplexSparse tensorMultiply(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
-//        int leftHeight = leftMatrix.getHeight();
-//        int rightHeight = rightMatrix.getHeight();
+        int leftHeight = leftMatrix.getHeight();
+        int rightHeight = rightMatrix.getHeight();
 
-//        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)*999) {
-//            return tensorMultiplyParallel(leftMatrix, rightMatrix);
-//        } else {
-//            return tensorMultiplySequential(leftMatrix, rightMatrix);
-//        }
-        return tensorMultiplySequential(leftMatrix, rightMatrix);
+        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)*999) {
+            return tensorMultiplyParallel(leftMatrix, rightMatrix);
+        } else {
+            return tensorMultiplySequential(leftMatrix, rightMatrix);
+        }
+//        return tensorMultiplySequential(leftMatrix, rightMatrix);
     }
 
     /**
@@ -171,22 +171,22 @@ public final class ComplexMath {
         }
         int height = leftMatrix.getHeight();
 
-        if (rightMatrix.getWidth() == 1) {
-            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-        } else {
-            return multiplyMatrixSequential(leftMatrix, rightMatrix);
-        }
-
-
-//        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
-//            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
-//        } else if (rightMatrix.getWidth() == 1) {
+//        if (rightMatrix.getWidth() == 1) {
 //            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-//        } else if (height >= SINGLE_THREAD_THRESHOLD) {
-//            return multiplyMatrixParallel(leftMatrix, rightMatrix);
 //        } else {
 //            return multiplyMatrixSequential(leftMatrix, rightMatrix);
 //        }
+//
+
+        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
+            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
+        } else if (rightMatrix.getWidth() == 1) {
+            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
+        } else if (height >= SINGLE_THREAD_THRESHOLD) {
+            return multiplyMatrixParallel(leftMatrix, rightMatrix);
+        } else {
+            return multiplyMatrixSequential(leftMatrix, rightMatrix);
+        }
     }
 
     /**

@@ -1,0 +1,52 @@
+Basic test, plugged in, sparse with all additions, single threaded.
+Testing 6 qubits.
+Run Time: 14
+Run Time: 4
+Run Time: 3
+Run Time: 2
+Run Time: 3
+Average execution time using Sparse: 3 ms
+Testing 7 qubits.
+Run Time: 23
+Run Time: 12
+Run Time: 16
+Run Time: 17
+Run Time: 13
+Average execution time using Sparse: 14 ms
+Testing 8 qubits.
+Run Time: 70
+Run Time: 85
+Run Time: 49
+Run Time: 48
+Run Time: 50
+Average execution time using Sparse: 58 ms
+Testing 9 qubits.
+Run Time: 382
+Run Time: 335
+Run Time: 334
+Run Time: 338
+Run Time: 355
+Average execution time using Sparse: 340 ms
+Testing 10 qubits.
+Run Time: 2727
+Run Time: 2749
+Run Time: 2704
+Run Time: 2627
+Run Time: 2690
+Average execution time using Sparse: 2692 ms
+Testing 11 qubits.
+Run Time: 20447
+Run Time: 19385
+Run Time: 19401
+Run Time: 19948
+Run Time: 19944
+Average execution time using Sparse: 19669 ms
+Testing 12 qubits.
+Run Time: 163323
+Run Time: 165852
+Run Time: 164303
+Run Time: 163136
+Run Time: 166015
+Average execution time using Sparse: 164826 ms
+
+8t 4986
