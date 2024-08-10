@@ -121,11 +121,11 @@ public class GateDirector {
      */
     private static ComplexSparse buildR1Gate(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
-        double cosTheta = Math.cos(work.getTheta()/2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
+//        double cosTheta = Math.cos(work.getTheta()/2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         builtGate.put(0, 0, new ComplexNumber(1, 0));
         builtGate.put(0, 1, new ComplexNumber(0, 0));
         builtGate.put(1, 0, new ComplexNumber(0, 0));
-        builtGate.put(1, 1, new ComplexNumber(cosTheta, Math.sin(work.getTheta())));
+        builtGate.put(1, 1, new ComplexNumber(Math.cos(work.getTheta()), Math.sin(work.getTheta())));
         return builtGate;
     }
 
@@ -140,12 +140,12 @@ public class GateDirector {
      * @return the complex matrix that is the RX gate operator
      */
     private static ComplexSparse buildR1Gatei(WorkItem work) {
-        double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
+//        double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         ComplexSparse builtGate = new ComplexSparse(2, 2);
         builtGate.put(0, 0, new ComplexNumber(1, 0));
         builtGate.put(0, 1, new ComplexNumber(0, 0));
         builtGate.put(1, 0, new ComplexNumber(0, 0));
-        builtGate.put(1, 1, new ComplexNumber(cosTheta, -Math.sin(work.getTheta())));
+        builtGate.put(1, 1, new ComplexNumber(Math.cos(work.getTheta()), -Math.sin(work.getTheta())));
         return builtGate;
     }
 
