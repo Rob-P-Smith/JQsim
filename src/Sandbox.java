@@ -9,7 +9,7 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 13;
+    private static int maxQubits = 14;
     private static int runsCount = 1;
 
     /**
@@ -20,12 +20,18 @@ public class Sandbox {
     public static void main(String[] args) {
 //        qiskitBasicQPE();
 //        qiskitMoreComplexQPE();
-        benchmark("Basic");
-//        jqs jqs = new jqs(4);
-//        jqs.X(0);
-//        jqs.H(1);
-//        jqs.buildCircuit();
-//        System.out.println(jqs);
+//        benchmark("Basic");
+        jqs jqs = new jqs(3, 1000000);
+        jqs.X(2);
+        jqs.H(1);
+        jqs.H(0);
+        jqs.CGate("R1", 0,2, (2*Math.PI)/3);
+        jqs.CGate("R1", 1,2, (2*Math.PI)/3);
+        jqs.CGate("R1", 1,2, (2*Math.PI)/3);
+        jqs.buildCircuit();
+        jqs.QFTi();
+        jqs.simulate();
+
 
     }
 
@@ -73,7 +79,7 @@ public class Sandbox {
                     long totalRunsTime = 0;
                     System.out.println("Testing " + qubits + " qubits.");
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for (int i = 0; i < qubits; i++) {
@@ -87,13 +93,20 @@ public class Sandbox {
                         jqs.QFT();
                         jqs.QFTi();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if (r > 0) {
-                            totalRunsTime += endTime - startTime;
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
                 }
             }
             case "QFTi" -> {
@@ -101,7 +114,7 @@ public class Sandbox {
                     long totalRunsTime = 0;
                     System.out.println("Testing " + qubits + " qubits.");
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for(int i = 0; i < qubits; i++){
@@ -111,13 +124,47 @@ public class Sandbox {
                         jqs.QFT();
                         jqs.QFTi();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if (r > 0) {
-                            totalRunsTime += endTime - startTime;
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
+                }
+            }
+
+            case "QPE" -> {
+                for (int qubits = 6; qubits <= maxQubits; qubits = qubits +2) {
+                    long totalRunsTime = 0;
+                    System.out.print("\nTesting " + qubits + " qubits.");
+                    for (int r = 0; r < runsCount; r++) {
+                        long startTime = System.nanoTime();
+
+                        jqs qsk = new jqs(qubits, 10000);
+                        qsk.QPE("R1", 2*Math.PI/3, 0,qubits-2, qubits-1);
+
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
+                        }
+                    }
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time: %.2f seconds%n", averageTimeSeconds);
                 }
             }
         }
@@ -168,8 +215,9 @@ public class Sandbox {
     }
 
     public static void qiskitMoreComplexQPE(){
-        jqs qsk = new jqs(6, 100000);
-        qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
+        jqs qsk = new jqs(4, 100000);
+        qsk.QPE("R1", 2*Math.PI/3, 0,2, 3);
+//        qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
 //        qsk.X(5);
 //        for(int i = 0; i < qsk.size()-1; i++) {
 //            qsk.H(i);

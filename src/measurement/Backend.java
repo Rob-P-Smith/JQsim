@@ -296,6 +296,7 @@ public class Backend {
         for (Map.Entry<String, Double> entry : sortedResults) {
             // Calculate the probability by dividing the count by the total number of shots
             double probability = entry.getValue() / shots;
+            System.out.printf("%s: %.2f%%%n", entry.getKey(), probability*100);
         }
 
         // Create a new list with the two highest value pairs
