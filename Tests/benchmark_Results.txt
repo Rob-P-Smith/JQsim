@@ -8,48 +8,105 @@ Profiling started
 
 Testing 2 qubits.
 Run Time: 2
-Average execution time using Sparse: 2 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 3 qubits.
 Run Time: 0
-Average execution time using Sparse: 0 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 4 qubits.
 Run Time: 1
-Average execution time using Sparse: 1 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 5 qubits.
 Run Time: 1
-Average execution time using Sparse: 1 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 6 qubits.
 Run Time: 4
-Average execution time using Sparse: 4 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 7 qubits.
 Run Time: 5
-Average execution time using Sparse: 5 ms
+Average execution time using Sparse: 0.00 seconds
 
 Testing 8 qubits.
 Run Time: 28
-Average execution time using Sparse: 28 ms
+Average execution time using Sparse: 0.03 seconds
 
 Testing 9 qubits.
 Run Time: 171
-Average execution time using Sparse: 171 ms
+Average execution time using Sparse: 0.17 seconds
 
 Testing 10 qubits.
 Run Time: 1065
-Average execution time using Sparse: 1065 ms
+Average execution time using Sparse: 1.07 seconds
 
 Testing 11 qubits.
 Run Time: 7668
-Average execution time using Sparse: 7668 ms
+Average execution time using Sparse: 7.67 seconds
 
 Testing 12 qubits.
 Run Time: 60957
-Average execution time using Sparse: 60957 ms
+Average execution time using Sparse: 60.96 seconds
 
 Testing 13 qubits.
 Run Time: 504088
-Average execution time using Sparse: 504088 ms
+Average execution time using Sparse: 504.01 seconds
+
+
+/////////////////////////
+Using serialized tensor multiply and multiply matrix for qubit sets under 14
+Windows 10 Enterprise LTSC
+7700x OC + chilled
+64gb very low latency ddr5 6200
+/////////////////////////
+Profiling started
+
+Testing 2 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 3 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 4 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 5 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 6 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 7 qubits.
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 8 qubits.
+Run Time: 0.03 seconds
+Average execution time using Sparse: 0.03 seconds
+
+Testing 9 qubits.
+Run Time: 0.15 seconds
+Average execution time using Sparse: 0.15 seconds
+
+Testing 10 qubits.
+Run Time: 1.11 seconds
+Average execution time using Sparse: 1.11 seconds
+
+Testing 11 qubits.
+Run Time: 7.99 seconds
+Average execution time using Sparse: 7.99 seconds
+
+Testing 12 qubits.
+Run Time: 64.06 seconds
+Average execution time using Sparse: 64.06 seconds
+
+Testing 13 qubits.
+Run Time: 509.81 seconds
+Average execution time using Sparse: 509.81 seconds

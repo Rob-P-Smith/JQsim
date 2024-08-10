@@ -18,9 +18,9 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        qiskitBasicQPE();
+//        qiskitBasicQPE();
 //        qiskitMoreComplexQPE();
-//        benchmark("Basic");
+        benchmark("Basic");
 //        jqs jqs = new jqs(4);
 //        jqs.X(0);
 //        jqs.H(1);
