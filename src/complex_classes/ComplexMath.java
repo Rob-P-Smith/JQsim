@@ -1,10 +1,11 @@
 package complex_classes;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.DecimalFormat;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static supportClasses.GreekEnums.PSI;
 
@@ -829,6 +830,32 @@ public final class ComplexMath {
         }
 
         return result.toString();
+    }
+
+
+    public static Map<String, Double> getMagnitudeStates(ComplexSparse stateVector) {
+        if (stateVector.getWidth() != 1) {
+            throw new IllegalArgumentException("State vector must be a column vector");
+        }
+
+        int numQubits = (int) (Math.log(stateVector.getHeight()) / Math.log(2));
+        DecimalFormat df = new DecimalFormat("0.00000");
+        TreeMap<Double, String> topTwoStates = new TreeMap<>(Collections.reverseOrder());
+
+        for (int i = 0; i < stateVector.getHeight(); i++) {
+            double magnitude = Double.parseDouble(df.format(stateVector.get(i, 0).magnitudeSquared()));
+            if (magnitude > EPSILON) {
+                String state = String.format("%" + numQubits + "s", Integer.toBinaryString(i)).replace(' ', '0');
+                topTwoStates.put(magnitude, state);
+                if (topTwoStates.size() > 2) {
+                    topTwoStates.pollLastEntry();
+                }
+            }
+        }
+
+        Map<String, Double> result = new HashMap<>();
+        topTwoStates.forEach((magnitude, state) -> result.put(state, magnitude));
+        return result;
     }
 
     /**

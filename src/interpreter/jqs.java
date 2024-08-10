@@ -9,7 +9,9 @@ import state.StateTracker;
 import state.WorkItem;
 import state.WorkQueue;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -598,14 +600,14 @@ public class jqs {
      * @param lowEstimator  The lower bound of the estimation register.
      * @param highEstimator The upper bound of the estimation register.
      * @param target        The target qubit for the controlled operations.
-     *
+     * @return String       The results of the system analysis
      * @see #QPE(String, int, int, int) QPE without theta parameter
      * @see #QFTi(int, int) Inverse Quantum Fourier Transform
      * @see #silentSimulate() Simulation method
      * @see #extractAndPrintQPEResults(Map, int) Result extraction method
      * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
      */
-    public void QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target){
+    public String QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target){
         this.X(target);
         for(int i = 0; i <= highEstimator; i++){
             this.H(i);
@@ -617,9 +619,10 @@ public class jqs {
         }
         this.buildCircuit();
         this.QFTi(lowEstimator,highEstimator);
-        Map<String, String> result = this.silentSimulate();
-        extractAndPrintQPEResults(result, (highEstimator-lowEstimator)+1);
+        return getresults(this.getPeakMagnitudeValues(), (highEstimator-lowEstimator)+1);
     }
+
+
 
     /**
      * Performs Quantum Phase Estimation (QPE) with a specified gate type.
@@ -631,14 +634,14 @@ public class jqs {
      * @param lowEstimator  The lower bound of the estimation register.
      * @param highEstimator The upper bound of the estimation register.
      * @param target        The target qubit for the controlled operations.
-     *
+     * @return String       The results of the system analysis
      * @see #QPE(String, double, int, int, int) QPE with theta parameter
      * @see #QFTi(int, int) Inverse Quantum Fourier Transform
      * @see #silentSimulate() Simulation method
      * @see #extractAndPrintQPEResults(Map, int) Result extraction method
      * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
      */
-    public void QPE(String gateType,int lowEstimator, int highEstimator, int target){
+    public String QPE(String gateType, int lowEstimator, int highEstimator, int target){
         this.X(target);
         for(int i = 0; i <= highEstimator; i++){
             this.H(i);
@@ -650,8 +653,29 @@ public class jqs {
         }
         this.buildCircuit();
         this.QFTi(lowEstimator,highEstimator);
-        Map<String, String> result = this.silentSimulate();
-        extractAndPrintQPEResults(result, (highEstimator-lowEstimator)+1);
+        return getresults(this.getPeakMagnitudeValues(), (highEstimator-lowEstimator)+1);
+    }
+
+    private String getresults(Map<String, Double> result, int estimationCount) {
+        StringBuilder sb = new StringBuilder("Two Highest Magnitude phases:\n");
+        DecimalFormat df = new DecimalFormat("0.00000");
+
+        for (int i = 0; i < 2 && !result.isEmpty(); i++) {
+            Map.Entry<String, Double> maxEntry = Collections.max(result.entrySet(), Map.Entry.comparingByValue());
+            int decimalValue = Integer.parseInt(maxEntry.getKey(), 2);
+            double phase = (double) decimalValue / Math.pow(2, estimationCount);
+
+            sb.append(String.format("0%s: %s%%\n",
+                    df.format(phase).substring(1),
+                    df.format(maxEntry.getValue() * 100)));
+
+            result.remove(maxEntry.getKey());
+        }
+        return sb.toString();
+    }
+
+    private Map<String, Double> getPeakMagnitudeValues() {
+        return backend.getPeakMagnitudeValues();
     }
 
     /**
@@ -659,17 +683,21 @@ public class jqs {
      *
      * @param result          A map containing the simulation results.
      * @param estimationCount The number of qubits used for estimation.
-     *
-     * @see #QPE(String, double, int, int, int) QPE method
-     * @see #QPE(String, int, int, int) QPE method without theta
      */
-    private void extractAndPrintQPEResults(Map<String, String> result, int estimationCount){
-        System.out.println("\nTwo primary phases detected:");
-        for(String key : result.keySet()) {
-            int decimalValue = Integer.parseInt(key,2);
-            double phase = (double) decimalValue /Math.pow(2, estimationCount);
-            String value = String.valueOf(phase);
-            System.out.println(value + ": " + result.get(key)+"%");
+    private void extractAndPrintQPEResults(Map<String, Double> result, int estimationCount) {
+        System.out.println("\nTwo Highest Magnitude phases:");
+        DecimalFormat df = new DecimalFormat("0.00000");
+
+        for (int i = 0; i < 2 && !result.isEmpty(); i++) {
+            Map.Entry<String, Double> maxEntry = Collections.max(result.entrySet(), Map.Entry.comparingByValue());
+            int decimalValue = Integer.parseInt(maxEntry.getKey(), 2);
+            double phase = (double) decimalValue / Math.pow(2, estimationCount);
+
+            System.out.printf("0%s: %s%%\n",
+                    df.format(phase).substring(1),
+                    df.format(maxEntry.getValue() * 100));
+
+            result.remove(maxEntry.getKey());
         }
     }
 
