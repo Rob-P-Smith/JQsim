@@ -91,6 +91,17 @@ public final class ComplexNumber {
     }
 
     /**
+     * Sets the real and imaginary part of the complex number to the specified value.
+     *
+     * @param real The new value for the real part of the complex number.
+     * @param imag The new value for the imaginary part of the complex number.
+     */
+    public void setValues(double real, double imag){
+        this.real = real;
+        this.imag = imag;
+    }
+
+    /**
      * Computes the squared magnitude (absolute value squared) of the complex number.
      *
      * @return The squared magnitude of the complex number.
@@ -147,11 +158,9 @@ public final class ComplexNumber {
      * Adds another complex number to this one, modifying this instance.
      *
      * @param other The complex number to add to this one
-     * @return This complex number, after addition
      */
-    public ComplexNumber addInPlace(ComplexNumber other) {
+    public void addInPlace(ComplexNumber other) {
         this.real += other.real;
         this.imag += other.imag;
-        return this;
     }
 }

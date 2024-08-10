@@ -9,8 +9,8 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 12;
-    private static int runsCount = 3;
+    private static int maxQubits = 13;
+    private static int runsCount = 1;
 
     /**
      * Main method for testing out quantum circuits while building the simulator.
@@ -18,9 +18,15 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        qiskitBasicQPE();
+        qiskitBasicQPE();
 //        qiskitMoreComplexQPE();
-        benchmark("Basic");
+//        benchmark("Basic");
+//        jqs jqs = new jqs(4);
+//        jqs.X(0);
+//        jqs.H(1);
+//        jqs.buildCircuit();
+//        System.out.println(jqs);
+
     }
 
     /**
@@ -32,10 +38,10 @@ public class Sandbox {
         switch (type) {
             case "Basic" -> {
                 for (int qubits = 2; qubits <= maxQubits; qubits++) {
-                    System.out.println("Testing " + qubits + " qubits.");
+                    System.out.println("\nTesting " + qubits + " qubits.");
                     long totalRunsTime = 0;
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for (int i = 0; i < qubits - 1; i++) {
@@ -45,19 +51,22 @@ public class Sandbox {
                         jqs.CX(0, qubits - 1);
                         jqs.buildCircuit();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if(runsCount > 1){
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
                             if (r > 0) {
-                                totalRunsTime += endTime - startTime;
+                                totalRunsTime += (endTime - startTime);
                             }
                         } else {
-                            totalRunsTime += endTime - startTime;
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    int count = runsCount == 1? runsCount : runsCount -1;
-                    System.out.println("Average execution time using Sparse: " + (totalRunsTime / count) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
                 }
+
             }
             case "QFT" -> {
                 for (int qubits = 3; qubits <= maxQubits; qubits++) {

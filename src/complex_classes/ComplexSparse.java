@@ -7,18 +7,49 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Represents a sparse matrix of complex numbers using Compressed Sparse Column (CSC) format.
- * This class supports basic matrix operations and efficient storage for matrices with many zero elements.
+ * This class provides efficient storage and operations for matrices with many zero elements,
+ * commonly encountered in various scientific and engineering applications, including quantum computing.
  *
- * <p>A {@code ComplexSparse} object can be constructed using its dimensions or from an existing
- * two-dimensional array of {@link ComplexNumber} objects. It supports matrix operations
- * and basic getter and setter functions.</p>
+ * <p>Key features:
+ * <ul>
+ *   <li>Efficient storage using CSC format, ideal for sparse matrices</li>
+ *   <li>Thread-safe operations using read-write locks</li>
+ *   <li>Optimized element insertion and retrieval using hybrid linear/binary search</li>
+ *   <li>Support for basic matrix operations and transformations</li>
+ * </ul>
+ * </p>
+ *
+ * <p>The CSC format uses three main components:
+ * <ul>
+ *   <li>values: A list of non-zero complex number values</li>
+ *   <li>rowIndices: A list of row indices for each non-zero value</li>
+ *   <li>colPointers: A list of pointers indicating the start of each column in the values and rowIndices lists</li>
+ * </ul>
+ * </p>
+ *
+ * <p>This class supports various constructors for creating sparse matrices, including:
+ * <ul>
+ *   <li>Empty matrix</li>
+ *   <li>Matrix with specified dimensions</li>
+ *   <li>Matrix from a 2D array of ComplexNumber objects</li>
+ * </ul>
+ * </p>
+ *
+ * <p>Performance considerations:
+ * <ul>
+ *   <li>The 'put' method uses a hybrid approach, switching between linear and binary search based on column density</li>
+ *   <li>The 'get' method uses binary search for efficient element retrieval</li>
+ *   <li>Thread safety is ensured using a ReentrantReadWriteLock for concurrent access</li>
+ * </ul>
+ * </p>
  *
  * <p>This class assumes matrices are rectangular (all rows have the same number of columns).</p>
  *
  * @author Robert Smith
- * @version 0.1
- * @since 03 August 2024
+ * @version 0.2
+ * @since 9 August 2024
  * @see ComplexNumber
+ * @see ComplexMath
  */
 public final class ComplexSparse {
     // CSC format components
@@ -63,24 +94,6 @@ public final class ComplexSparse {
      */
     public void setValues(List<ComplexNumber> values) {
         this.values = values;
-    }
-
-    /**
-     * Sets the list of row indices corresponding to the non-zero values.
-     *
-     * @param rowIndices A List of Integer objects representing the new row indices of non-zero values.
-     */
-    public void setRowIndices(List<Integer> rowIndices) {
-        this.rowIndices = rowIndices;
-    }
-
-    /**
-     * Sets the list of column pointers in the CSC format.
-     *
-     * @param colPointers A List of Integer objects representing the new starting indices of each column.
-     */
-    public void setColPointers(List<Integer> colPointers) {
-        this.colPointers = colPointers;
     }
 
     /**
@@ -151,11 +164,9 @@ public final class ComplexSparse {
      */
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("CSC Format " + "(" + rows + "x" + cols + "):\n");
-        result.append("Values: ").append(values).append("\n");
-        result.append("Row Indices: ").append(rowIndices).append("\n");
-        result.append("Column Pointers: ").append(colPointers);
-        return result.toString();
+        return "CSC Format " + "(" + rows + "x" + cols + "):\n" + "Values: " + values + "\n" +
+                "Row Indices: " + rowIndices + "\n" +
+                "Column Pointers: " + colPointers;
     }
 
     /**
@@ -168,8 +179,7 @@ public final class ComplexSparse {
      */
     public boolean isZero(ComplexNumber value) {
         // Using a small epsilon value for floating-point comparison
-        final double EPSILON = 1e-10;
-        return Math.abs(value.getReal()) < EPSILON && Math.abs(value.getImag()) < EPSILON;
+        return ComplexMath.isZero(value);
     }
 
     /**
@@ -236,7 +246,6 @@ public final class ComplexSparse {
      * @param col   the column index
      * @param value the {@link ComplexNumber} value to insert or update
      * @throws IndexOutOfBoundsException if the specified indices are out of bounds
-     *
      * Performance characteristics:
      * - For columns with 8 or fewer elements, a linear search is used for better cache locality.
      * - For columns with more than 8 elements, a binary search is employed for faster lookup.
@@ -275,6 +284,9 @@ public final class ComplexSparse {
                 }
             }
 
+            double realnum = value.getReal();
+            double imagnum = value.getImag();
+
             if (pos < colPointers.get(col + 1) && rowIndices.get(pos) == row) {
                 // Update existing value
                 if (isZero(value)) {
@@ -282,11 +294,13 @@ public final class ComplexSparse {
                     rowIndices.remove(pos);
                     updateColPointers(col + 1, -1);
                 } else {
-                    values.set(pos, value);
+                    // Create a new ComplexNumber object instead of directly assigning the value
+                    values.set(pos, new ComplexNumber(realnum, imagnum));
                 }
             } else if (!isZero(value)) {
                 // Insert new non-zero value
-                values.add(pos, value);
+                // Create a new ComplexNumber object instead of directly inserting the value
+                values.add(pos, new ComplexNumber(realnum, imagnum));
                 rowIndices.add(pos, row);
                 updateColPointers(col + 1, 1);
             }
@@ -317,20 +331,6 @@ public final class ComplexSparse {
      * @throws IndexOutOfBoundsException if the specified indices are out of bounds
      * @see ComplexNumber
      */
-//    public ComplexNumber get(int row, int col) {
-//        if (row < 0 || row >= rows || col < 0 || col >= cols) {
-//            throw new IndexOutOfBoundsException("Invalid matrix indices");
-//        }
-//
-//        for (int i = colPointers.get(col); i < colPointers.get(col + 1); i++) {
-//            if (rowIndices.get(i) == row) {
-//                return values.get(i);
-//            } else if (rowIndices.get(i) > row) {
-//                break;
-//            }
-//        }
-//        return new ComplexNumber(0, 0);
-//    }
     public ComplexNumber get(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new IndexOutOfBoundsException("Invalid matrix indices");

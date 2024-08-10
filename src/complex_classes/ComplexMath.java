@@ -9,11 +9,31 @@ import java.util.concurrent.Future;
 import static supportClasses.GreekEnums.PSI;
 
 /**
- * ComplexObject serves as the parent class for other complex classes, providing a single location for linear algebra
- * functions to be collected and giving universal access to those methods on each complex class.
- * <br>
- * Multithreaded functionality disabled via if/else statements in the tensor multiply and complex multiply methods
- * because the threaded overhead outweighs the performance gains.
+ * ComplexMath provides a comprehensive set of operations for complex number arithmetic
+ * and linear algebra operations on sparse matrices.
+ *
+ * <p>This class serves as a central repository for various mathematical operations
+ * used in quantum computing simulations and other applications involving complex
+ * numbers and sparse matrices. It includes methods for matrix multiplication,
+ * tensor products, and other linear algebra operations optimized for sparse
+ * representations.</p>
+ *
+ * <p>Key features include:
+ * <ul>
+ *   <li>Efficient sparse matrix operations using Compressed Sparse Column (CSC) format</li>
+ *   <li>Sequential and parallel implementations of matrix operations</li>
+ *   <li>Specialized methods for quantum computing operations (e.g., outer products, Dirac notation)</li>
+ *   <li>Utility methods for complex number arithmetic and representation</li>
+ * </ul>
+ * </p>
+ *
+ * <p>The class uses a threshold ({@code SINGLE_THREAD_THRESHOLD}) to decide between
+ * single-threaded and multi-threaded operations. However, as of the current version,
+ * multi-threaded functionality is disabled in tensor multiply and complex multiply
+ * methods due to the threaded overhead outweighing performance gains in typical use cases.</p>
+ *
+ * <p>This class is designed to work with the {@link ComplexSparse} class for sparse
+ * matrix representations and the {@link ComplexNumber} class for individual complex numbers.</p>
  *
  * @author Robert Smith
  * @version 0.5
@@ -25,7 +45,7 @@ public final class ComplexMath {
      * Threshold for matrix height below which single-threaded execution is used.
      * Matrices with height less than or equal to this value will use single-threaded multiplication.
      */
-    private static int SINGLE_THREAD_THRESHOLD = 2048;
+    private static final int SINGLE_THREAD_THRESHOLD = 16384;
     public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
 //    private static int BLOCK_SIZE = 16;
 
@@ -48,13 +68,33 @@ public final class ComplexMath {
             return tensorMultiplySequential(leftMatrix, rightMatrix);
         }
 //        return tensorMultiplySequential(leftMatrix, rightMatrix);
+//        return tensorMultiplyParallel(leftMatrix, rightMatrix);
     }
 
+    /**
+     * Multiplies two sparse matrices, choosing the appropriate multiplication method based on the matrices' dimensions.
+     * This method serves as a dispatcher to select between vector multiplication and general matrix multiplication.
+     *
+     * @param leftMatrix The left sparse matrix in the multiplication.
+     * @param rightMatrix The right sparse matrix in the multiplication.
+     * @return A new {@link ComplexSparse} object representing the result of the matrix multiplication.
+     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
+     * Current behavior:
+     * - If the right matrix is a column vector (width == 1), it uses sequential vector multiplication.
+     * - For all other cases, it uses sequential matrix multiplication.
+     * Note: Parallel multiplication methods are currently disabled (commented out).
+     * When uncommented, the method would choose between parallel and sequential methods
+     * based on the matrix dimensions and a threshold (SINGLE_THREAD_THRESHOLD).
+     *
+     * @see #multiplyMatrixVectorSequential(ComplexSparse, ComplexSparse)
+     * @see #multiplyMatrixSequential(ComplexSparse, ComplexSparse)
+     * @see #multiplyMatrixVectorParallel(ComplexSparse, ComplexSparse)
+     * @see #multiplyMatrixParallel(ComplexSparse, ComplexSparse)
+     */
     public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
         }
-        int height = leftMatrix.getHeight();
 
         if (rightMatrix.getWidth() == 1) {
             return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
@@ -96,20 +136,62 @@ public final class ComplexMath {
         int leftWidth = leftMatrix.getWidth();
         int rightHeight = rightMatrix.getHeight();
         int rightWidth = rightMatrix.getWidth();
+        int resultHeight = leftHeight * rightHeight;
+        int resultWidth = leftWidth * rightWidth;
 
-        ComplexSparse result = new ComplexSparse(leftHeight * rightHeight, leftWidth * rightWidth);
+        // Initialize result matrix
+        ComplexSparse result = new ComplexSparse(resultHeight, resultWidth);
 
-        for (int i1 = 0; i1 < leftHeight; i1++) {
-            for (int j1 = 0; j1 < leftWidth; j1++) {
-                ComplexNumber leftNumber = leftMatrix.get(i1, j1);
-                if (!isZero(leftNumber)) {
-                    for (int i2 = 0; i2 < rightHeight; i2++) {
-                        for (int j2 = 0; j2 < rightWidth; j2++) {
-                            ComplexNumber rightNumber = rightMatrix.get(i2, j2);
-                            if (!isZero(rightNumber)) {
-                                int i = i1 * rightHeight + i2;
-                                int j = j1 * rightWidth + j2;
-                                result.put(i, j, multiplyComplexNumbers(leftNumber, rightNumber));
+        final int bufferSize = 50;
+
+        // Buffers for batched puts
+        int[] rowBuffer = new int[bufferSize];
+        int[] colBuffer = new int[bufferSize];
+        ComplexNumber[] valueBuffer = new ComplexNumber[bufferSize];
+        int bufferIndex = 0;
+
+        // Temporary storage for complex multiplication
+        double[] tempReal = new double[1];
+        double[] tempImag = new double[1];
+
+        // Single loop over non-zero elements of left matrix
+        for (int leftCol = 0; leftCol < leftWidth; leftCol++) {
+            for (int leftPtr = leftMatrix.getColPointers().get(leftCol); leftPtr < leftMatrix.getColPointers().get(leftCol + 1); leftPtr++) {
+                int leftRow = leftMatrix.getRowIndices().get(leftPtr);
+                ComplexNumber leftValue = leftMatrix.getValues().get(leftPtr);
+
+                // Nested loop over non-zero elements of right matrix
+                for (int rightCol = 0; rightCol < rightWidth; rightCol++) {
+                    for (int rightPtr = rightMatrix.getColPointers().get(rightCol); rightPtr < rightMatrix.getColPointers().get(rightCol + 1); rightPtr++) {
+                        int rightRow = rightMatrix.getRowIndices().get(rightPtr);
+                        ComplexNumber rightValue = rightMatrix.getValues().get(rightPtr);
+
+                        // Calculate indices for result matrix
+                        int resultRow = leftRow * rightHeight + rightRow;
+                        int resultCol = leftCol * rightWidth + rightCol;
+
+                        // Multiply complex numbers using primitive operations
+                        tempReal[0] = leftValue.getReal() * rightValue.getReal() - leftValue.getImag() * rightValue.getImag();
+                        tempImag[0] = leftValue.getReal() * rightValue.getImag() + leftValue.getImag() * rightValue.getReal();
+
+                        // Handle floating-point errors
+                        if (Math.abs(tempReal[0]) < EPSILON) tempReal[0] = 0;
+                        if (Math.abs(tempImag[0]) < EPSILON) tempImag[0] = 0;
+
+                        // Only add non-zero results
+                        if (tempReal[0] != 0 || tempImag[0] != 0) {
+                            // Add to buffer
+                            rowBuffer[bufferIndex] = resultRow;
+                            colBuffer[bufferIndex] = resultCol;
+                            valueBuffer[bufferIndex] = new ComplexNumber(tempReal[0], tempImag[0]);
+                            bufferIndex++;
+
+                            // If buffer is full, perform batched put
+                            if (bufferIndex >= bufferSize) {
+                                for (int i = 0; i < bufferSize; i++) {
+                                    result.put(rowBuffer[i], colBuffer[i], valueBuffer[i]);
+                                }
+                                bufferIndex = 0;
                             }
                         }
                     }
@@ -117,53 +199,119 @@ public final class ComplexMath {
             }
         }
 
+        // Perform final batched put for any remaining items in the buffer
+        for (int i = 0; i < bufferIndex; i++) {
+            result.put(rowBuffer[i], colBuffer[i], valueBuffer[i]);
+        }
+
         return result;
     }
 
     /**
-     * Performs sequential tensor multiplication of two sparse matrices.
+     * Performs parallel tensor multiplication of two sparse matrices.
      * This method implements the tensor product algorithm for sparse matrices
-     * without parallelization, suitable for smaller matrices or when parallel
-     * execution is not beneficial.
+     * using parallel execution, suitable for larger matrices where parallelization
+     * can provide significant performance benefits.
+     * The method uses the following strategy:
+     * 1. Divides the left matrix columns among available threads.
+     * 2. Each thread computes its portion of the tensor product.
+     * 3. Results are combined into the final result matrix using synchronized batched updates.
      *
      * @param leftMatrix The first {@link ComplexSparse} matrix in the tensor product.
      * @param rightMatrix The second {@link ComplexSparse} matrix in the tensor product.
-     * @return A new {@link ComplexSparse} matrix representing the tensor product of A and B.
+     * @return A new {@link ComplexSparse} matrix representing the tensor product of leftMatrix and rightMatrix.
+     * @throws RuntimeException if an error occurs during parallel execution.
+     * Performance characteristics:
+     * - Uses a buffer of size 1000 for batched updates to reduce synchronization overhead.
+     * - Performs primitive operations for complex number multiplication to avoid object creation.
+     * - Only stores non-zero results to maintain sparsity.
+     * - Handles floating-point errors by setting very small values (less than EPSILON) to zero.
+     * Note: The effectiveness of parallelization depends on the size and sparsity of the input matrices.
+     * For small or very sparse matrices, the sequential version might be more efficient.
+     *
      * @see ComplexSparse
      * @see #tensorMultiply(ComplexSparse, ComplexSparse)
-     * @see #tensorMultiplyParallel(ComplexSparse, ComplexSparse)
+     * @see #tensorMultiplySequential(ComplexSparse, ComplexSparse)
      */
     private static ComplexSparse tensorMultiplyParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         int leftHeight = leftMatrix.getHeight();
         int leftWidth = leftMatrix.getWidth();
         int rightHeight = rightMatrix.getHeight();
         int rightWidth = rightMatrix.getWidth();
+        int resultHeight = leftHeight * rightHeight;
+        int resultWidth = leftWidth * rightWidth;
 
-        ComplexSparse result = new ComplexSparse(leftHeight * rightHeight, leftWidth * rightWidth);
+        ComplexSparse result = new ComplexSparse(resultHeight, resultWidth);
 
         ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
         List<Future<?>> futures = new ArrayList<>();
 
-        int rowsPerThread = Math.max(1, leftHeight / NUM_THREADS);
+        // Use sparse matrix properties for iteration
         for (int thread = 0; thread < NUM_THREADS; thread++) {
-            final int startRow = thread * rowsPerThread;
-            final int endRow = (thread == NUM_THREADS - 1) ? leftHeight : (startRow + rowsPerThread);
+            final int startCol = thread * (leftWidth / NUM_THREADS);
+            final int endCol = (thread == NUM_THREADS - 1) ? leftWidth : (startCol + (leftWidth / NUM_THREADS));
 
             futures.add(executor.submit(() -> {
-                for (int i1 = startRow; i1 < endRow; i1++) {
-                    for (int j1 = 0; j1 < leftWidth; j1++) {
-                        ComplexNumber leftElement = leftMatrix.get(i1, j1);
-                        if (!isZero(leftElement)) {
-                            for (int i2 = 0; i2 < rightHeight; i2++) {
-                                for (int j2 = 0; j2 < rightWidth; j2++) {
-                                    ComplexNumber rightElement = rightMatrix.get(i2, j2);
-                                    if (!isZero(rightElement)) {
-                                        int i = i1 * rightHeight + i2;
-                                        int j = j1 * rightWidth + j2;
-                                        result.put(i, j, multiplyComplexNumbers(leftElement, rightElement));
+                // Buffers for batched puts
+                int[] rowBuffer = new int[1000];
+                int[] colBuffer = new int[1000];
+                double[] realBuffer = new double[1000];
+                double[] imagBuffer = new double[1000];
+                int bufferIndex = 0;
+
+                // Temporary storage for complex multiplication
+                double tempReal;
+                double tempImag;
+
+                for (int j1 = startCol; j1 < endCol; j1++) {
+                    for (int leftPtr = leftMatrix.getColPointers().get(j1); leftPtr < leftMatrix.getColPointers().get(j1 + 1); leftPtr++) {
+                        int i1 = leftMatrix.getRowIndices().get(leftPtr);
+                        ComplexNumber leftValue = leftMatrix.getValues().get(leftPtr);
+
+                        for (int j2 = 0; j2 < rightWidth; j2++) {
+                            for (int rightPtr = rightMatrix.getColPointers().get(j2); rightPtr < rightMatrix.getColPointers().get(j2 + 1); rightPtr++) {
+                                int i2 = rightMatrix.getRowIndices().get(rightPtr);
+                                ComplexNumber rightValue = rightMatrix.getValues().get(rightPtr);
+
+                                int i = i1 * rightHeight + i2;
+                                int j = j1 * rightWidth + j2;
+
+                                // Multiply complex numbers using primitive operations
+                                tempReal = leftValue.getReal() * rightValue.getReal() - leftValue.getImag() * rightValue.getImag();
+                                tempImag = leftValue.getReal() * rightValue.getImag() + leftValue.getImag() * rightValue.getReal();
+
+                                // Handle floating-point errors
+                                if (Math.abs(tempReal) < EPSILON) tempReal = 0;
+                                if (Math.abs(tempImag) < EPSILON) tempImag = 0;
+
+                                // Only add non-zero results
+                                if (tempReal != 0 || tempImag != 0) {
+                                    rowBuffer[bufferIndex] = i;
+                                    colBuffer[bufferIndex] = j;
+                                    realBuffer[bufferIndex] = tempReal;
+                                    imagBuffer[bufferIndex] = tempImag;
+                                    bufferIndex++;
+
+                                    // If buffer is full, perform batched put
+                                    if (bufferIndex == 1000) {
+                                        synchronized (result) {
+                                            for (int k = 0; k < bufferIndex; k++) {
+                                                result.put(rowBuffer[k], colBuffer[k], new ComplexNumber(realBuffer[k], imagBuffer[k]));
+                                            }
+                                        }
+                                        bufferIndex = 0;
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+
+                // Perform final batched put for any remaining items in the buffer
+                if (bufferIndex > 0) {
+                    synchronized (result) {
+                        for (int k = 0; k < bufferIndex; k++) {
+                            result.put(rowBuffer[k], colBuffer[k], new ComplexNumber(realBuffer[k], imagBuffer[k]));
                         }
                     }
                 }
@@ -242,6 +390,16 @@ public final class ComplexMath {
         return resultMatrix;
     }
 
+    /**
+     * Performs parallel multiplication of a sparse matrix with a sparse column vector.
+     * This method is optimized for parallel execution, suitable for large matrices.
+     *
+     * @param leftMatrix The sparse matrix to be multiplied.
+     * @param rightMatrix The sparse column vector to be multiplied.
+     * @return A new {@code ComplexSparse} object representing the result of the multiplication.
+     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
+     *                                  or if the right matrix is not a column vector.
+     */
     private static ComplexSparse multiplyMatrixVectorParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight() || rightMatrix.getWidth() != 1) {
             throw new IllegalArgumentException("Matrix dimensions do not match for matrix-vector multiplication.");
@@ -293,6 +451,15 @@ public final class ComplexMath {
         return resultMatrix;
     }
 
+    /**
+     * Performs sequential multiplication of two sparse matrices.
+     * This method is optimized for sparse matrices using Compressed Sparse Column (CSC) format.
+     *
+     * @param leftMatrix The first sparse matrix to be multiplied.
+     * @param rightMatrix The second sparse matrix to be multiplied.
+     * @return A new {@code ComplexSparse} object representing the result of the multiplication.
+     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication.
+     */
     private static ComplexSparse multiplyMatrixSequential(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
@@ -345,6 +512,19 @@ public final class ComplexMath {
         return resultMatrix;
     }
 
+    /**
+     * Performs parallel multiplication of two sparse matrices.
+     * This method divides the work among multiple threads for improved performance on large matrices.
+     * The method uses the following strategy:
+     * 1. Divides the right matrix columns among available threads.
+     * 2. Each thread computes a partial result for its assigned columns.
+     * 3. Partial results are combined into the final result matrix.
+     *
+     * @param leftMatrix The first sparse matrix to be multiplied.
+     * @param rightMatrix The second sparse matrix to be multiplied.
+     * @return A new {@code ComplexSparse} object representing the result of the multiplication.
+     * @throws RuntimeException If an error occurs during parallel execution.
+     */
     private static ComplexSparse multiplyMatrixParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         int leftHeight = leftMatrix.getHeight();
         int rightWidth = rightMatrix.getWidth();
@@ -475,6 +655,16 @@ public final class ComplexMath {
         return new ComplexNumber(real, imag);
     }
 
+    /**
+     * Corrects potential floating-point error buildup for values very close to 1 or -1.
+     * This method addresses the common issue in floating-point arithmetic where
+     * calculations that should result in exactly 1 or -1 end up slightly off due to
+     * accumulated rounding errors. It rounds values extremely close to 1 or -1
+     * to exactly 1 or -1, respectively.
+     * @param number The double value to check and potentially correct
+     * @return The input number, or 1.0 if the input is between 0.9999999 and 1.0,
+     *         or -1.0 if the input is between -1.0 and -0.9999999
+     */
     private static double testResultForFloatErrorBuildup(double number) {
         if (number > 0.9999999 && number < 1.0) {
             return 1.0;
