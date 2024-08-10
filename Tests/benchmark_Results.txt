@@ -1,420 +1,55 @@
-Results without using sparse storage techniques and using the classic triple loop dense matrix multiplication algorithm.
-    Testing 2 qubits.
-    Run Time: 3
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 0ms
+/////////////////////////
+Using serialized tensor multiply and multiply matrix for qubit sets under 14
+Ubuntu
+7700x OC + chilled
+64gb very low latency ddr5 6200
+/////////////////////////
+Profiling started
 
-    Testing 3 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 0ms
+Testing 2 qubits.
+Run Time: 2
+Average execution time using Sparse: 2 ms
 
-    Testing 4 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 0ms
+Testing 3 qubits.
+Run Time: 0
+Average execution time using Sparse: 0 ms
 
-    Testing 5 qubits.
-    Run Time: 7
-    Run Time: 1
-    Run Time: 0
-    Run Time: 3
-    Run Time: 0
-    Average execution time using Sparse: 2ms
+Testing 4 qubits.
+Run Time: 1
+Average execution time using Sparse: 1 ms
 
-    Testing 6 qubits.
-    Run Time: 13
-    Run Time: 2
-    Run Time: 4
-    Run Time: 6
-    Run Time: 0
-    Average execution time using Sparse: 5ms
+Testing 5 qubits.
+Run Time: 1
+Average execution time using Sparse: 1 ms
 
-    Testing 7 qubits.
-    Run Time: 45
-    Run Time: 55
-    Run Time: 50
-    Run Time: 30
-    Run Time: 21
-    Average execution time using Sparse: 40ms
+Testing 6 qubits.
+Run Time: 4
+Average execution time using Sparse: 4 ms
 
-    Testing 8 qubits.
-    Run Time: 149
-    Run Time: 150
-    Run Time: 187
-    Run Time: 151
-    Run Time: 150
-    Average execution time using Sparse: 157ms
+Testing 7 qubits.
+Run Time: 5
+Average execution time using Sparse: 5 ms
 
-    Testing 9 qubits.
-    Run Time: 1204
-    Run Time: 1161
-    Run Time: 1162
-    Run Time: 1161
-    Run Time: 1157
-    Average execution time using Sparse: 1169ms
+Testing 8 qubits.
+Run Time: 28
+Average execution time using Sparse: 28 ms
 
-    Testing 10 qubits.
-    Run Time: 9573
-    Run Time: 9499
-    Run Time: 9656
-    Run Time: 9571
-    Run Time: 9486
-    Average execution time using Sparse: 9557ms
+Testing 9 qubits.
+Run Time: 171
+Average execution time using Sparse: 171 ms
 
-    Testing 11 qubits.
-    Run Time: 77072
-    Run Time: 76764
-    Run Time: 77763
-    Run Time: 75427
-    Run Time: 75118
-    Average execution time using Sparse: 76428ms
+Testing 10 qubits.
+Run Time: 1065
+Average execution time using Sparse: 1065 ms
 
+Testing 11 qubits.
+Run Time: 7668
+Average execution time using Sparse: 7668 ms
 
-Results saving zero values back to the sparse array during math operations and using the classic triple loop dense matrix multiplication algorithm.
-    Testing 2 qubits.
-    Run Time: 4
-    Run Time: 3
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 1ms
+Testing 12 qubits.
+Run Time: 60957
+Average execution time using Sparse: 60957 ms
 
-    Testing 3 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 0ms
-
-    Testing 4 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 7
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 1ms
-
-    Testing 5 qubits.
-    Run Time: 6
-    Run Time: 0
-    Run Time: 4
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 2ms
-
-    Testing 6 qubits.
-    Run Time: 21
-    Run Time: 13
-    Run Time: 16
-    Run Time: 10
-    Run Time: 13
-    Average execution time using Sparse: 14ms
-
-    Testing 7 qubits.
-    Run Time: 103
-    Run Time: 113
-    Run Time: 103
-    Run Time: 92
-    Run Time: 76
-    Average execution time using Sparse: 97ms
-
-    Testing 8 qubits.
-    Run Time: 755
-    Run Time: 735
-    Run Time: 730
-    Run Time: 735
-    Run Time: 731
-    Average execution time using Sparse: 737ms
-
-    Testing 9 qubits.
-    Run Time: 7774
-    Run Time: 7786
-    Run Time: 7730
-    Run Time: 7778
-    Run Time: 7707
-    Average execution time using Sparse: 7755ms
-
-Results without saving zero values back to the sparse array during math operations and still using the classic triple loop dense matrix multiplication algorithm.
-
-    Testing 2 qubits.
-    Run Time: 3
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 1
-    Average execution time using Sparse: 0ms
-
-    Testing 3 qubits.
-    Run Time: 0
-    Run Time: 1
-    Run Time: 0
-    Run Time: 0
-    Run Time: 1
-    Average execution time using Sparse: 0ms
-
-    Testing 4 qubits.
-    Run Time: 1
-    Run Time: 2
-    Run Time: 1
-    Run Time: 1
-    Run Time: 1
-    Average execution time using Sparse: 1ms
-
-    Testing 5 qubits.
-    Run Time: 3
-    Run Time: 3
-    Run Time: 3
-    Run Time: 2
-    Run Time: 2
-    Average execution time using Sparse: 2ms
-
-    Testing 6 qubits.
-    Run Time: 13
-    Run Time: 9
-    Run Time: 12
-    Run Time: 7
-    Run Time: 8
-    Average execution time using Sparse: 9ms
-
-    Testing 7 qubits.
-    Run Time: 89
-    Run Time: 96
-    Run Time: 64
-    Run Time: 51
-    Run Time: 52
-    Average execution time using Sparse: 70ms
-
-    Testing 8 qubits.
-    Run Time: 489
-    Run Time: 479
-    Run Time: 481
-    Run Time: 476
-    Run Time: 476
-    Average execution time using Sparse: 480ms
-
-    Testing 9 qubits.
-    Run Time: 3855
-    Run Time: 3867
-    Run Time: 3954
-    Run Time: 3853
-    Run Time: 3862
-    Average execution time using Sparse: 3878ms
-
-Results after implementing CSC as the sparse data-structure and still using the classic triple loop dense matrix multiplication algorithm.
-
-    Testing 2 qubits.
-    Run Time: 8
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 1ms
-
-    Testing 3 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 1
-    Run Time: 0
-    Average execution time using Sparse: 0ms
-
-    Testing 4 qubits.
-    Run Time: 1
-    Run Time: 2
-    Run Time: 1
-    Run Time: 1
-    Run Time: 1
-    Average execution time using Sparse: 1ms
-
-    Testing 5 qubits.
-    Run Time: 3
-    Run Time: 2
-    Run Time: 3
-    Run Time: 1
-    Run Time: 3
-    Average execution time using Sparse: 2ms
-
-    Testing 6 qubits.
-    Run Time: 13
-    Run Time: 13
-    Run Time: 12
-    Run Time: 10
-    Run Time: 7
-    Average execution time using Sparse: 11ms
-
-    Testing 7 qubits.
-    Run Time: 100
-    Run Time: 95
-    Run Time: 44
-    Run Time: 41
-    Run Time: 42
-    Average execution time using Sparse: 64ms
-
-    Testing 8 qubits.
-    Run Time: 315
-    Run Time: 312
-    Run Time: 312
-    Run Time: 312
-    Run Time: 308
-    Average execution time using Sparse: 311ms
-
-    Testing 9 qubits.
-    Run Time: 2422
-    Run Time: 2407
-    Run Time: 2410
-    Run Time: 2402
-    Run Time: 2385
-    Average execution time using Sparse: 2405ms
-
-    Testing 10 qubits.
-    Run Time: 18834
-    Run Time: 18979
-    Run Time: 18974
-    Run Time: 22560
-    Run Time: 19107
-    Average execution time using Sparse: 19690ms
-
-Results after implementing CSC, Gustavson's Algorithm, and multi-threading.
-
-    Testing 1 qubits.
-    Run Time: 10
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 2ms
-
-    Testing 2 qubits.
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Run Time: 1
-    Average execution time using Sparse: 0ms
-
-    Testing 3 qubits.
-    Run Time: 0
-    Run Time: 1
-    Run Time: 0
-    Run Time: 0
-    Run Time: 0
-    Average execution time using Sparse: 0ms
-
-    Testing 4 qubits.
-    Run Time: 1
-    Run Time: 1
-    Run Time: 1
-    Run Time: 0
-    Run Time: 1
-    Average execution time using Sparse: 0ms
-
-    Testing 5 qubits.
-    Run Time: 2
-    Run Time: 2
-    Run Time: 2
-    Run Time: 1
-    Run Time: 2
-    Average execution time using Sparse: 1ms
-
-    Testing 6 qubits.
-    Run Time: 7
-    Run Time: 9
-    Run Time: 6
-    Run Time: 5
-    Run Time: 6
-    Average execution time using Sparse: 6ms
-
-    Testing 7 qubits.
-    Run Time: 42
-    Run Time: 49
-    Run Time: 50
-    Run Time: 50
-    Run Time: 49
-    Average execution time using Sparse: 48ms
-
-    Testing 8 qubits.
-    Run Time: 236
-    Run Time: 218
-    Run Time: 219
-    Run Time: 222
-    Run Time: 222
-    Average execution time using Sparse: 223ms
-
-    Testing 9 qubits.
-    Run Time: 1878
-    Run Time: 1841
-    Run Time: 1859
-    Run Time: 1825
-    Run Time: 1823
-    Average execution time using Sparse: 1845ms
-
-    Testing 10 qubits.
-    Run Time: 13653
-    Run Time: 13632
-    Run Time: 13634
-    Run Time: 13852
-    Run Time: 13900
-    Average execution time using Sparse: 13734ms
-
-    Testing 11 qubits.
-    Run Time: 108764
-    Run Time: 109059
-    Run Time: 107919
-    Run Time: 107555
-    Run Time: 107539
-    Average execution time using Sparse: 108167ms
-
-Results after implementing CSC, Gustavson's Algorithm for multiply and tensor multiply, and streamlined put/get methods Single Threaded
-    Testing 6 qubits.
-    Run Time: 63
-    Run Time: 2
-    Run Time: 2
-    Run Time: 2
-    Run Time: 1
-    Average execution time using Sparse: 1 ms
-    Testing 7 qubits.
-    Run Time: 12
-    Run Time: 8
-    Run Time: 8
-    Run Time: 5
-    Run Time: 6
-    Average execution time using Sparse: 6 ms
-    Testing 8 qubits.
-    Run Time: 46
-    Run Time: 58
-    Run Time: 55
-    Run Time: 56
-    Run Time: 53
-    Average execution time using Sparse: 55 ms
-    Testing 9 qubits.
-    Run Time: 252
-    Run Time: 238
-    Run Time: 241
-    Run Time: 241
-    Run Time: 236
-    Average execution time using Sparse: 239 ms
-    Testing 10 qubits.
-    Run Time: 1833
-    Run Time: 1832
-    Run Time: 1830
-    Run Time: 1831
-    Run Time: 1830
-    Average execution time using Sparse: 1830 ms
-    Testing 11 qubits.
-    Run Time: 14373
-    Run Time: 14384
-    Run Time: 18309
-    Run Time: 14160
-    Run Time: 14325
-    Average execution time using Sparse: 15294 ms
+Testing 13 qubits.
+Run Time: 504088
+Average execution time using Sparse: 504088 ms
