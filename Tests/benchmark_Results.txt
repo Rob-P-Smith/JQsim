@@ -114,6 +114,7 @@ Average execution time using Sparse: 509.81 seconds
 
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+CSC 6800H
 
 Testing 2 qubits.
 Run Time: 0.01 seconds
@@ -186,3 +187,69 @@ Run Time: 719.61 seconds
 Run Time: 645.64 seconds
 Run Time: 644.96 seconds
 Average execution time using Sparse: 645.30 seconds
+
+//////////////////////////////////////
+Dense Matrix
+
+Testing 2 qubits.
+Run Time: 0.03 seconds
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 3 qubits.
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 4 qubits.
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 5 qubits.
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Run Time: 0.00 seconds
+Average execution time using Sparse: 0.00 seconds
+
+Testing 6 qubits.
+Run Time: 0.01 seconds
+Run Time: 0.01 seconds
+Run Time: 0.01 seconds
+Average execution time using Sparse: 0.01 seconds
+
+Testing 7 qubits.
+Run Time: 0.06 seconds
+Run Time: 0.03 seconds
+Run Time: 0.03 seconds
+Average execution time using Sparse: 0.03 seconds
+
+Testing 8 qubits.
+Run Time: 0.31 seconds
+Run Time: 0.26 seconds
+Run Time: 0.22 seconds
+Average execution time using Sparse: 0.24 seconds
+
+Testing 9 qubits.
+Run Time: 1.79 seconds
+Run Time: 1.85 seconds
+Run Time: 1.75 seconds
+Average execution time using Sparse: 1.80 seconds
+
+Testing 10 qubits.
+Run Time: 14.03 seconds
+Run Time: 13.80 seconds
+Run Time: 13.92 seconds
+Average execution time using Sparse: 13.86 seconds
+
+Testing 11 qubits.
+Run Time: 192.51 seconds
+Run Time: 182.15 seconds
+Run Time: 183.53 seconds
+Average execution time using Sparse: 182.84 seconds
+
+Testing 12 qubits.
+Run Time: 1737.04 seconds
