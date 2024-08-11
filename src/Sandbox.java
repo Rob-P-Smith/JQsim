@@ -9,8 +9,8 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 12;
-    private static int runsCount = 3;
+    private static int maxQubits = 6;
+    private static int runsCount = 1;
 
     /**
      * Main method for testing out quantum circuits while building the simulator.
@@ -18,9 +18,9 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        qiskitBasicQPE();
-//        qiskitMoreComplexQPE();
-        benchmark("Basic");
+        jqs qsk = new jqs(5);
+        System.out.println(qsk.QPE("R1", 5*Math.PI/30, 0,3, 4));
+//        benchmark("QPE");
     }
 
     /**
@@ -32,10 +32,10 @@ public class Sandbox {
         switch (type) {
             case "Basic" -> {
                 for (int qubits = 2; qubits <= maxQubits; qubits++) {
-                    System.out.println("Testing " + qubits + " qubits.");
+                    System.out.println("\nTesting " + qubits + " qubits.");
                     long totalRunsTime = 0;
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for (int i = 0; i < qubits - 1; i++) {
@@ -45,26 +45,29 @@ public class Sandbox {
                         jqs.CX(0, qubits - 1);
                         jqs.buildCircuit();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if(runsCount > 1){
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
                             if (r > 0) {
-                                totalRunsTime += endTime - startTime;
+                                totalRunsTime += (endTime - startTime);
                             }
                         } else {
-                            totalRunsTime += endTime - startTime;
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    int count = runsCount == 1? runsCount : runsCount -1;
-                    System.out.println("Average execution time using Sparse: " + (totalRunsTime / count) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
                 }
+
             }
             case "QFT" -> {
                 for (int qubits = 3; qubits <= maxQubits; qubits++) {
                     long totalRunsTime = 0;
                     System.out.println("Testing " + qubits + " qubits.");
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for (int i = 0; i < qubits; i++) {
@@ -78,13 +81,20 @@ public class Sandbox {
                         jqs.QFT();
                         jqs.QFTi();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if (r > 0) {
-                            totalRunsTime += endTime - startTime;
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
                 }
             }
             case "QFTi" -> {
@@ -92,7 +102,7 @@ public class Sandbox {
                     long totalRunsTime = 0;
                     System.out.println("Testing " + qubits + " qubits.");
                     for (int r = 0; r < runsCount; r++) {
-                        long startTime = System.currentTimeMillis();
+                        long startTime = System.nanoTime();
 
                         jqs jqs = new jqs(qubits);
                         for(int i = 0; i < qubits; i++){
@@ -102,89 +112,51 @@ public class Sandbox {
                         jqs.QFT();
                         jqs.QFTi();
 
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Run Time: " + (endTime - startTime));
-                        if (r > 0) {
-                            totalRunsTime += endTime - startTime;
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
                         }
                     }
-                    System.out.println("Average time: " + (totalRunsTime / (runsCount - 1)) + " ms");
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
+                }
+            }
+            case "QPE" -> {
+                for (int qubits = 6; qubits <= 6; qubits = qubits +2) {
+                    long totalRunsTime = 0;
+                    System.out.print("\nTesting " + qubits + " qubits.\n");
+                    for (int r = 0; r < runsCount; r++) {
+                        long startTime = System.nanoTime();
+
+                        jqs qsk = new jqs(qubits, 100000);
+                        qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
+//                        qsk.QPE("R1", 2*Math.PI/3, 0,qubits-2, qubits-1);
+//                        qsk.QPE("T", 0,qubits-2, qubits-1);
+
+                        long endTime = System.nanoTime();
+                        double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
+                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        if (runsCount > 1) {
+                            if (r > 0) {
+                                totalRunsTime += (endTime - startTime);
+                            }
+                        } else {
+                            totalRunsTime += (endTime - startTime);
+                        }
+                    }
+                    int count = runsCount == 1 ? runsCount : runsCount - 1;
+                    double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
+                    System.out.printf("Average execution time: %.2f seconds%n", averageTimeSeconds);
                 }
             }
         }
-    }
-
-    /**
-     * Test the simulation function. Haven't addressed how to build this as a test yet because of probabilistic results.
-     */
-    public static void simulateTest(){
-        jqs jqs = new jqs(3);
-        jqs.X(0);
-        jqs.H(1);
-        jqs.X(2);
-        jqs.CX(0,1);
-        jqs.T(0);
-        jqs.Z(1);
-        jqs.S(2);
-        jqs.H(0);
-        jqs.H(2);
-        jqs.T(0);
-        jqs.buildCircuit();
-        jqs.simulate();
-        System.out.println(jqs);
-    }
-
-    public static void qiskitBasicQPE(){
-        jqs qsk = new jqs(4, 100000);
-        qsk.QPE("T",0,2,3);
-//        qsk.X(3);
-//        for(int i = 0; i < qsk.size()-1; i++) {
-//            qsk.H(i);
-//        }
-//        qsk.CGate("T", 0, 3);
-//
-//        qsk.CGate("T", 1, 3);
-//        qsk.CGate("T", 1, 3);
-//
-//        qsk.CGate("T", 2, 3);
-//        qsk.CGate("T", 2, 3);
-//        qsk.CGate("T", 2, 3);
-//        qsk.CGate("T", 2, 3);
-
-//        qsk.buildCircuit();
-//        qsk.QFTi(0,2);
-//        System.out.println(qsk);
-//        qsk.simulate();
-//        System.out.println("Phase is : " + (1/Math.pow(2,3)));
-    }
-
-    public static void qiskitMoreComplexQPE(){
-        jqs qsk = new jqs(6, 1000000);
-        qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
-//        qsk.X(5);
-//        for(int i = 0; i < qsk.size()-1; i++) {
-//            qsk.H(i);
-//        }
-//        qsk.CGate("R1", 0, 5, (2*Math.PI/3));
-//
-//        qsk.CGate("R1", 1, 5, (2*Math.PI/3));
-//        qsk.CGate("R1", 1, 5, (2*Math.PI/3));
-//
-//        for(int i = 0; i < 4; i++) {
-//            qsk.CGate("R1", 2, 5, (2*Math.PI/3));
-//        }
-//        for(int i = 0; i < 8; i++) {
-//            qsk.CGate("R1", 3, 5, (2*Math.PI/3));
-//        }
-//        for(int i = 0; i < 16; i++){
-//            qsk.CGate("R1", 4, 5, (2*Math.PI/3));
-//        }
-
-//        qsk.buildCircuit();
-//        qsk.QFTi(0,4);
-//        System.out.println(qsk);
-//        qsk.simulate();
-//        System.out.println("Phase is : " + (1/Math.pow(2,3)));
     }
 }
 

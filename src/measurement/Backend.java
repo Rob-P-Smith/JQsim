@@ -117,6 +117,15 @@ public class Backend {
     }
 
     /**
+     * Retrieves the viable states of the quantum system as an array of strings.
+     *
+     * @return An array of strings representing the viable states
+     */
+    private Map<String, Double> getMagnitudeStates() {
+        return ComplexMath.getMagnitudeStates(this.tracker.getStateVec());
+    }
+
+    /**
      * Performs a simulation of the quantum circuit for the specified number of shots.
      * This method applies quantum gates, performs measurements, and aggregates results.
      * The simulation process includes the following steps:
@@ -201,7 +210,7 @@ public class Backend {
             double probability = entry.getValue() / shots;
 
             // Print the quantum state and its probability
-            System.out.printf("%s: %.2f%%%n", entry.getKey(), probability*100);
+            System.out.printf("%s: %.2f%%%n", entry.getKey().substring(2,entry.getKey().length()-1), probability*100);
 
             // Add to the total probability (should sum to approximately 1)
             totalProbability += probability;
@@ -296,6 +305,7 @@ public class Backend {
         for (Map.Entry<String, Double> entry : sortedResults) {
             // Calculate the probability by dividing the count by the total number of shots
             double probability = entry.getValue() / shots;
+            // Note: This calculation isn't used further in this method
         }
 
         // Create a new list with the two highest value pairs
@@ -306,11 +316,24 @@ public class Backend {
 
         Map<String, String> results = new HashMap<>();
 
-        for(Map.Entry<String, Double> entry : topTwoResults){
-            String key = entry.getKey().substring(2, entry.getKey().length()-1);
-            String convertedValue = String.valueOf((entry.getValue()/shots)*100);
+        for(Map.Entry<String, Double> entry : topTwoResults) {
+            String key = entry.getKey().substring(2, entry.getKey().length() - 1);
+            // Format the value to 3 decimal places
+            String convertedValue = String.format("%.3f", (entry.getValue() / shots) * 100.0);
             results.put(key, convertedValue);
         }
         return results;
+    }
+
+    public Map<String, Double> getPeakMagnitudeValues() {
+//        while (workQueue.hasWork()) {
+//            GateDirector gdd = new GateDirector(this.tracker);
+//            WorkItem nextItem = workQueue.peek();
+//            ComplexSparse matrix = gdd.getGate(workQueue.getNextGate());
+//            if (nextItem.isSingleTarget()) {
+//                tracker.setStateVec(ComplexMath.multiplyMatrix(matrix, tracker.getStateVec()));
+//            }
+//        }
+        return getMagnitudeStates();
     }
 }

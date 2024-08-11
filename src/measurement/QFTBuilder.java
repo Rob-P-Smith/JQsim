@@ -19,8 +19,8 @@ import state.WorkItem;
  * increment of k, the rotation scalar, the subsequent rotations are 1/2 the distance of the last, which reflects the
  * requirement in QFT to reduce the influence of each subsequent bit on transformed state by 50%.
  * @author Robert Smith
- * @version 0.1
- * @since 28 July 2024
+ * @version 0.2
+ * @since 9 August 2024
  *
  * @see GateDirector
  * @see complex_classes.ComplexMath
@@ -102,7 +102,6 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRki(int controlQubit, int targetQubit, int k) {
-        System.out.println("In full vector QFT inverse.");
         double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         WorkItem Rki = new WorkItem("CR1i", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
         gateD.getGate(Rki);
@@ -158,7 +157,7 @@ public class QFTBuilder {
             applyHadamard(endQubit - i);
             int k = 1;
             for (int j = i-1; j >=0; j--) {
-                applyRki(j, i, k++, startQubit, endQubit);
+                applyRki(j, i, k++, endQubit);
             }
         }
     }
@@ -173,9 +172,7 @@ public class QFTBuilder {
      * @see ComplexSparse
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
-    private void applyRki(int controlQubit, int targetQubit, int k, int startQubit, int endQubit) {
-//        System.out.println("In ranged QFT inverse.");
-//        System.out.println("Control: " + controlQubit + ", Target: " + targetQubit + ", k: " + k + ", Start/End Qubits: " + startQubit + ", " + endQubit);
+    private void applyRki(int controlQubit, int targetQubit, int k, int endQubit) {
         double theta = (2 * Math.PI / Math.pow(2, k)/2);
         WorkItem Rki = new WorkItem("CR1i", endQubit - controlQubit, endQubit-targetQubit, theta);
         gateD.getGate(Rki);
