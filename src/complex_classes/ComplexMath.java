@@ -42,12 +42,12 @@ public final class ComplexMath {
         int leftHeight = leftMatrix.getHeight();
         int rightHeight = rightMatrix.getHeight();
 
-        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)) {
-            return tensorMultiplyParallel(leftMatrix, rightMatrix);
-        } else {
-            return tensorMultiplySequential(leftMatrix, rightMatrix);
-        }
-//        return tensorMultiplySequential(leftMatrix, rightMatrix);
+//        if (leftHeight * rightHeight >= (SINGLE_THREAD_THRESHOLD)) {
+//            return tensorMultiplyParallel(leftMatrix, rightMatrix);
+//        } else {
+//            return tensorMultiplySequential(leftMatrix, rightMatrix);
+//        }
+        return tensorMultiplySequential(leftMatrix, rightMatrix);
     }
 
     public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {

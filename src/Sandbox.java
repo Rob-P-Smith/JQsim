@@ -159,7 +159,7 @@ public class Sandbox {
     }
 
     public static void qiskitMoreComplexQPE(){
-        jqs qsk = new jqs(6, 100000);
+        jqs qsk = new jqs(6, 1000000);
         qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
 //        qsk.X(5);
 //        for(int i = 0; i < qsk.size()-1; i++) {
