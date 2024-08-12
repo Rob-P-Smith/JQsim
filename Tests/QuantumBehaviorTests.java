@@ -11,7 +11,7 @@ public class QuantumBehaviorTests {
         jqs jqs = new jqs();
         jqs.device(2);
 
-        System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
+//        System.out.println("Test flipping bit 1 if bit 0 is not 0.0");
         jqs.X(0);
         jqs.CX(0, 1);
         jqs.buildCircuit();
@@ -21,7 +21,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000°} 1.00000 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("Testing reverse CNOT, flip 1 to 1 if 0 is not 0.0, then flip 2 based on 1, then 0 based on 2");
+//        System.out.println("Testing reverse CNOT, flip 1 to 1 if 0 is not 0.0, then flip 2 based on 1, then 0 based on 2");
         jqs = new jqs();
         jqs.device(3);
         jqs.X(0);
@@ -35,7 +35,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000°} 1.00000 |110⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
+//        System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
         jqs = new jqs();
         jqs.device(2);
         jqs.X(0);
@@ -48,7 +48,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{90.000°} 1.00000i |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("\nTest flipping bit 1 if bit 0 is not 0.0, then flipping bit 2 if 1 is not 0.0");
+//        System.out.println("\nTest flipping bit 1 if bit 0 is not 0.0, then flipping bit 2 if 1 is not 0.0");
         jqs = new jqs();
         jqs.device(3);
         jqs.X(0);
@@ -61,7 +61,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000°} 1.00000 |111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("\nTesting flipping qubit 1 and qubit 3 if qubit 0 is not 0.0 using a CGate of CX on Control 0 Target 1 and 3");
+//        System.out.println("\nTesting flipping qubit 1 and qubit 3 if qubit 0 is not 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
         jqs.device(4);
         jqs.X(0);
@@ -74,7 +74,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000°} 1.00000 |1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
+//        System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
         jqs = new jqs();
         jqs.device(4);
         jqs.CX(0, 1);
@@ -85,7 +85,7 @@ public class QuantumBehaviorTests {
                 "-------------------------\n" +
                 "{0.000°} 1.00000 |0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
 
-        System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
+//        System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
         jqs.device(4);
         jqs.CX(0, 1);
@@ -652,23 +652,23 @@ public class QuantumBehaviorTests {
     public void quantumProbabilityEstimationTests(){
         jqs qsk = new jqs(8);
         assertEquals("Two Highest Magnitude phases:\n" +
-                "0.08594: 68.39300%\n" +
-                "0.07812: 17.09900%\n", qsk.QPE("R1", 5*Math.PI/30, 0,6, 7));
+                "0001011, 0.086: 68.393%\n" +
+                "0001010, 0.078: 17.099%\n", qsk.QPE("R1", 5*Math.PI/30, 0,6, 7));
         qsk = new jqs(4);
         assertEquals("Two Highest Magnitude phases:\n" +
-                "0.37500: 93.56200%\n" +
-                "0.25000: 2.69700%\n", qsk.QPE("R1", 5*Math.PI/7, 0,2, 3));
+                "011, 0.375: 93.562%\n" +
+                "010, 0.250: 2.697%\n", qsk.QPE("R1", 5*Math.PI/7, 0,2, 3));
         qsk = new jqs(4);
         assertEquals("Two Highest Magnitude phases:\n" +
-                "0.25000: 100.00000%\n", qsk.QPE("R1", 2*Math.PI/4, 0,2, 3));
+                "010, 0.250: 100.000%\n", qsk.QPE("R1", 2*Math.PI/4, 0,2, 3));
         qsk = new jqs(5);
         assertEquals("Two Highest Magnitude phases:\n" +
-                "0.06250: 68.49000%\n" +
-                "0.12500: 17.19600%\n", qsk.QPE("R1", 5*Math.PI/30, 0,3, 4));
+                "0001, 0.062: 68.490%\n" +
+                "0010, 0.125: 17.196%\n", qsk.QPE("R1", 5*Math.PI/30, 0,3, 4));
         qsk = new jqs(6);
         assertEquals("Two Highest Magnitude phases:\n" +
-                "0.53125: 81.78600%\n" +
-                "0.50000: 8.61100%\n", qsk.QPE("R1", Math.PI*Math.PI/3, 0,4, 5));
+                "10001, 0.531: 81.786%\n" +
+                "10000, 0.500: 8.611%\n", qsk.QPE("R1", Math.PI*Math.PI/3, 0,4, 5));
     }
 
     @Test

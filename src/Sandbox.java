@@ -9,7 +9,7 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 13;
+    private static int maxQubits = 6;
     private static int runsCount = 3;
 
     /**
@@ -18,11 +18,11 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        jqs qsk = new jqs(4);
-//        System.out.println(
-//                qsk.QPE("R1", 2*Math.PI/5, 0,2, 3)
-//        );
-        benchmark("Basic");
+        int qubits = 6;
+        jqs qsk = new jqs(qubits);
+//        String result = qsk.QPE("R1", 2*Math.PI/9, 0,qubits-2, qubits-1);
+        String results = qsk.QPE("R1", Math.PI*Math.PI/3, 0,qubits-2, qubits-1);
+        System.out.println(results);
     }
 
     /**
@@ -128,18 +128,19 @@ public class Sandbox {
                 }
             }
             case "QPE" -> {
-                for (int qubits = 6; qubits <= 6; qubits = qubits +2) {
+                for (int qubits = 6; qubits <= maxQubits; qubits = qubits +2) {
                     long totalRunsTime = 0;
                     System.out.print("\nTesting " + qubits + " qubits.\n");
                     for (int r = 0; r < runsCount; r++) {
                         long startTime = System.nanoTime();
 
-                        jqs qsk = new jqs(qubits, 100000);
-                        qsk.QPE("R1", 2*Math.PI/3, 0,4, 5);
-//                        qsk.QPE("R1", 2*Math.PI/3, 0,qubits-2, qubits-1);
-//                        qsk.QPE("T", 0,qubits-2, qubits-1);
+                        jqs qsk = new jqs(qubits);
+//                        String result = qsk.QPE("R1", 2*Math.PI/2, 0,qubits-2, qubits-1);
+                        String result = qsk.QPE("S", 0,qubits-2, qubits-1);
+
 
                         long endTime = System.nanoTime();
+                        System.out.println(result);
                         double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
                         System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
                         if (runsCount > 1) {

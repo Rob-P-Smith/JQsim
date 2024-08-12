@@ -622,8 +622,6 @@ public class jqs {
         return getresults(this.getPeakMagnitudeValues(), (highEstimator-lowEstimator)+1);
     }
 
-
-
     /**
      * Performs Quantum Phase Estimation (QPE) with a specified gate type.
      * This overload does not require a theta parameter.
@@ -658,14 +656,17 @@ public class jqs {
 
     private String getresults(Map<String, Double> result, int estimationCount) {
         StringBuilder sb = new StringBuilder("Two Highest Magnitude phases:\n");
-        DecimalFormat df = new DecimalFormat("0.00000");
+        DecimalFormat df = new DecimalFormat("0.000");
+
+
 
         for (int i = 0; i < 2 && !result.isEmpty(); i++) {
             Map.Entry<String, Double> maxEntry = Collections.max(result.entrySet(), Map.Entry.comparingByValue());
             int decimalValue = Integer.parseInt(maxEntry.getKey(), 2);
             double phase = (double) decimalValue / Math.pow(2, estimationCount);
 
-            sb.append(String.format("0%s: %s%%\n",
+            sb.append(String.format("%s, 0%s: %s%%\n",
+                    maxEntry.getKey().substring(1),
                     df.format(phase).substring(1),
                     df.format(maxEntry.getValue() * 100)));
 

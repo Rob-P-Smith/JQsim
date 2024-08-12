@@ -102,7 +102,7 @@ public class GateDirector {
             case ("RY"), ("CRY") -> singleOperator = buildRYGate(work);
             case ("RZ"), ("CRZ") -> singleOperator = buildRZGate(work);
             case ("R1"), ("CR1") -> singleOperator = buildR1Gate(work);
-            case ("R1i"), ("CR1i") -> singleOperator = buildR1Gatei(work);
+            case ("R1i"), ("CR1i") -> singleOperator = buildR1Gateinverse(work);
             case ("SWAP"), ("CSWAP") -> singleOperator = SWAP.getMatrix();
             case ("ISWAP") -> singleOperator = ISWAP.getMatrix();
             case ("ID") -> singleOperator = IDENTITY.getMatrix();
@@ -121,7 +121,6 @@ public class GateDirector {
      */
     private static ComplexSparse buildR1Gate(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
-//        double cosTheta = Math.cos(work.getTheta()/2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
         builtGate.put(0, 0, new ComplexNumber(1, 0));
         builtGate.put(0, 1, new ComplexNumber(0, 0));
         builtGate.put(1, 0, new ComplexNumber(0, 0));
@@ -139,8 +138,7 @@ public class GateDirector {
      * @param work the work item that contains the RX gate in the workQueue
      * @return the complex matrix that is the RX gate operator
      */
-    private static ComplexSparse buildR1Gatei(WorkItem work) {
-//        double cosTheta = Math.cos(work.getTheta()) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta());
+    private static ComplexSparse buildR1Gateinverse(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
         builtGate.put(0, 0, new ComplexNumber(1, 0));
         builtGate.put(0, 1, new ComplexNumber(0, 0));
@@ -162,7 +160,7 @@ public class GateDirector {
      */
     private static ComplexSparse buildRXGate(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
-        double cosTheta = Math.cos(work.getTheta() / 2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta() / 2);
+        double cosTheta = Math.cos(work.getTheta()/2);
         double sinTheta = Math.sin(work.getTheta() / 2);
         builtGate.put(0, 0, new ComplexNumber(cosTheta, 0));
         builtGate.put(0, 1, new ComplexNumber(0, -sinTheta));
@@ -181,7 +179,7 @@ public class GateDirector {
      */
     private static ComplexSparse buildRYGate(WorkItem work) {
         ComplexSparse builtGate = new ComplexSparse(2, 2);
-        double cosTheta = Math.cos(work.getTheta() / 2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta() / 2);
+        double cosTheta = Math.cos(work.getTheta() / 2);
         double sinTheta = Math.sin(work.getTheta() / 2);
         builtGate.put(0, 0, new ComplexNumber(cosTheta, 0));
         builtGate.put(0, 1, new ComplexNumber(-sinTheta, 0));
@@ -201,7 +199,7 @@ public class GateDirector {
      */
     private static ComplexSparse buildRZGate(WorkItem work) {
         ComplexSparse RZ = new ComplexSparse(2, 2);
-        double cosTheta = Math.cos(work.getTheta() / 2) == 6.123233995736766E-17 ? 0.0 : Math.cos(work.getTheta() / 2);
+        double cosTheta = Math.cos(work.getTheta() / 2);
         RZ.put(0, 0, new ComplexNumber(cosTheta, -Math.sin(work.getTheta() / 2)));
         RZ.put(0, 1, new ComplexNumber(0, 0));
         RZ.put(1, 0, new ComplexNumber(0, 0));
