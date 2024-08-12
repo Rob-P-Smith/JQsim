@@ -1,3 +1,5 @@
+import interpreter.jqs;
+
 /**
  * Just a class for debugging things while building the program.
  *
@@ -14,6 +16,10 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        System.out.println("Onward and upward to QPE!");
+        jqs jqs = new jqs(2);
+        jqs.X(0);
+        jqs.CX(0,1);
+        jqs.getComputationalState();
+        System.out.println(jqs);
     }
 }
