@@ -117,8 +117,8 @@ public class QFTBuilder {
      * Applies the controlled rotation gate Rk.
      * <p>
      * theta below examples:
-     * 2*Math.PI/Math.pow(2,2) = Math.PI/2
-     * 2*Math.PI/Math.pow(2,3) = Math.PI/4
+     * 2*Math.PI/(1 << 2) = Math.PI/2
+     * 2*Math.PI/(1 << 3) = Math.PI/4
      * </p>
      * k starts at 1 because the hadamard applied already as the power 0 increment.
      *
@@ -129,8 +129,6 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRk(int controlQubit, int targetQubit, int k) {
-//        System.out.println("In QFT.");
-//        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         double theta = (2 * Math.PI / (1 << k) / 2);
         WorkItem Rk = new WorkItem("CR1", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
         gateD.getGate(Rk);
@@ -147,7 +145,6 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRki(int controlQubit, int targetQubit, int k) {
-//        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         double theta = (2 * Math.PI / (1 << k) / 2);
         WorkItem Rki = new WorkItem("CR1i", numQubits - 1 - controlQubit, numQubits - 1 - targetQubit, theta);
         gateD.getGate(Rki);
@@ -164,7 +161,6 @@ public class QFTBuilder {
      * @see ComplexMath#multiplyMatrix(ComplexSparse, ComplexSparse)
      */
     private void applyRki(int controlQubit, int targetQubit, int k, int endQubit) {
-//        double theta = (2 * Math.PI / Math.pow(2, k) / 2);
         double theta = (2 * Math.PI / (1 << k) / 2);
         WorkItem Rki = new WorkItem("CR1i", endQubit - controlQubit, endQubit - targetQubit, theta);
         gateD.getGate(Rki);
