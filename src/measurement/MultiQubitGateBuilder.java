@@ -1,6 +1,3 @@
-//TODO: Profile this class using
-// https://bell-sw.com/announcements/2020/07/22/Hunting-down-code-hotspots-with-JDK-Flight-Recorder/
-// and try to reduce memory and cpu usage.
 package measurement;
 
 import complex_classes.ComplexMath;
@@ -104,8 +101,7 @@ public class MultiQubitGateBuilder {
                     int targetBit = (i >> targetQubit) & 1;
                     if (controlBit == 1 && targetBit == 1) {
                         // Apply phase shift of -1
-                        gateD.tracker.getStateVec().get(i, 0).setReal(-1 * (gateD.tracker.getStateVec().get(i, 0).getReal()));
-                        gateD.tracker.getStateVec().get(i, 0).setImag(-1 * (gateD.tracker.getStateVec().get(i, 0).getImag()));
+                        gateD.tracker.getStateVec().put(i, 0, new ComplexNumber((-1*gateD.tracker.getStateVec().get(i,0).getReal()), (-1*gateD.tracker.getStateVec().get(i,0).getImag())));
                     }
                 }
             }

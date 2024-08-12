@@ -47,7 +47,6 @@ public final class ComplexMath {
      */
     private static final int SINGLE_THREAD_THRESHOLD = 16384;
     public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
-//    private static int BLOCK_SIZE = 16;
 
     /**
      * Computes the tensor product of two matrices using Gustavson's algorithm for sparse matrices.
@@ -391,67 +390,6 @@ public final class ComplexMath {
     }
 
     /**
-     * Performs parallel multiplication of a sparse matrix with a sparse column vector.
-     * This method is optimized for parallel execution, suitable for large matrices.
-     *
-     * @param leftMatrix The sparse matrix to be multiplied.
-     * @param rightMatrix The sparse column vector to be multiplied.
-     * @return A new {@code ComplexSparse} object representing the result of the multiplication.
-     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
-     *                                  or if the right matrix is not a column vector.
-     */
-    private static ComplexSparse multiplyMatrixVectorParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
-        if (leftMatrix.getWidth() != rightMatrix.getHeight() || rightMatrix.getWidth() != 1) {
-            throw new IllegalArgumentException("Matrix dimensions do not match for matrix-vector multiplication.");
-        }
-
-        int leftHeight = leftMatrix.getHeight();
-        int leftWidth = leftMatrix.getWidth();
-
-        ComplexSparse resultMatrix = new ComplexSparse(leftHeight, 1);
-
-        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
-        List<Future<?>> futures = new ArrayList<>();
-
-        int rowsPerThread = Math.max(1, leftHeight / NUM_THREADS);
-        for (int threadIdx = 0; threadIdx < NUM_THREADS; threadIdx++) {
-            final int startRow = threadIdx * rowsPerThread;
-            final int endRow = (threadIdx == NUM_THREADS - 1) ? leftHeight : (startRow + rowsPerThread);
-
-            futures.add(executor.submit(() -> {
-                for (int i = startRow; i < endRow; i++) {
-                    ComplexNumber sum = new ComplexNumber(0, 0);
-                    for (int j = 0; j < leftWidth; j++) {
-                        ComplexNumber leftValue = leftMatrix.get(i, j);
-                        if (!isZero(leftValue)) {
-                            ComplexNumber rightValue = rightMatrix.get(j, 0);
-                            sum.addInPlace(multiplyComplexNumbers(leftValue, rightValue));
-                        }
-                    }
-                    if (!isZero(sum)) {
-                        synchronized (resultMatrix) {
-                            resultMatrix.put(i, 0, sum);
-                        }
-                    }
-                }
-            }));
-        }
-
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                System.out.println("Error in matrix-vector multiplication parallel.");
-                throw new RuntimeException("Error in parallel matrix-vector multiplication", e);
-            }
-        }
-
-        executor.shutdown();
-
-        return resultMatrix;
-    }
-
-    /**
      * Performs sequential multiplication of two sparse matrices.
      * This method is optimized for sparse matrices using Compressed Sparse Column (CSC) format.
      *
@@ -508,6 +446,67 @@ public final class ComplexMath {
             }
             nnzTrackerIndex = 0;  // Reset for next column
         }
+
+        return resultMatrix;
+    }
+
+    /**
+     * Performs parallel multiplication of a sparse matrix with a sparse column vector.
+     * This method is optimized for parallel execution, suitable for large matrices.
+     *
+     * @param leftMatrix The sparse matrix to be multiplied.
+     * @param rightMatrix The sparse column vector to be multiplied.
+     * @return A new {@code ComplexSparse} object representing the result of the multiplication.
+     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
+     *                                  or if the right matrix is not a column vector.
+     */
+    private static ComplexSparse multiplyMatrixVectorParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
+        if (leftMatrix.getWidth() != rightMatrix.getHeight() || rightMatrix.getWidth() != 1) {
+            throw new IllegalArgumentException("Matrix dimensions do not match for matrix-vector multiplication.");
+        }
+
+        int leftHeight = leftMatrix.getHeight();
+        int leftWidth = leftMatrix.getWidth();
+
+        ComplexSparse resultMatrix = new ComplexSparse(leftHeight, 1);
+
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        List<Future<?>> futures = new ArrayList<>();
+
+        int rowsPerThread = Math.max(1, leftHeight / NUM_THREADS);
+        for (int threadIdx = 0; threadIdx < NUM_THREADS; threadIdx++) {
+            final int startRow = threadIdx * rowsPerThread;
+            final int endRow = (threadIdx == NUM_THREADS - 1) ? leftHeight : (startRow + rowsPerThread);
+
+            futures.add(executor.submit(() -> {
+                for (int i = startRow; i < endRow; i++) {
+                    ComplexNumber sum = new ComplexNumber(0, 0);
+                    for (int j = 0; j < leftWidth; j++) {
+                        ComplexNumber leftValue = leftMatrix.get(i, j);
+                        if (!isZero(leftValue)) {
+                            ComplexNumber rightValue = rightMatrix.get(j, 0);
+                            sum.addInPlace(multiplyComplexNumbers(leftValue, rightValue));
+                        }
+                    }
+                    if (!isZero(sum)) {
+                        synchronized (resultMatrix) {
+                            resultMatrix.put(i, 0, sum);
+                        }
+                    }
+                }
+            }));
+        }
+
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                System.out.println("Error in matrix-vector multiplication parallel.");
+                throw new RuntimeException("Error in parallel matrix-vector multiplication", e);
+            }
+        }
+
+        executor.shutdown();
 
         return resultMatrix;
     }
@@ -622,7 +621,7 @@ public final class ComplexMath {
      *
      * @param matrixOne The first matrix.
      * @param matrixTwo The second matrix.
-     * @return A new {ComlexSparse} object that is the result of the matrix addition.
+     * @return A new {ComplexSparse} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
     public static ComplexSparse addMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
@@ -686,24 +685,6 @@ public final class ComplexMath {
         double real = testResultForFloatErrorBuildup(aVec.getReal() + bVec.getReal());
         double imag = testResultForFloatErrorBuildup(aVec.getImag() + bVec.getImag());
         return new ComplexNumber(real, imag);
-    }
-
-    /**
-     * Multiplies a vector against it's transpose and returns a matrix that is 2*vector.getHeight() wide and tall
-     *
-     * @param vector The input vector, usually a qubit state
-     * @return The outer product as matrix
-     */
-    public static ComplexSparse outerProduct(ComplexSparse vector) {
-        ComplexSparse transpose = getTranspose(vector);
-        ComplexSparse outerProduct = new ComplexSparse(vector.getHeight(), vector.getHeight());
-        for (int i = 0; i < vector.getHeight(); i++) {
-            ComplexNumber sample = new ComplexNumber(vector.get(i, 0).getReal(), vector.get(i, 0).getImag());
-            for (int j = 0; j < vector.getHeight(); j++) {
-                outerProduct.put(i, j, multiplyComplexNumbers(sample, transpose.get(0, j)));
-            }
-        }
-        return outerProduct;
     }
 
     /**
@@ -830,7 +811,6 @@ public final class ComplexMath {
 
         return result.toString();
     }
-
 
     public static Map<String, Double> getMagnitudeStates(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {

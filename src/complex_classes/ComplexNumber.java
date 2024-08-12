@@ -64,41 +64,12 @@ public final class ComplexNumber {
     }
 
     /**
-     * Sets the real part of the complex number to the specified value.
-     *
-     * @param real The new value for the real part of the complex number.
-     */
-    public void setReal(double real) {
-        this.real = real;
-    }
-
-    /**
      * Returns the imaginary part of the complex number.
      *
      * @return The imaginary part of the complex number.
      */
     public double getImag() {
         return imag;
-    }
-
-    /**
-     * Sets the imaginary part of the complex number to the specified value.
-     *
-     * @param imag The new value for the imaginary part of the complex number.
-     */
-    public void setImag(double imag) {
-        this.imag = imag;
-    }
-
-    /**
-     * Sets the real and imaginary part of the complex number to the specified value.
-     *
-     * @param real The new value for the real part of the complex number.
-     * @param imag The new value for the imaginary part of the complex number.
-     */
-    public void setValues(double real, double imag){
-        this.real = real;
-        this.imag = imag;
     }
 
     /**
