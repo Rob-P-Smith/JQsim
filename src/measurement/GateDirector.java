@@ -36,7 +36,7 @@ public class GateDirector {
      * Returns the final gate matrix.
      *
      * @param thisGate is a WorkItem from the WorkQueue
-     * @return The ComplexMatrix representing the final gate.
+     * @return The SparseMatrix representing the final gate.
      */
     public ComplexSparse getGate(WorkItem thisGate) {
         calculateGate(thisGate);
@@ -46,7 +46,7 @@ public class GateDirector {
     /**
      * Executes the sequence of operators to build the final gate matrix.
      *
-     * @param operatorSequence An array of ComplexMatrix operators to be applied.
+     * @param operatorSequence An array of SparseMatrix operators to be applied.
      */
     public void executeOperatorSequence(ComplexSparse[] operatorSequence) {
         for (int i = operatorSequence.length - 1; i >= 0; i--) {
@@ -81,10 +81,10 @@ public class GateDirector {
     }
 
     /**
-     * Decodes the operator from the WorkItem and returns the corresponding ComplexMatrix.
+     * Decodes the operator from the WorkItem and returns the corresponding SparseMatrix.
      *
      * @param work The WorkItem containing the operator information.
-     * @return The ComplexMatrix representing the operator.
+     * @return The SparseMatrix representing the operator.
      */
     private static ComplexSparse decodeOperator(WorkItem work) {
         ComplexSparse singleOperator = null;
@@ -210,7 +210,7 @@ public class GateDirector {
     /**
      * Overridden toString for this class.
      *
-     * @return A string of the final operator calculated and the system state as a column vector in a ComplexMatrix of 2^n x 1 dimensions.
+     * @return A string of the final operator calculated and the system state as a column vector in a matrix of 2^n x 1 dimensions.
      */
     @Override
     public String toString() {

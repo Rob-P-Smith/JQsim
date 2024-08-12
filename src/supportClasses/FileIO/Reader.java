@@ -1,16 +1,15 @@
 package supportClasses.FileIO;
 
 import complex_classes.ComplexNumber;
-import complex_classes.ComplexQubit;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.*;
 
 /**
- * The {@code Reader} class provides methods to load {@link ComplexQubit} objects from a file.
+ * The {@code Reader} class provides methods to load objects from a file.
  * <p>
- * The class includes methods to read data from a file and parse it into {@link ComplexQubit} objects.
+ * The class includes methods to read data from a file and parse it into objects.
  * </p>
  *
  * @author Robert Smith
@@ -19,34 +18,34 @@ import java.util.*;
  */
 public class Reader {
 
-    /**
-     * Loads an array of {@link ComplexQubit} objects from the specified file.
-     *
-     * @param filePath The path to the file containing the qubit data.
-     * @return An array of {@link ComplexQubit} objects.
-     */
-    public static ComplexQubit[] loadQubits(String filePath) {
-        Map<String, List<String>> dataMap = loadData(filePath);
-        assert dataMap != null;
-        ArrayList<String> keys = new ArrayList<>(dataMap.keySet());
-
-        ComplexQubit[] fileContents = new ComplexQubit[dataMap.size()];
-
-        for (int i = 0; i < dataMap.size(); i++) {
-            String[] qubitStates = dataMap.get(keys.get(i)).get(0).split(",");
-
-            fileContents[i] = new ComplexQubit(
-                    new ComplexNumber((Double.parseDouble(qubitStates[0])), (Double.parseDouble(qubitStates[1]))),
-                    new ComplexNumber((Double.parseDouble(qubitStates[2])), (Double.parseDouble(qubitStates[3]))),
-                    Integer.parseInt(keys.get(i)));
-            fileContents[i].setQubitID(Integer.parseInt(keys.get(i)));
-        }
-
-        for (ComplexQubit qubit : fileContents) {
-            System.out.println("\n" + qubit);
-        }
-        return fileContents;
-    }
+//    /**
+//     * Loads an array of {@link ComplexQubit} objects from the specified file.
+//     *
+//     * @param filePath The path to the file containing the qubit data.
+//     * @return An array of {@link ComplexQubit} objects.
+//     */
+//    public static ComplexQubit[] loadQubits(String filePath) {
+//        Map<String, List<String>> dataMap = loadData(filePath);
+//        assert dataMap != null;
+//        ArrayList<String> keys = new ArrayList<>(dataMap.keySet());
+//
+//        ComplexQubit[] fileContents = new ComplexQubit[dataMap.size()];
+//
+//        for (int i = 0; i < dataMap.size(); i++) {
+//            String[] qubitStates = dataMap.get(keys.get(i)).get(0).split(",");
+//
+//            fileContents[i] = new ComplexQubit(
+//                    new ComplexNumber((Double.parseDouble(qubitStates[0])), (Double.parseDouble(qubitStates[1]))),
+//                    new ComplexNumber((Double.parseDouble(qubitStates[2])), (Double.parseDouble(qubitStates[3]))),
+//                    Integer.parseInt(keys.get(i)));
+//            fileContents[i].setQubitID(Integer.parseInt(keys.get(i)));
+//        }
+//
+//        for (ComplexQubit qubit : fileContents) {
+//            System.out.println("\n" + qubit);
+//        }
+//        return fileContents;
+//    }
 
     /**
      * Loads data from the specified file and returns it as a map.

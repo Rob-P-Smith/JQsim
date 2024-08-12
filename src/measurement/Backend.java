@@ -112,7 +112,7 @@ public class Backend {
      * @return An array of strings representing the viable states
      */
     private String[] getViableStates() {
-        String states = ComplexMath.complexMatrixToBasisStates(this.tracker.getStateVec());
+        String states = ComplexMath.stateVectorToBasisStates(this.tracker.getStateVec());
         return states.split("\\$");
     }
 

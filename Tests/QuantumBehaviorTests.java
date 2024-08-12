@@ -19,7 +19,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |11⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("Testing reverse CNOT, flip 1 to 1 if 0 is not 0.0, then flip 2 based on 1, then 0 based on 2");
         jqs = new jqs();
@@ -33,7 +33,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |110⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |110⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("Test flipping bit 1 if bit 0 is not 0.0 with an imaginary value for control only.");
         jqs = new jqs();
@@ -46,7 +46,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{90.000°} 1.00000i |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{90.000°} 1.00000i |11⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("\nTest flipping bit 1 if bit 0 is not 0.0, then flipping bit 2 if 1 is not 0.0");
         jqs = new jqs();
@@ -59,7 +59,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |111⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("\nTesting flipping qubit 1 and qubit 3 if qubit 0 is not 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
@@ -72,7 +72,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |1011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |1011⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("\nTesting not flipping bit 1 if bit 0 is a 0.0");
         jqs = new jqs();
@@ -83,7 +83,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |0000⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
 //        System.out.println("\nTesting not flipping bit 1 or bit 3 if bit 0 is a 0.0 using a CGate of CX on Control 0 Target 1 and 3");
         jqs = new jqs();
@@ -95,7 +95,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |0000⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |0000⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
     }
 
     @Test
@@ -109,7 +109,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |011⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         jqs = new jqs(3);
         jqs.X(2);
@@ -119,7 +119,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{0.000°} 1.00000 |100⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 1.00000 |100⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22,1,%22X%22],[1,1,%22Z^%C2%BC%22]]}
         jqs = new jqs(3);
@@ -131,7 +131,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{45.000°} (0.70711 + 0.70711i) |101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{45.000°} (0.70711 + 0.70711i) |101⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22,1,%22X%22],[1,1,%22Z^%C2%BC%22],[%22Swap%22,1,%22Swap%22]]}
         jqs = new jqs(3);
@@ -144,7 +144,7 @@ public class QuantumBehaviorTests {
         assertEquals("|ψ⟩ = \n" +
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
-                "{45.000°} (0.70711 + 0.70711i) |011⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{45.000°} (0.70711 + 0.70711i) |011⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
     }
 
     @Test
@@ -161,7 +161,7 @@ public class QuantumBehaviorTests {
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
                 "{0.000°} 0.70711 |01⟩\n" +
-                "{0.000°} 0.70711 |10⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 0.70711 |10⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22X%22],[%22%E2%80%A2%22,%22Z%22]]}
         jqs = new jqs(2);
@@ -175,7 +175,7 @@ public class QuantumBehaviorTests {
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
                 "{0.000°} 0.70711 |10⟩\n" +
-                "{-180.000°} -0.70711 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{-180.000°} -0.70711 |11⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22,%22H%22],[1,%22Z^%C2%BC%22],[%22%E2%80%A2%22,%22X%22],[%22H%22],[%22%E2%80%A2%22,1,%22X%22]]}
         jqs = new jqs(4);
@@ -194,7 +194,7 @@ public class QuantumBehaviorTests {
                         "{22.500°} (0.60355 + 0.25000i) |0010⟩\n" +
                         "{-67.500°} (0.10355 + -0.25000i) |0101⟩\n" +
                         "{112.500°} (-0.10355 + 0.25000i) |0111⟩",
-                ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
     }
 
     @Test
@@ -690,7 +690,7 @@ public class QuantumBehaviorTests {
                 "{180.000°} -0.50000 |001⟩\n" +
                 "{0.000°} 0.50000 |011⟩\n" +
                 "{90.000°} 0.50000i |101⟩\n" +
-                "{-90.000°} -0.50000i |111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{-90.000°} -0.50000i |111⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22],[%22H%22],[%22%E2%80%A2%22,%22X%22]]}
         jqs = new jqs(2);
@@ -703,7 +703,7 @@ public class QuantumBehaviorTests {
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
                 "{0.000°} 0.70711 |00⟩\n" +
-                "{180.000°} -0.70711 |11⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{180.000°} -0.70711 |11⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22H%22],[%22%E2%80%A2%22,%22X%22],[1,%22Z%22],[1,%22%E2%80%A2%22,%22X%22],[1,1,%22Z^%C2%BD%22],[1,1,%22Z^%C2%BD%22],[1,1,%22H%22],[1,1,%22Z^%C2%BD%22]]}
         jqs = new jqs(3);
@@ -723,7 +723,7 @@ public class QuantumBehaviorTests {
                 "{0.000°} 0.50000 |000⟩\n" +
                 "{0.000°} 0.50000 |011⟩\n" +
                 "{90.000°} 0.50000i |100⟩\n" +
-                "{-90.000°} -0.50000i |111⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{-90.000°} -0.50000i |111⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
 
         //https://algassert.com/quirk#circuit={%22cols%22:[[%22X%22],[1,%22H%22],[1,%22%E2%80%A2%22,%22X%22],[%22%E2%80%A2%22,%22X%22]]}
         jqs = new jqs(3);
@@ -737,6 +737,6 @@ public class QuantumBehaviorTests {
                 "{phase} amplitude |basis⟩ \n" +
                 "-------------------------\n" +
                 "{0.000°} 0.70711 |011⟩\n" +
-                "{0.000°} 0.70711 |101⟩", ComplexMath.complexMatrixToDiracNotation(jqs.getStateVec()));
+                "{0.000°} 0.70711 |101⟩", ComplexMath.stateVectorToDiracNotation(jqs.getStateVec()));
     }
 }

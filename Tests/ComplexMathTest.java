@@ -1,5 +1,4 @@
 import complex_classes.ComplexMath;
-import complex_classes.ComplexMatrix;
 import complex_classes.ComplexNumber;
 import complex_classes.ComplexSparse;
 import org.junit.jupiter.api.Test;

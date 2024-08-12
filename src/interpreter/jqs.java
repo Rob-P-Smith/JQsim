@@ -128,7 +128,7 @@ public class jqs {
      */
     @Override
     public String toString() {
-        return ComplexMath.complexMatrixToDiracNotation(this.getStateVec());
+        return ComplexMath.stateVectorToDiracNotation(this.getStateVec());
     }
 
     /**
@@ -168,7 +168,7 @@ public class jqs {
     /**
      * Returns the state vector from StateTracker.
      *
-     * @return tracker's state vector which is a 2^nqubits x 1 ComplexMatrix.
+     * @return tracker's state vector which is a 2^nqubits x 1 matrix.
      */
     public ComplexSparse getStateVec() {
         return tracker.getStateVec();

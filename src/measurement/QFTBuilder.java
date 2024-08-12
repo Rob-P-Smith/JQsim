@@ -24,7 +24,6 @@ import state.WorkItem;
  *
  * @see GateDirector
  * @see complex_classes.ComplexMath
- * @see complex_classes.ComplexMatrix
  * @see state.WorkItem
  */
 public class QFTBuilder {

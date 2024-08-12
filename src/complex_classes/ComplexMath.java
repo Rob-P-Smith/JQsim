@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import static supportClasses.GreekEnums.PSI;
 
@@ -623,7 +622,7 @@ public final class ComplexMath {
      *
      * @param matrixOne The first matrix.
      * @param matrixTwo The second matrix.
-     * @return A new {@code ComplexMatrix} object that is the result of the matrix addition.
+     * @return A new {ComlexSparse} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
     public static ComplexSparse addMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
@@ -711,7 +710,7 @@ public final class ComplexMath {
      * Transposes a given matrix.
      *
      * @param originMatrix The matrix to transpose.
-     * @return A new {@code ComplexMatrix} that is the transpose of the original matrix.
+     * @return A new {@code ComplexSparse} that is the transpose of the original matrix.
      */
     public static ComplexSparse getTranspose(ComplexSparse originMatrix) {
         int height = originMatrix.getHeight();
@@ -739,7 +738,7 @@ public final class ComplexMath {
      * Computes the conjugate transpose (Hermitian transpose) of a given matrix.
      *
      * @param originMatrix The matrix to compute the conjugate transpose of.
-     * @return A new {@code ComplexMatrix} that is the conjugate transpose of the original matrix.
+     * @return A new {@code ComplexSparse} that is the conjugate transpose of the original matrix.
      */
     public static ComplexSparse getConjugateTranspose(ComplexSparse originMatrix) {
         int height = originMatrix.getHeight();
@@ -769,7 +768,7 @@ public final class ComplexMath {
      * @param stateVector the current system state vector
      * @return A string of the dirac notation representation
      */
-    public static String complexMatrixToDiracNotation(ComplexSparse stateVector) {
+    public static String stateVectorToDiracNotation(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
         }
@@ -814,7 +813,7 @@ public final class ComplexMath {
      * @param stateVector the current system state vector
      * @return A string of the dirac notation representation
      */
-    public static String complexMatrixToBasisStates(ComplexSparse stateVector) {
+    public static String stateVectorToBasisStates(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
         }
