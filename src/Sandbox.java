@@ -9,7 +9,7 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 6;
+    private static int maxQubits = 13;
     private static int runsCount = 3;
 
     /**
@@ -18,14 +18,15 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        int qubits = 5;
-        jqs qsk = new jqs(qubits);
-        String result = qsk.QPE("R1", 2*Math.PI/9, 0,qubits-2, qubits-1);
-        System.out.println(result);
-
-        jqs jqs = new jqs(4);
-        String results = jqs.QPE("R1", 2*Math.PI/4, 0,2, 3);
-        System.out.println(results);
+//        int qubits = 5;
+//        jqs qsk = new jqs(qubits);
+//        String result = qsk.QPE("R1", 2*Math.PI/9, 0,qubits-2, qubits-1);
+//        System.out.println(result);
+//
+//        jqs jqs = new jqs(4);
+//        String results = jqs.QPE("R1", 2*Math.PI/4, 0,2, 3);
+//        System.out.println(results);
+        benchmark("Basic");
     }
 
     /**

@@ -665,9 +665,9 @@ public final class ComplexMath {
      *         or -1.0 if the input is between -1.0 and -0.9999999
      */
     private static double testResultForFloatErrorBuildup(double number) {
-        if (number > 0.9999999 && number < 1.0) {
+        if (number > 0.999999999 && number < 1.0) {
             return 1.0;
-        } else if (number < -0.9999999 && number > -1.0) {
+        } else if (number < -0.999999999 && number > -1.0) {
             return -1.0;
         } else {
             return number;

@@ -17,7 +17,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *   <li>Optimized element insertion and retrieval using hybrid linear/binary search</li>
  *   <li>Support for basic matrix operations and transformations</li>
  * </ul>
- * </p>
  *
  * <p>The CSC format uses three main components:
  * <ul>
@@ -25,15 +24,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *   <li>rowIndices: A list of row indices for each non-zero value</li>
  *   <li>colPointers: A list of pointers indicating the start of each column in the values and rowIndices lists</li>
  * </ul>
- * </p>
- *
- * <p>This class supports various constructors for creating sparse matrices, including:
- * <ul>
- *   <li>Empty matrix</li>
- *   <li>Matrix with specified dimensions</li>
- *   <li>Matrix from a 2D array of ComplexNumber objects</li>
- * </ul>
- * </p>
  *
  * <p>Performance considerations:
  * <ul>
@@ -41,13 +31,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *   <li>The 'get' method uses binary search for efficient element retrieval</li>
  *   <li>Thread safety is ensured using a ReentrantReadWriteLock for concurrent access</li>
  * </ul>
- * </p>
  *
  * <p>This class assumes matrices are rectangular (all rows have the same number of columns).</p>
  *
  * @author Robert Smith
- * @version 0.2
- * @since 9 August 2024
+ * @version 1.0
+ * @since 11 August 2024
  * @see ComplexNumber
  * @see ComplexMath
  */
@@ -63,7 +52,6 @@ public final class ComplexSparse {
     /**
      * Constructs an empty sparse matrix.
      * Initializes the CSC format components with empty lists and zero dimensions.
-     * Only here so I don't get fined.
      */
     public ComplexSparse() {
         values = new ArrayList<>();
@@ -81,6 +69,7 @@ public final class ComplexSparse {
      *
      * @param height the number of rows in the matrix
      * @param width  the number of columns in the matrix
+     * @throws IllegalArgumentException if height or width is negative
      */
     public ComplexSparse(int height, int width) {
         values = new ArrayList<>();
@@ -95,6 +84,8 @@ public final class ComplexSparse {
      * Converts the dense matrix representation to CSC format.
      *
      * @param matrix the 2D array of {@link ComplexNumber} objects representing the matrix
+     * @throws NullPointerException if matrix is null or contains null elements
+     * @throws IllegalArgumentException if matrix is empty or jagged
      * @see ComplexNumber
      */
     public ComplexSparse(ComplexNumber[][] matrix) {
@@ -139,6 +130,7 @@ public final class ComplexSparse {
      * Performs a deep copy of all CSC components.
      *
      * @param other The other {@code ComplexSparse} matrix to copy data from
+     * @throws NullPointerException if other is null
      */
     public void setData(ComplexSparse other) {
         // Copy the dimensions
@@ -171,10 +163,7 @@ public final class ComplexSparse {
      * @param col   the column index
      * @param value the {@link ComplexNumber} value to insert or update
      * @throws IndexOutOfBoundsException if the specified indices are out of bounds
-     * Performance characteristics:
-     * - For columns with 8 or fewer elements, a linear search is used for better cache locality.
-     * - For columns with more than 8 elements, a binary search is employed for faster lookup.
-     * - The method adapts to the sparsity of each column for optimized performance.
+     * @throws NullPointerException if value is null
      */
     public void put(int row, int col, ComplexNumber value) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
@@ -201,7 +190,9 @@ public final class ComplexSparse {
                         break;
                     }
                 }
-                if (rowIndices.get(pos) < row) pos++;
+                if (rowIndices.get(pos) < row) {
+                    pos++;
+                }
             } else {
                 // Linear search
                 while (pos <= end && rowIndices.get(pos) < row) {
@@ -209,8 +200,8 @@ public final class ComplexSparse {
                 }
             }
 
-            double realnum = value.getReal();
-            double imagnum = value.getImag();
+            double realNum = value.getReal();
+            double imagNum = value.getImag();
 
             if (pos < colPointers.get(col + 1) && rowIndices.get(pos) == row) {
                 // Update existing value
@@ -220,12 +211,12 @@ public final class ComplexSparse {
                     updateColPointers(col + 1, -1);
                 } else {
                     // Create a new ComplexNumber object instead of directly assigning the value
-                    values.set(pos, new ComplexNumber(realnum, imagnum));
+                    values.set(pos, new ComplexNumber(realNum, imagNum));
                 }
             } else if (!ComplexMath.isZero(value)) {
                 // Insert new non-zero value
                 // Create a new ComplexNumber object instead of directly inserting the value
-                values.add(pos, new ComplexNumber(realnum, imagnum));
+                values.add(pos, new ComplexNumber(realNum, imagNum));
                 rowIndices.add(pos, row);
                 updateColPointers(col + 1, 1);
             }
@@ -283,7 +274,7 @@ public final class ComplexSparse {
     /**
      * Returns the list of non-zero values in the sparse matrix.
      *
-     * @return A List of ComplexNumber objects representing the non-zero values in the matrix.
+     * @return An unmodifiable List of ComplexNumber objects representing the non-zero values in the matrix.
      */
     public List<ComplexNumber> getValues() {
         return values;
@@ -292,7 +283,7 @@ public final class ComplexSparse {
     /**
      * Returns the list of row indices corresponding to the non-zero values.
      *
-     * @return A List of Integer objects representing the row indices of non-zero values.
+     * @return An unmodifiable List of Integer objects representing the row indices of non-zero values.
      */
     public List<Integer> getRowIndices() {
         return rowIndices;
@@ -301,7 +292,7 @@ public final class ComplexSparse {
     /**
      * Returns the list of column pointers in the CSC format.
      *
-     * @return A List of Integer objects representing the starting indices of each column in the values and rowIndices lists.
+     * @return An unmodifiable List of Integer objects representing the starting indices of each column in the values and rowIndices lists.
      */
     public List<Integer> getColPointers() {
         return colPointers;
@@ -311,6 +302,8 @@ public final class ComplexSparse {
      * Sets the list of non-zero values in the sparse matrix.
      *
      * @param values A List of ComplexNumber objects representing the new non-zero values.
+     * @throws NullPointerException if values is null or contains null elements
+     * @throws IllegalArgumentException if the size of values doesn't match the current matrix structure
      */
     public void setValues(List<ComplexNumber> values) {
         this.values = values;
