@@ -10,8 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * This class provides methods to add and retrieve work items in a thread-safe manner.
  *
  * @author Robert Smith
- * @version 0.1
- * @since 5 July 2024
+ * @version 1.0
+ * @since 11 August 2024
  */
 public class WorkQueue {
     private Queue<WorkItem> gates;

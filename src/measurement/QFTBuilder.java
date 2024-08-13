@@ -20,11 +20,11 @@ import state.WorkItem;
  * requirement in QFT to reduce the influence of each subsequent bit on transformed state by 50%.
  *
  * @author Robert Smith
- * @version 0.2
+ * @version 1.0
  * @see GateDirector
  * @see complex_classes.ComplexMath
  * @see state.WorkItem
- * @since 9 August 2024
+ * @since 11 August 2024
  */
 public class QFTBuilder {
     private final GateDirector gateD;

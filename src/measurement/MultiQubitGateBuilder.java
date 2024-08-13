@@ -6,12 +6,18 @@ import complex_classes.ComplexSparse;
 import state.WorkItem;
 
 /**
- * The GateBuilder class is responsible for constructing and applying quantum gates
- * to a quantum state vector.
+ * The MultiQubitGateBuilder class is responsible for constructing and applying multi-qubit quantum gates
+ * to a quantum state vector. It handles both dual-qubit gates (one control, one target) and multi-qubit gates
+ * (multiple controls and/or targets).
+ *
+ * This class works in conjunction with the GateDirector to manage the application of complex quantum operations.
  *
  * @author Robert Smith
- * @version 0.1
- * @since 16 July 2024
+ * @version 1.0
+ * @since 11 August 2024
+ * @see GateDirector
+ * @see WorkItem
+ * @see ComplexSparse
  */
 public class MultiQubitGateBuilder {
     private GateDirector gateD;
@@ -19,7 +25,7 @@ public class MultiQubitGateBuilder {
     /**
      * Constructor for the MultiQubitGateBuilder class.
      *
-     * @param gateD the active GateDirector
+     * @param gateD the active GateDirector used to manage gate operations and state tracking
      */
     public MultiQubitGateBuilder(GateDirector gateD) {
         this.gateD = gateD;
@@ -27,8 +33,9 @@ public class MultiQubitGateBuilder {
 
     /**
      * Returns a string representation of the final gate matrix.
+     * This method delegates to the toString method of the finalGate in the GateDirector.
      *
-     * @return A string representation of the final gate.
+     * @return A string representation of the final gate matrix.
      */
     @Override
     public String toString() {
@@ -36,10 +43,18 @@ public class MultiQubitGateBuilder {
     }
 
     /**
-     * Builds the operator matrix for a gate with one control qubit and one or many target qubits.
-     * This method applies the single-qubit operator to each target qubit when the control qubit is not |0⟩.
+     * Builds the operator matrix for a gate with one or more control qubits and one or more target qubits.
+     * This method determines whether the gate is a dual-qubit or multi-qubit operation and delegates to the
+     * appropriate method for gate application.
      *
-     * @param work           The WorkItem containing the gate information.
+     * Internal functionality:
+     * 1. Determines the number of qubits in the system.
+     * 2. Validates control and target qubit indices.
+     * 3. Calls either applyMultiQubitGate or applyDualQubitGate based on the WorkItem type.
+     *
+     * @param work The WorkItem containing the gate information.
+     * @throws IllegalArgumentException if the control or target qubit indices are invalid.
+     * @see WorkItem
      */
     void dualAndMultiGateSetup(WorkItem work) {
         //Setup basic variables
@@ -70,10 +85,20 @@ public class MultiQubitGateBuilder {
     }
 
     /**
-     * Directly mutates the system state after applying the control gate in a single control single target gate.
+     * Applies a dual-qubit gate (one control, one target) to the quantum state vector.
+     * This method directly mutates the system state by applying the specified controlled gate.
      *
-     * @param work  the WorkItem to evaluate and execute.
-     * @param numQubits    the number of qubits, not the state vector size.
+     * Internal functionality:
+     * 1. Determines the gate type from the WorkItem.
+     * 2. Creates a new state vector to store the result.
+     * 3. Applies the appropriate controlled operation based on the gate type.
+     * 4. Updates the system state with the new state vector.
+     *
+     * @param work The WorkItem specifying the gate operation.
+     * @param numQubits The number of qubits in the system.
+     * @see WorkItem
+     * @see ComplexSparse
+     * @see GateDirector#tracker
      */
     private void applyDualQubitGate(WorkItem work, int numQubits) {
         int controlQubit = work.getControl();
@@ -221,6 +246,23 @@ public class MultiQubitGateBuilder {
         }
     }
 
+    /**
+     * Applies a multi-qubit gate to the quantum state vector.
+     * This method directly mutates the system state by applying the specified multi-qubit operation.
+     *
+     * Internal functionality:
+     * 1. Determines the gate type from the operator string.
+     * 2. Creates a new state vector to store the result.
+     * 3. Applies the appropriate multi-qubit operation based on the gate type.
+     * 4. Updates the system state with the new state vector.
+     *
+     * @param operator The string identifier for the multi-qubit gate operation.
+     * @param controlQubits An array of indices for the control qubits.
+     * @param targetQubits An array of indices for the target qubits.
+     * @param numQubits The number of qubits in the system.
+     * @see ComplexSparse
+     * @see GateDirector#tracker
+     */
     private void applyMultiQubitGate(String operator, Integer[] controlQubits, Integer[] targetQubits, int numQubits) {
         int stateSize = 1 << numQubits;
         ComplexSparse newStateVector = new ComplexSparse(gateD.tracker.getStateVecSize(), 1);

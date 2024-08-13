@@ -18,15 +18,13 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-//        int qubits = 5;
-//        jqs qsk = new jqs(qubits);
-//        String result = qsk.QPE("R1", 2*Math.PI/9, 0,qubits-2, qubits-1);
-//        System.out.println(result);
-//
-//        jqs jqs = new jqs(4);
-//        String results = jqs.QPE("R1", 2*Math.PI/4, 0,2, 3);
-//        System.out.println(results);
-        benchmark("Basic");
+        jqs jqs = new jqs(6);
+        jqs.X(5);
+        jqs.buildCircuit();
+        String result = jqs.QPE("R1",2*Math.PI/5, 0, 4,5);
+        System.out.println(result);
+
+//        benchmark("Basic");
     }
 
     /**

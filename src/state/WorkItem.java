@@ -5,8 +5,8 @@ package state;
  * This class can handle both single control/target and multiple controls/targets scenarios.
  *
  * @author Robert Smith
- * @version 0.1
- * @since 4 July 2024
+ * @version 1.0
+ * @since 11 August 2024
  */
 public class WorkItem {
     private String operator;
@@ -176,7 +176,6 @@ public class WorkItem {
     public Integer[] getTargets() {
         return targets;
     }
-
 
     /**
      * Gets whether this work item is a single qubit gate.

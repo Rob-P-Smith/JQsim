@@ -596,24 +596,48 @@ public class jqs {
      *
      * @param gateType the type of quantum gate to use in the estimation
      * @param theta the phase angle to estimate
-     * @param lowEstimator the lower bound of the estimation register
-     * @param highEstimator the upper bound of the estimation register
+     * @param startIdxAuxQubits the lower bound of the estimation register
+     * @param endIdxAuxQubits the upper bound of the estimation register
+     * @return a string containing the results of the phase estimation
+     */
+    public String QPE(String gateType, double theta, int startIdxAuxQubits, int endIdxAuxQubits, int startEigenStateQubit, int endEigenStateQubit) {
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
+            this.H(i);
+        }
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
+            for (int j = 0; j < (int) Math.pow(2, i); j++) {
+                for(int k = 0; k < endEigenStateQubit-startEigenStateQubit; k++){
+                    this.CGate(gateType, i, k, theta);
+                }
+            }
+        }
+        this.buildCircuit();
+        this.QFTi(startIdxAuxQubits, endIdxAuxQubits);
+        return getResults(this.getPeakMagnitudeValues(), (endIdxAuxQubits - startIdxAuxQubits) + 1);
+    }
+
+    /**
+     * Performs Quantum Phase Estimation (QPE) with a specified gate type and phase angle.
+     *
+     * @param gateType the type of quantum gate to use in the estimation
+     * @param theta the phase angle to estimate
+     * @param startIdxAuxQubits the lower bound of the estimation register
+     * @param endIdxAuxQubits the upper bound of the estimation register
      * @param target the target qubit for the controlled operations
      * @return a string containing the results of the phase estimation
      */
-    public String QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target) {
-        this.X(target);
-        for (int i = 0; i <= highEstimator; i++) {
+    public String QPE(String gateType, double theta, int startIdxAuxQubits, int endIdxAuxQubits, int target) {
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
             this.H(i);
         }
-        for (int i = 0; i <= highEstimator; i++) {
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
             for (int j = 0; j < (int) Math.pow(2, i); j++) {
                 this.CGate(gateType, i, target, theta);
             }
         }
         this.buildCircuit();
-        this.QFTi(lowEstimator, highEstimator);
-        return getresults(this.getPeakMagnitudeValues(), (highEstimator - lowEstimator) + 1);
+        this.QFTi(startIdxAuxQubits, endIdxAuxQubits);
+        return getResults(this.getPeakMagnitudeValues(), (endIdxAuxQubits - startIdxAuxQubits) + 1);
     }
 
     /**
@@ -623,8 +647,8 @@ public class jqs {
      * phases and their percentage.
      *
      * @param gateType      The type of quantum gate to use in the estimation.
-     * @param lowEstimator  The lower bound of the estimation register.
-     * @param highEstimator The upper bound of the estimation register.
+     * @param startIdxAuxQubits  The lower bound of the estimation register.
+     * @param endIdxAuxQubits The upper bound of the estimation register.
      * @param target        The target qubit for the controlled operations.
      * @return String       The results of the system analysis
      * @see #QPE(String, double, int, int, int) QPE with theta parameter
@@ -632,22 +656,22 @@ public class jqs {
      * @see #silentSimulate() Simulation method
      * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
      */
-    public String QPE(String gateType, int lowEstimator, int highEstimator, int target) {
+    public String QPE(String gateType, int startIdxAuxQubits, int endIdxAuxQubits, int target) {
         this.X(target);
-        for (int i = 0; i <= highEstimator; i++) {
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
             this.H(i);
         }
-        for (int i = 0; i <= highEstimator; i++) {
+        for (int i = 0; i <= endIdxAuxQubits; i++) {
             for (int j = 0; j < (int) Math.pow(2, i); j++) {
                 this.CGate(gateType, i, target);
             }
         }
         this.buildCircuit();
-        this.QFTi(lowEstimator, highEstimator);
-        return getresults(this.getPeakMagnitudeValues(), (highEstimator - lowEstimator) + 1);
+        this.QFTi(startIdxAuxQubits, endIdxAuxQubits);
+        return getResults(this.getPeakMagnitudeValues(), (endIdxAuxQubits - startIdxAuxQubits) + 1);
     }
 
-    private String getresults(Map<String, Double> result, int estimationCount) {
+    private String getResults(Map<String, Double> result, int estimationCount) {
         StringBuilder sb = new StringBuilder("Two Highest Magnitude phases:\n");
         DecimalFormat df = new DecimalFormat("0.000");
 
