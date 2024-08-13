@@ -9,31 +9,21 @@ import java.util.concurrent.Future;
 import static supportClasses.GreekEnums.PSI;
 
 /**
- * ComplexMath provides a comprehensive set of operations for complex number arithmetic
- * and linear algebra operations on sparse matrices.
+ * Provides utility methods for complex number arithmetic and linear algebra operations on sparse matrices.
+ * This class is optimized for quantum computing simulations and other applications involving complex numbers
+ * and sparse matrices.
  *
- * <p>This class serves as a central repository for various mathematical operations
- * used in quantum computing simulations and other applications involving complex
- * numbers and sparse matrices. It includes methods for matrix multiplication,
- * tensor products, and other linear algebra operations optimized for sparse
- * representations.</p>
- *
- * <p>Key features include:
+ * <p>Key features:
  * <ul>
  *   <li>Efficient sparse matrix operations using Compressed Sparse Column (CSC) format</li>
  *   <li>Sequential and parallel implementations of matrix operations</li>
  *   <li>Specialized methods for quantum computing operations (e.g., outer products, Dirac notation)</li>
  *   <li>Utility methods for complex number arithmetic and representation</li>
  * </ul>
- * </p>
  *
  * <p>The class uses a threshold ({@code SINGLE_THREAD_THRESHOLD}) to decide between
- * single-threaded and multi-threaded operations. However, as of the current version,
- * multi-threaded functionality is disabled in tensor multiply and complex multiply
- * methods due to the threaded overhead outweighing performance gains in typical use cases.</p>
- *
- * <p>This class is designed to work with the {@link ComplexSparse} class for sparse
- * matrix representations and the {@link ComplexNumber} class for individual complex numbers.</p>
+ * single-threaded and multi-threaded operations. Multi-threaded functionality is currently
+ * disabled in some methods due to performance considerations.</p>
  *
  * @author Robert Smith
  * @version 0.5
@@ -49,13 +39,14 @@ public final class ComplexMath {
     public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
 
     /**
-     * Computes the tensor product of two matrices using Gustavson's algorithm for sparse matrices.
-     * This method is optimized for sparse matrices and uses parallel computation for large matrices.
+     * Computes the tensor product of two sparse matrices.
+     * This method chooses between sequential and parallel implementations based on matrix size.
+     * The tensor product, also known as the Kronecker product, is a way of putting two matrices together
+     * to form a larger matrix with a special structure.
      *
      * @param leftMatrix  The first {@link ComplexSparse} matrix.
      * @param rightMatrix The second {@link ComplexSparse} matrix.
-     * @return A new {@link ComplexSparse} object that is the result of the tensor product.
-     * @see ComplexSparse
+     * @return A new {@link ComplexSparse} object representing the tensor product.
      */
     public static ComplexSparse tensorMultiply(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         int leftHeight = leftMatrix.getHeight();
@@ -72,23 +63,13 @@ public final class ComplexMath {
 
     /**
      * Multiplies two sparse matrices, choosing the appropriate multiplication method based on the matrices' dimensions.
-     * This method serves as a dispatcher to select between vector multiplication and general matrix multiplication.
+     * This method serves as a dispatcher, selecting between vector multiplication and general matrix multiplication.
+     * It optimizes the computation based on whether the right matrix is a column vector.
      *
-     * @param leftMatrix The left sparse matrix in the multiplication.
+     * @param leftMatrix  The left sparse matrix in the multiplication.
      * @param rightMatrix The right sparse matrix in the multiplication.
      * @return A new {@link ComplexSparse} object representing the result of the matrix multiplication.
-     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
-     * Current behavior:
-     * - If the right matrix is a column vector (width == 1), it uses sequential vector multiplication.
-     * - For all other cases, it uses sequential matrix multiplication.
-     * Note: Parallel multiplication methods are currently disabled (commented out).
-     * When uncommented, the method would choose between parallel and sequential methods
-     * based on the matrix dimensions and a threshold (SINGLE_THREAD_THRESHOLD).
-     *
-     * @see #multiplyMatrixVectorSequential(ComplexSparse, ComplexSparse)
-     * @see #multiplyMatrixSequential(ComplexSparse, ComplexSparse)
-     * @see #multiplyMatrixVectorParallel(ComplexSparse, ComplexSparse)
-     * @see #multiplyMatrixParallel(ComplexSparse, ComplexSparse)
+     * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication.
      */
     public static ComplexSparse multiplyMatrix(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight()) {
@@ -113,22 +94,13 @@ public final class ComplexMath {
     }
 
     /**
-     * Performs parallel tensor multiplication of two sparse matrices.
-     * This method implements the tensor product algorithm for sparse matrices
-     * using parallel execution, suitable for larger matrices where parallelization
-     * can provide significant performance benefits.
-     *
-     * <p>The method divides the computation into blocks and processes them in parallel
-     * using multiple threads. This can lead to improved performance on multi-core systems
-     * for large matrices.</p>
+     * Performs sequential tensor multiplication of two sparse matrices.
+     * This method implements the tensor product algorithm for sparse matrices using a single thread.
+     * It's optimized for memory usage and performance on smaller matrices.
      *
      * @param leftMatrix  The first {@link ComplexSparse} matrix in the tensor product.
      * @param rightMatrix The second {@link ComplexSparse} matrix in the tensor product.
-     * @return A new {@link ComplexSparse} matrix representing the tensor product of A and B.
-     * @throws RuntimeException if an error occurs during parallel execution
-     * @see ComplexSparse
-     * @see #tensorMultiply(ComplexSparse, ComplexSparse)
-     * @see #tensorMultiplySequential(ComplexSparse, ComplexSparse)
+     * @return A new {@link ComplexSparse} matrix representing the tensor product of leftMatrix and rightMatrix.
      */
     private static ComplexSparse tensorMultiplySequential(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         int leftHeight = leftMatrix.getHeight();
@@ -208,29 +180,13 @@ public final class ComplexMath {
 
     /**
      * Performs parallel tensor multiplication of two sparse matrices.
-     * This method implements the tensor product algorithm for sparse matrices
-     * using parallel execution, suitable for larger matrices where parallelization
-     * can provide significant performance benefits.
-     * The method uses the following strategy:
-     * 1. Divides the left matrix columns among available threads.
-     * 2. Each thread computes its portion of the tensor product.
-     * 3. Results are combined into the final result matrix using synchronized batched updates.
+     * This method implements the tensor product algorithm for sparse matrices using multiple threads.
+     * It divides the computation into blocks and processes them in parallel, suitable for larger matrices.
      *
-     * @param leftMatrix The first {@link ComplexSparse} matrix in the tensor product.
+     * @param leftMatrix  The first {@link ComplexSparse} matrix in the tensor product.
      * @param rightMatrix The second {@link ComplexSparse} matrix in the tensor product.
      * @return A new {@link ComplexSparse} matrix representing the tensor product of leftMatrix and rightMatrix.
      * @throws RuntimeException if an error occurs during parallel execution.
-     * Performance characteristics:
-     * - Uses a buffer of size 1000 for batched updates to reduce synchronization overhead.
-     * - Performs primitive operations for complex number multiplication to avoid object creation.
-     * - Only stores non-zero results to maintain sparsity.
-     * - Handles floating-point errors by setting very small values (less than EPSILON) to zero.
-     * Note: The effectiveness of parallelization depends on the size and sparsity of the input matrices.
-     * For small or very sparse matrices, the sequential version might be more efficient.
-     *
-     * @see ComplexSparse
-     * @see #tensorMultiply(ComplexSparse, ComplexSparse)
-     * @see #tensorMultiplySequential(ComplexSparse, ComplexSparse)
      */
     private static ComplexSparse tensorMultiplyParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         int leftHeight = leftMatrix.getHeight();
@@ -334,7 +290,8 @@ public final class ComplexMath {
     /**
      * Performs sequential multiplication of a sparse matrix with a sparse column vector.
      * This method is optimized for the case where the right matrix is a column vector,
-     * which is common in quantum computing operations.
+     * which is common in quantum computing operations. It uses a temporary dense vector
+     * to accumulate results efficiently.
      *
      * @param leftMatrix  The sparse matrix to be multiplied.
      * @param rightMatrix The sparse column vector to be multiplied.
@@ -392,8 +349,9 @@ public final class ComplexMath {
     /**
      * Performs sequential multiplication of two sparse matrices.
      * This method is optimized for sparse matrices using Compressed Sparse Column (CSC) format.
+     * It uses a temporary dense vector to accumulate results for each column of the result matrix.
      *
-     * @param leftMatrix The first sparse matrix to be multiplied.
+     * @param leftMatrix  The first sparse matrix to be multiplied.
      * @param rightMatrix The second sparse matrix to be multiplied.
      * @return A new {@code ComplexSparse} object representing the result of the multiplication.
      * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication.
@@ -452,13 +410,15 @@ public final class ComplexMath {
 
     /**
      * Performs parallel multiplication of a sparse matrix with a sparse column vector.
-     * This method is optimized for parallel execution, suitable for large matrices.
+     * This method divides the rows of the left matrix among available threads for parallel computation.
+     * It's optimized for large matrices where parallelization can provide significant performance benefits.
      *
-     * @param leftMatrix The sparse matrix to be multiplied.
+     * @param leftMatrix  The sparse matrix to be multiplied.
      * @param rightMatrix The sparse column vector to be multiplied.
      * @return A new {@code ComplexSparse} object representing the result of the multiplication.
      * @throws IllegalArgumentException If the dimensions of the matrices do not match for multiplication
      *                                  or if the right matrix is not a column vector.
+     * @throws RuntimeException         If an error occurs during parallel execution.
      */
     private static ComplexSparse multiplyMatrixVectorParallel(ComplexSparse leftMatrix, ComplexSparse rightMatrix) {
         if (leftMatrix.getWidth() != rightMatrix.getHeight() || rightMatrix.getWidth() != 1) {
@@ -513,13 +473,10 @@ public final class ComplexMath {
 
     /**
      * Performs parallel multiplication of two sparse matrices.
-     * This method divides the work among multiple threads for improved performance on large matrices.
-     * The method uses the following strategy:
-     * 1. Divides the right matrix columns among available threads.
-     * 2. Each thread computes a partial result for its assigned columns.
-     * 3. Partial results are combined into the final result matrix.
+     * This method divides the columns of the right matrix among available threads for parallel computation.
+     * Each thread computes a partial result, which is then combined into the final result matrix.
      *
-     * @param leftMatrix The first sparse matrix to be multiplied.
+     * @param leftMatrix  The first sparse matrix to be multiplied.
      * @param rightMatrix The second sparse matrix to be multiplied.
      * @return A new {@code ComplexSparse} object representing the result of the multiplication.
      * @throws RuntimeException If an error occurs during parallel execution.
@@ -607,9 +564,11 @@ public final class ComplexMath {
     }
 
     /**
-     * Checks passed number to be "essentially zero", and returns true if it is.
-     * @param value the ComplexNumber to check
-     * @return true if essentially zero, false otherwise
+     * Checks if a complex number is essentially zero.
+     * This method uses a small epsilon value to account for floating-point precision issues.
+     *
+     * @param value The ComplexNumber to check.
+     * @return true if both the real and imaginary parts of the complex number are smaller than EPSILON, false otherwise.
      */
     public static boolean isZero(ComplexNumber value) {
         final double EPSILON = 1e-10;
@@ -618,10 +577,11 @@ public final class ComplexMath {
 
     /**
      * Adds two matrices and returns the result as a new sparse matrix.
+     * This method performs element-wise addition of the two input matrices.
      *
      * @param matrixOne The first matrix.
      * @param matrixTwo The second matrix.
-     * @return A new {ComplexSparse} object that is the result of the matrix addition.
+     * @return A new {@link ComplexSparse} object that is the result of the matrix addition.
      * @throws IllegalArgumentException If the matrices have different dimensions.
      */
     public static ComplexSparse addMatrix(ComplexSparse matrixOne, ComplexSparse matrixTwo) {
@@ -642,7 +602,8 @@ public final class ComplexMath {
 
     /**
      * Multiplies two complex numbers.
-     * If the result came back as 0.9999999999999998 it is changed to 1.0
+     * This method performs the standard complex number multiplication: (a+bi)(c+di) = (ac-bd) + (ad+bc)i.
+     * It also includes a check for floating-point error buildup, correcting values very close to 1 or -1.
      *
      * @param aVec The first complex number.
      * @param bVec The second complex number.
@@ -660,9 +621,10 @@ public final class ComplexMath {
      * calculations that should result in exactly 1 or -1 end up slightly off due to
      * accumulated rounding errors. It rounds values extremely close to 1 or -1
      * to exactly 1 or -1, respectively.
+     *
      * @param number The double value to check and potentially correct
      * @return The input number, or 1.0 if the input is between 0.9999999 and 1.0,
-     *         or -1.0 if the input is between -1.0 and -0.9999999
+     * or -1.0 if the input is between -1.0 and -0.9999999
      */
     private static double testResultForFloatErrorBuildup(double number) {
         if (number > 0.999999999 && number < 1.0) {
@@ -676,6 +638,8 @@ public final class ComplexMath {
 
     /**
      * Adds two complex numbers.
+     * This method performs element-wise addition of the real and imaginary parts.
+     * It also includes a check for floating-point error buildup, correcting values very close to 1 or -1.
      *
      * @param aVec The first complex number.
      * @param bVec The second complex number.
@@ -689,6 +653,7 @@ public final class ComplexMath {
 
     /**
      * Transposes a given matrix.
+     * This method swaps the row and column indices of the matrix elements.
      *
      * @param originMatrix The matrix to transpose.
      * @return A new {@code ComplexSparse} that is the transpose of the original matrix.
@@ -717,6 +682,7 @@ public final class ComplexMath {
 
     /**
      * Computes the conjugate transpose (Hermitian transpose) of a given matrix.
+     * This method transposes the matrix and takes the complex conjugate of each element.
      *
      * @param originMatrix The matrix to compute the conjugate transpose of.
      * @return A new {@code ComplexSparse} that is the conjugate transpose of the original matrix.
@@ -744,10 +710,13 @@ public final class ComplexMath {
     }
 
     /**
-     * Interprets the system state vector into a Dirac notation representation for printing to console.
+     * Interprets the system state vector into a Dirac notation representation.
+     * This method converts a quantum state vector into the standard Dirac (bra-ket) notation used in quantum mechanics.
+     * It includes the phase and amplitude of each non-zero basis state.
      *
-     * @param stateVector the current system state vector
-     * @return A string of the dirac notation representation
+     * @param stateVector The current system state vector.
+     * @return A string of the Dirac notation representation.
+     * @throws IllegalArgumentException If the state vector is not a column vector.
      */
     public static String stateVectorToDiracNotation(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
@@ -789,10 +758,12 @@ public final class ComplexMath {
     }
 
     /**
-     * Interprets the system state vector into a Dirac notation representation for printing to console.
+     * Interprets the system state vector into a basis states representation.
+     * This method extracts the non-zero basis states from the state vector, representing them in binary notation.
      *
-     * @param stateVector the current system state vector
-     * @return A string of the dirac notation representation
+     * @param stateVector The current system state vector.
+     * @return A string of the basis states representation, with each state separated by a '$' character.
+     * @throws IllegalArgumentException If the state vector is not a column vector.
      */
     public static String stateVectorToBasisStates(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
@@ -812,6 +783,14 @@ public final class ComplexMath {
         return result.toString();
     }
 
+    /**
+     * Gets the magnitude of states from the state vector.
+     * This method calculates the probability amplitudes (magnitudes squared) of the top two basis states in the vector.
+     *
+     * @param stateVector The current system state vector.
+     * @return A map of basis states (in binary notation) to their probability amplitudes.
+     * @throws IllegalArgumentException If the state vector is not a column vector.
+     */
     public static Map<String, Double> getMagnitudeStates(ComplexSparse stateVector) {
         if (stateVector.getWidth() != 1) {
             throw new IllegalArgumentException("State vector must be a column vector");
@@ -838,10 +817,11 @@ public final class ComplexMath {
     }
 
     /**
-     * Converts the complex number to a string in a particular format for use elsewhere
+     * Converts a complex number to a string representation.
+     * This method formats the complex number as a string, handling special cases like zero real or imaginary parts.
      *
-     * @param compNum the ComplexNumber to convert
-     * @return the string in a special format
+     * @param compNum The ComplexNumber to convert.
+     * @return The string representation of the complex number, formatted to 5 decimal places.
      */
     public static String complexToString(ComplexNumber compNum) {
         if (Math.abs(compNum.getImag()) < EPSILON) {
@@ -854,10 +834,11 @@ public final class ComplexMath {
     }
 
     /**
-     * Converts the complex number to a string in a particular format for use elsewhere
+     * Converts a complex number to a string representation focusing on phase.
+     * This method is used for displaying the phase of a complex number, with special handling for near-zero values.
      *
-     * @param compNum the ComplexNumber to convert
-     * @return the string in a special format
+     * @param compNum The ComplexNumber to convert.
+     * @return The string representation of the complex number's phase, formatted to 1 decimal place.
      */
     public static String complexPhaseToString(ComplexNumber compNum) {
         double real = compNum.getReal();
@@ -875,11 +856,11 @@ public final class ComplexMath {
     }
 
     /**
-     * Gets the phase of the computational basis state by taking the atan2 of the imaginary and real
-     * values and converting it to degrees.
+     * Calculates the phase of a complex number.
+     * This method computes the angle (in degrees) that the complex number makes with the positive real axis.
      *
-     * @param amplitude the amplitude of the basis state
-     * @return the double as degrees of rotation around the Z axis from the X axis as 0.0 degrees.
+     * @param amplitude The complex number amplitude.
+     * @return The phase in degrees, ranging from -180 to 180.
      */
     public static double getPhase(ComplexNumber amplitude) {
         double decimalPhase = Math.atan2(amplitude.getImag(), amplitude.getReal());
@@ -888,6 +869,7 @@ public final class ComplexMath {
 
     /**
      * Computes the conjugate of a complex number.
+     * The conjugate of a complex number a + bi is a - bi.
      *
      * @param sampleNumber The complex number to conjugate.
      * @return The conjugated complex number.
