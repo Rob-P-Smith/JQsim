@@ -15,26 +15,23 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * This class provides the user interface for jqsim. The commands are similar to other established
- * quantum simulator libraries.
- * <br>
- * The jqs constructor is overloaded, you can provide the number of shots as the 2nd parameter if you
- * desire a different number of shots than the default of 1024.
- * <br><ul>
- * Theta values: as a double. e.g Math.PI/2 or 1.57079632679 ; both will work as the parameter when calling R gates.
- * Control values: as an integer of which qubit to use as control.
- * Target values: as an integer of which qubit to use as the target.
+ * Provides the user interface for jqsim, a quantum circuit simulator.
+ * This class allows users to construct and simulate quantum circuits with various gates and operations.
  *
- * For dual-qubit gates, just provide the int value for control and target.
- * For multi-qubit gates, provide an array of int for controls and an array of int[] as targets.
+ * <p>Key features include:
+ * <ul>
+ *   <li>Support for single-qubit, dual-qubit, and multi-qubit gates</li>
+ *   <li>Quantum circuit simulation with configurable number of shots</li>
+ *   <li>State vector manipulation and measurement</li>
+ *   <li>Implementation of Quantum Phase Estimation (QPE) and Quantum Fourier Transform (QFT)</li>
  * </ul>
- * <br>This class instantiates a StateTracker which tracks the system vector as the system state as a column vector
- * of the qubit amplitudes. It also instantiates the WorkQueue which processes the gates applied to each qubit as the
- * user defines.
+ *
+ * <p>The class uses a {@link StateTracker} to manage the quantum state vector and a {@link WorkQueue}
+ * to process gate operations. It interfaces with a {@link Backend} for simulation and measurement.
  *
  * @author Robert Smith
- * @version 0.1
- * @since 7 July 2024
+ * @version 1.0
+ * @since 11 August 2024
  */
 public class jqs {
     private int shots = 1000;
@@ -51,7 +48,7 @@ public class jqs {
             "ID", "H",
             "CZ", "CY", "CX", "CH",
             "TOF", "CXX", "CGate", "CCGate",
-            "SWAP", "ISWAP", "CSWAP", };
+            "SWAP", "ISWAP", "CSWAP",};
 
     ////////////////////////
     //   Class Required   //
@@ -67,21 +64,21 @@ public class jqs {
     }
 
     /**
-     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     * Constructs a jqs instance with a specified number of qubits.
      *
-     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
+     * @param numQubits the number of qubits to initialize in the system
      */
-    public jqs(int numQubits){
+    public jqs(int numQubits) {
         this.label = "Default";
         this.numQubits = numQubits;
         device(numQubits);
     }
 
     /**
-     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     * Constructs a jqs instance with a specified number of qubits and a label.
      *
-     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
-     * @param label the label for this jqs object, helpful in creating separate registers
+     * @param numQubits the number of qubits to initialize in the system
+     * @param label     a string label for this jqs object, useful for creating separate registers
      */
     public jqs(int numQubits, String label) {
         this.label = label;
@@ -90,10 +87,11 @@ public class jqs {
     }
 
     /**
-     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     * Constructs a jqs instance with specified number of qubits, shots, and a label.
      *
-     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
-     * @param label the label for this jqs object, helpful in creating separate registers
+     * @param numQubits the number of qubits to initialize in the system
+     * @param shots     the number of times to run the simulation
+     * @param label     a string label for this jqs object, useful for creating separate registers
      */
     public jqs(int numQubits, int shots, String label) {
         this.shots = shots;
@@ -103,9 +101,10 @@ public class jqs {
     }
 
     /**
-     * Constructor for the jqs class that takes and prepares a system using the provided number of qubits.
+     * Constructs a jqs instance with a specified number of qubits and shots.
      *
-     * @param numQubits the number of qubits you want to initialize to 0.0 real and 0.0 imaginary
+     * @param numQubits the number of qubits to initialize in the system
+     * @param shots     the number of times to run the simulation
      */
     public jqs(int numQubits, int shots) {
         this.shots = shots;
@@ -115,16 +114,17 @@ public class jqs {
 
     /**
      * Returns the number of qubits in the system.
-     * @return int as value for number of qubits.
+     *
+     * @return the number of qubits
      */
-    public int size(){
+    public int size() {
         return numQubits;
     }
 
     /**
-     * Overriden toString() to print the Dirac notation of the current state vector.
+     * Returns a string representation of the current state vector in Dirac notation.
      *
-     * @return the String representation of the current system state vector in Dirac notation.
+     * @return the Dirac notation of the current state vector
      */
     @Override
     public String toString() {
@@ -132,17 +132,20 @@ public class jqs {
     }
 
     /**
-     * Reset the system state to zeroed out column vector of the same size as initially declared, replace gate builder
-     * with new empty gate builder, and reset the workQueue to a new empty work queue.
+     * Resets the quantum system to its initial state with a new number of qubits.
+     * This method reinitializes the state vector, gate builder, and work queue.
+     *
+     * @param numQubits the new number of qubits for the reset system
      */
     public void reset(int numQubits) {
         device(numQubits);
     }
 
     /**
-     * Initializes the jqs device with the specified number of qubits and default number of shots.
+     * Initializes the jqs device with a specified number of qubits.
+     * This method sets up the state tracker, gate director, work queue, and backend.
      *
-     * @param numQubits The number of qubits for the device.
+     * @param numQubits the number of qubits for the device
      */
     public void device(int numQubits) {
         this.numQubits = numQubits;
@@ -153,10 +156,11 @@ public class jqs {
     }
 
     /**
-     * Initializes the jqs device with the specified number of qubits and number of shots.
+     * Initializes the jqs device with a specified number of qubits and shots.
+     * This method sets up the state tracker, work queue, and backend with the given parameters.
      *
-     * @param numberOfQubits The number of qubits for the device.
-     * @param numShots       The number of shots to run the simulation.
+     * @param numberOfQubits the number of qubits for the device
+     * @param numShots       the number of shots to run in simulations
      */
     public void device(int numberOfQubits, int numShots) {
         this.shots = numShots;
@@ -166,23 +170,18 @@ public class jqs {
     }
 
     /**
-     * Returns the state vector from StateTracker.
+     * Retrieves the current state vector of the quantum system.
      *
-     * @return tracker's state vector which is a 2^nqubits x 1 matrix.
+     * @return the current state vector as a ComplexSparse object
      */
     public ComplexSparse getStateVec() {
         return tracker.getStateVec();
     }
 
-    public void listGates() {
-        for (String gate : GATES) {
-            System.out.println(gate);
-        }
-    }
-
     /**
-     * Setter for the state vector to make setting it shorter from outside jqs.
-     * @param newState the state to set the tracker system vector to.
+     * Sets the state vector of the quantum system to a new state.
+     *
+     * @param newState the new state vector to set
      */
     public void setState(ComplexSparse newState) {
         tracker.setStateVec(newState);
@@ -192,11 +191,12 @@ public class jqs {
     // Single Qubit Gates //
     ////////////////////////
 
-    /** Applies the measureQubit function to the target qubit by adding it to the workQueue instead of measuring is immediately.
+    /**
+     * Applies the measureQubit function to the target qubit by adding it to the workQueue instead of measuring is immediately.
      *
      * @param target the target qubit to measure
      */
-    public void M(int target){
+    public void M(int target) {
         measureQubit(target);
     }
 
@@ -405,7 +405,7 @@ public class jqs {
      * Applies the SWAP gate with the specified control and target qubits.
      *
      * @param bitOne The first qubit.
-     * @param bitTwo  The second qubit.
+     * @param bitTwo The second qubit.
      */
     public void SWAP(int bitOne, int bitTwo) {
         workQueue.addGate("SWAP", bitOne, bitTwo);
@@ -424,9 +424,9 @@ public class jqs {
     /**
      * Applies the CSWAP (controlled SWAP) gate with the specified control and target qubits.
      *
-     * @param control The control qubit.
-     * @param targetOne  The target qubit.
-     * @param targetTwo  The second target qubit.
+     * @param control   The control qubit.
+     * @param targetOne The target qubit.
+     * @param targetTwo The second target qubit.
      */
     public void CSWAP(int control, int targetOne, int targetTwo) {
         workQueue.addGate("CSWAP", control, targetOne, targetTwo);
@@ -435,9 +435,9 @@ public class jqs {
     /**
      * Applies the CSWAP (controlled SWAP) gate with the specified control and target qubits.
      *
-     * @param control The control qubit.
-     * @param targetOne  The target qubit.
-     * @param targetTwo  The second target qubit.
+     * @param control   The control qubit.
+     * @param targetOne The target qubit.
+     * @param targetTwo The second target qubit.
      */
     public void Fredkin(int control, int targetOne, int targetTwo) {
         workQueue.addGate("CSWAP", control, targetOne, targetTwo);
@@ -453,7 +453,7 @@ public class jqs {
      * @param target  The target qubit.
      */
     public void CGate(String gate, int control, int target) {
-        workQueue.addGate(new WorkItem("C"+gate, control, target));
+        workQueue.addGate(new WorkItem("C" + gate, control, target));
     }
 
     ///////////////////////
@@ -494,10 +494,10 @@ public class jqs {
      * @param gate    The name of the controlled gate.
      * @param control The control qubit.
      * @param target  The target qubit.
-     * @param theta the rotation to apply as a double.
+     * @param theta   the rotation to apply as a double.
      */
     public void CGate(String gate, int control, int target, double theta) {
-        workQueue.addGate(new WorkItem("C"+gate, control, target, theta));
+        workQueue.addGate(new WorkItem("C" + gate, control, target, theta));
     }
 
     /**
@@ -569,57 +569,51 @@ public class jqs {
     /**
      * Should measure a given qubit state and give the result as 0 or 1.
      * TODO re-look this process, it is suspect
+     *
      * @param target the qubit to measure
      * @return the found result.
      */
-    public int measureQubit(int target){
+    public int measureQubit(int target) {
         return backend.measureQubit(target);
     }
 
     /**
      * Simulates the quantum circuit running shots times and collects the results and prints them out.
      */
-    public Map<String, String> simulate(){
+    public Map<String, String> simulate() {
         return backend.simulate();
     }
 
     /**
      * Simulates the quantum circuit running shots times and collects the results.
      */
-    public Map<String, String> silentSimulate(){
+    public Map<String, String> silentSimulate() {
         return backend.silentSimulate();
     }
 
     /**
      * Performs Quantum Phase Estimation (QPE) with a specified gate type and phase angle.
-     * This method does not print the probabilistic results, only the two most lilely
-     * phases and their percentage.
      *
-     * @param gateType      The type of quantum gate to use in the estimation.
-     * @param theta         The phase angle to estimate.
-     * @param lowEstimator  The lower bound of the estimation register.
-     * @param highEstimator The upper bound of the estimation register.
-     * @param target        The target qubit for the controlled operations.
-     * @return String       The results of the system analysis
-     * @see #QPE(String, int, int, int) QPE without theta parameter
-     * @see #QFTi(int, int) Inverse Quantum Fourier Transform
-     * @see #silentSimulate() Simulation method
-     * @see #extractAndPrintQPEResults(Map, int) Result extraction method
-     * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
+     * @param gateType the type of quantum gate to use in the estimation
+     * @param theta the phase angle to estimate
+     * @param lowEstimator the lower bound of the estimation register
+     * @param highEstimator the upper bound of the estimation register
+     * @param target the target qubit for the controlled operations
+     * @return a string containing the results of the phase estimation
      */
-    public String QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target){
+    public String QPE(String gateType, double theta, int lowEstimator, int highEstimator, int target) {
         this.X(target);
-        for(int i = 0; i <= highEstimator; i++){
+        for (int i = 0; i <= highEstimator; i++) {
             this.H(i);
         }
-        for(int i = 0; i <= highEstimator; i++){
-            for(int j = 0; j < (int)Math.pow(2,i); j++) {
+        for (int i = 0; i <= highEstimator; i++) {
+            for (int j = 0; j < (int) Math.pow(2, i); j++) {
                 this.CGate(gateType, i, target, theta);
             }
         }
         this.buildCircuit();
-        this.QFTi(lowEstimator,highEstimator);
-        return getresults(this.getPeakMagnitudeValues(), (highEstimator-lowEstimator)+1);
+        this.QFTi(lowEstimator, highEstimator);
+        return getresults(this.getPeakMagnitudeValues(), (highEstimator - lowEstimator) + 1);
     }
 
     /**
@@ -636,28 +630,26 @@ public class jqs {
      * @see #QPE(String, double, int, int, int) QPE with theta parameter
      * @see #QFTi(int, int) Inverse Quantum Fourier Transform
      * @see #silentSimulate() Simulation method
-     * @see #extractAndPrintQPEResults(Map, int) Result extraction method
      * @see <a href="https://en.wikipedia.org/wiki/Quantum_phase_estimation_algorithm">Quantum Phase Estimation Algorithm</a>
      */
-    public String QPE(String gateType, int lowEstimator, int highEstimator, int target){
+    public String QPE(String gateType, int lowEstimator, int highEstimator, int target) {
         this.X(target);
-        for(int i = 0; i <= highEstimator; i++){
+        for (int i = 0; i <= highEstimator; i++) {
             this.H(i);
         }
-        for(int i = 0; i <= highEstimator; i++){
-            for(int j = 0; j < (int)Math.pow(2,i); j++) {
+        for (int i = 0; i <= highEstimator; i++) {
+            for (int j = 0; j < (int) Math.pow(2, i); j++) {
                 this.CGate(gateType, i, target);
             }
         }
         this.buildCircuit();
-        this.QFTi(lowEstimator,highEstimator);
-        return getresults(this.getPeakMagnitudeValues(), (highEstimator-lowEstimator)+1);
+        this.QFTi(lowEstimator, highEstimator);
+        return getresults(this.getPeakMagnitudeValues(), (highEstimator - lowEstimator) + 1);
     }
 
     private String getresults(Map<String, Double> result, int estimationCount) {
         StringBuilder sb = new StringBuilder("Two Highest Magnitude phases:\n");
         DecimalFormat df = new DecimalFormat("0.000");
-
 
 
         for (int i = 0; i < 2 && !result.isEmpty(); i++) {
@@ -680,32 +672,9 @@ public class jqs {
     }
 
     /**
-     * Extracts and prints the results of the Quantum Phase Estimation.
-     *
-     * @param result          A map containing the simulation results.
-     * @param estimationCount The number of qubits used for estimation.
-     */
-    private void extractAndPrintQPEResults(Map<String, Double> result, int estimationCount) {
-        System.out.println("\nTwo Highest Magnitude phases:");
-        DecimalFormat df = new DecimalFormat("0.00000");
-
-        for (int i = 0; i < 2 && !result.isEmpty(); i++) {
-            Map.Entry<String, Double> maxEntry = Collections.max(result.entrySet(), Map.Entry.comparingByValue());
-            int decimalValue = Integer.parseInt(maxEntry.getKey(), 2);
-            double phase = (double) decimalValue / Math.pow(2, estimationCount);
-
-            System.out.printf("0%s: %s%%\n",
-                    df.format(phase).substring(1),
-                    df.format(maxEntry.getValue() * 100));
-
-            result.remove(maxEntry.getKey());
-        }
-    }
-
-    /**
      * Conduct QFT on the system
      */
-    public void QFT(){
+    public void QFT() {
         QFTBuilder qft = new QFTBuilder(gd);
         qft.applyQFT();
     }
@@ -713,7 +682,7 @@ public class jqs {
     /**
      * Conduct QFTi on the system
      */
-    public void QFTi(){
+    public void QFTi() {
         QFTBuilder qft = new QFTBuilder(gd);
         qft.applyQFTi();
     }
@@ -721,7 +690,7 @@ public class jqs {
     /**
      * Conduct QFTi on the system in a range of startQubit to endQubit, where start and end are inclusive.
      */
-    public void QFTi(int startQubit, int endQubit){
+    public void QFTi(int startQubit, int endQubit) {
         QFTBuilder qft = new QFTBuilder(gd);
         qft.applyQFTi(startQubit, endQubit);
     }
