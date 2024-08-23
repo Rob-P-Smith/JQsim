@@ -9,7 +9,7 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 12;
+    private static int maxQubits = 14;
     private static int runsCount = 2;
 
     /**
@@ -59,9 +59,8 @@ public class Sandbox {
                     }
                     int count = runsCount == 1 ? runsCount : runsCount - 1;
                     double averageTimeSeconds = ((double) totalRunsTime / count) / 1_000_000_000.0;
-                    System.out.printf("Average execution time using Sparse: %.2f seconds%n", averageTimeSeconds);
+                    System.out.printf("Average execution time using Sparse: %.5f seconds%n", averageTimeSeconds);
                 }
-
             }
             case "QFT" -> {
                 for (int qubits = 3; qubits <= maxQubits; qubits++) {

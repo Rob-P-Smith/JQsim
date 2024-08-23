@@ -35,7 +35,7 @@ public final class ComplexMath {
      * Threshold for matrix height below which single-threaded execution is used.
      * Matrices with height less than or equal to this value will use single-threaded multiplication.
      */
-    private static final int SINGLE_THREAD_THRESHOLD = 16384;
+    private static final int SINGLE_THREAD_THRESHOLD = 8192;
     public static int NUM_THREADS = Runtime.getRuntime().availableProcessors() / 2;
 
     /**
@@ -82,11 +82,11 @@ public final class ComplexMath {
             return multiplyMatrixSequential(leftMatrix, rightMatrix);
         }
 
-//        if (rightMatrix.getWidth() == 1 && height >= SINGLE_THREAD_THRESHOLD) {
+//        if (rightMatrix.getWidth() == 1 && rightMatrix.getHeight() >= SINGLE_THREAD_THRESHOLD) {
 //            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
 //        } else if (rightMatrix.getWidth() == 1) {
 //            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-//        } else if (height >= SINGLE_THREAD_THRESHOLD) {
+//        } else if (rightMatrix.getHeight() >= SINGLE_THREAD_THRESHOLD) {
 //            return multiplyMatrixParallel(leftMatrix, rightMatrix);
 //        } else {
 //            return multiplyMatrixSequential(leftMatrix, rightMatrix);
