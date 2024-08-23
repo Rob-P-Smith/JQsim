@@ -173,57 +173,98 @@ public final class ComplexSparse {
         lock.writeLock().lock();
         try {
             int start = colPointers.get(col);
-            int end = colPointers.get(col + 1) - 1;
-            int pos = start;
+            int end = colPointers.get(col + 1);
+            int insertionPoint = start;
 
-            // Linear search for small ranges, binary search for larger ones
-            if (end - start > 8) {
-                // Binary search
-                while (start <= end) {
-                    pos = (start + end) >>> 1;
-                    int rowAtPos = rowIndices.get(pos);
-                    if (rowAtPos < row) {
-                        start = pos + 1;
-                    } else if (rowAtPos > row) {
-                        end = pos - 1;
-                    } else {
-                        break;
-                    }
-                }
-                if (rowIndices.get(pos) < row) {
-                    pos++;
-                }
-            } else {
-                // Linear search
-                while (pos <= end && rowIndices.get(pos) < row) {
-                    pos++;
-                }
+            // Find the insertion point
+            while (insertionPoint < end && rowIndices.get(insertionPoint) < row) {
+                insertionPoint++;
             }
 
-            double realNum = value.getReal();
-            double imagNum = value.getImag();
-
-            if (pos < colPointers.get(col + 1) && rowIndices.get(pos) == row) {
+            if (insertionPoint < end && rowIndices.get(insertionPoint) == row) {
                 // Update existing value
                 if (ComplexMath.isZero(value)) {
-                    values.remove(pos);
-                    rowIndices.remove(pos);
-                    updateColPointers(col + 1, -1);
+                    // Remove the element if the new value is zero
+                    values.remove(insertionPoint);
+                    rowIndices.remove(insertionPoint);
+                    for (int i = col + 1; i < colPointers.size(); i++) {
+                        colPointers.set(i, colPointers.get(i) - 1);
+                    }
                 } else {
-                    // Create a new ComplexNumber object instead of directly assigning the value
-                    values.set(pos, new ComplexNumber(realNum, imagNum));
+                    // Update the value
+                    values.set(insertionPoint, new ComplexNumber(value.getReal(), value.getImag()));
                 }
             } else if (!ComplexMath.isZero(value)) {
                 // Insert new non-zero value
-                // Create a new ComplexNumber object instead of directly inserting the value
-                values.add(pos, new ComplexNumber(realNum, imagNum));
-                rowIndices.add(pos, row);
-                updateColPointers(col + 1, 1);
+                values.add(insertionPoint, new ComplexNumber(value.getReal(), value.getImag()));
+                rowIndices.add(insertionPoint, row);
+                for (int i = col + 1; i < colPointers.size(); i++) {
+                    colPointers.set(i, colPointers.get(i) + 1);
+                }
             }
         } finally {
             lock.writeLock().unlock();
         }
     }
+//    public void put(int row, int col, ComplexNumber value) {
+//        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+//            throw new IndexOutOfBoundsException("Invalid matrix indices");
+//        }
+//
+//        lock.writeLock().lock();
+//        try {
+//            int start = colPointers.get(col);
+//            int end = colPointers.get(col + 1) - 1;
+//            int pos = start;
+//
+//            // Linear search for small ranges, binary search for larger ones
+//            if (end - start > 8) {
+//                // Binary search
+//                while (start <= end) {
+//                    pos = (start + end) >>> 1;
+//                    int rowAtPos = rowIndices.get(pos);
+//                    if (rowAtPos < row) {
+//                        start = pos + 1;
+//                    } else if (rowAtPos > row) {
+//                        end = pos - 1;
+//                    } else {
+//                        break;
+//                    }
+//                }
+//                if (rowIndices.get(pos) < row) {
+//                    pos++;
+//                }
+//            } else {
+//                // Linear search
+//                while (pos <= end && rowIndices.get(pos) < row) {
+//                    pos++;
+//                }
+//            }
+//
+//            double realNum = value.getReal();
+//            double imagNum = value.getImag();
+//
+//            if (pos < colPointers.get(col + 1) && rowIndices.get(pos) == row) {
+//                // Update existing value
+//                if (ComplexMath.isZero(value)) {
+//                    values.remove(pos);
+//                    rowIndices.remove(pos);
+//                    updateColPointers(col + 1, -1);
+//                } else {
+//                    // Create a new ComplexNumber object instead of directly assigning the value
+//                    values.set(pos, new ComplexNumber(realNum, imagNum));
+//                }
+//            } else if (!ComplexMath.isZero(value)) {
+//                // Insert new non-zero value
+//                // Create a new ComplexNumber object instead of directly inserting the value
+//                values.add(pos, new ComplexNumber(realNum, imagNum));
+//                rowIndices.add(pos, row);
+//                updateColPointers(col + 1, 1);
+//            }
+//        } finally {
+//            lock.writeLock().unlock();
+//        }
+//    }
 
     /**
      * Retrieves the value at the specified position in the matrix.

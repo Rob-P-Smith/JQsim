@@ -9,8 +9,8 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 13;
-    private static int runsCount = 3;
+    private static int maxQubits = 12;
+    private static int runsCount = 2;
 
     /**
      * Main method for testing out quantum circuits while building the simulator.
@@ -18,13 +18,13 @@ public class Sandbox {
      * @param args none needed or accounted for.
      */
     public static void main(String[] args) {
-        jqs jqs = new jqs(6);
-        jqs.X(5);
-        jqs.buildCircuit();
-        String result = jqs.QPE("R1",2*Math.PI/5, 0, 4,5);
-        System.out.println(result);
+//        jqs jqs = new jqs(6);
+//        jqs.X(5);
+//        jqs.buildCircuit();
+//        String result = jqs.QPE("R1",2*Math.PI/5, 0, 4,5);
+//        System.out.println(result);
 
-//        benchmark("Basic");
+        benchmark("Basic");
     }
 
     /**
@@ -48,7 +48,7 @@ public class Sandbox {
 
                         long endTime = System.nanoTime();
                         double runTimeSeconds = (endTime - startTime) / 1_000_000_000.0;
-                        System.out.printf("Run Time: %.2f seconds%n", runTimeSeconds);
+                        System.out.printf("Run Time: %.5f seconds%n", runTimeSeconds);
                         if (runsCount > 1) {
                             if (r > 0) {
                                 totalRunsTime += (endTime - startTime);

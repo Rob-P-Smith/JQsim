@@ -651,21 +651,26 @@ public class QuantumBehaviorTests {
     @Test
     public void quantumProbabilityEstimationTests(){
         jqs qsk = new jqs(8);
+        qsk.X(7);
         assertEquals("Two Highest Magnitude phases:\n" +
                 "0001011, 0.086: 68.393%\n" +
                 "0001010, 0.078: 17.099%\n", qsk.QPE("R1", 5*Math.PI/30, 0,6, 7));
         qsk = new jqs(4);
+        qsk.X(3);
         assertEquals("Two Highest Magnitude phases:\n" +
                 "011, 0.375: 93.562%\n" +
                 "010, 0.250: 2.697%\n", qsk.QPE("R1", 5*Math.PI/7, 0,2, 3));
         qsk = new jqs(4);
+        qsk.X(3);
         assertEquals("Two Highest Magnitude phases:\n" +
                 "010, 0.250: 100.000%\n", qsk.QPE("R1", 2*Math.PI/4, 0,2, 3));
         qsk = new jqs(5);
+        qsk.X(4);
         assertEquals("Two Highest Magnitude phases:\n" +
                 "0001, 0.062: 68.490%\n" +
                 "0010, 0.125: 17.196%\n", qsk.QPE("R1", 5*Math.PI/30, 0,3, 4));
         qsk = new jqs(6);
+        qsk.X(5);
         assertEquals("Two Highest Magnitude phases:\n" +
                 "10001, 0.531: 81.786%\n" +
                 "10000, 0.500: 8.611%\n", qsk.QPE("R1", Math.PI*Math.PI/3, 0,4, 5));

@@ -113,17 +113,8 @@ public final class ComplexMath {
         // Initialize result matrix
         ComplexSparse result = new ComplexSparse(resultHeight, resultWidth);
 
-        final int bufferSize = 50;
-
-        // Buffers for batched puts
-        int[] rowBuffer = new int[bufferSize];
-        int[] colBuffer = new int[bufferSize];
-        ComplexNumber[] valueBuffer = new ComplexNumber[bufferSize];
-        int bufferIndex = 0;
-
-        // Temporary storage for complex multiplication
-        double[] tempReal = new double[1];
-        double[] tempImag = new double[1];
+        double tempReal = 0.0;
+        double tempImag = 0.0;
 
         // Single loop over non-zero elements of left matrix
         for (int leftCol = 0; leftCol < leftWidth; leftCol++) {
@@ -142,39 +133,20 @@ public final class ComplexMath {
                         int resultCol = leftCol * rightWidth + rightCol;
 
                         // Multiply complex numbers using primitive operations
-                        tempReal[0] = leftValue.getReal() * rightValue.getReal() - leftValue.getImag() * rightValue.getImag();
-                        tempImag[0] = leftValue.getReal() * rightValue.getImag() + leftValue.getImag() * rightValue.getReal();
+                        tempReal = leftValue.getReal() * rightValue.getReal() - leftValue.getImag() * rightValue.getImag();
+                        tempImag = leftValue.getReal() * rightValue.getImag() + leftValue.getImag() * rightValue.getReal();
 
                         // Handle floating-point errors
-                        if (Math.abs(tempReal[0]) < EPSILON) tempReal[0] = 0;
-                        if (Math.abs(tempImag[0]) < EPSILON) tempImag[0] = 0;
+                        if (Math.abs(tempReal) < EPSILON) tempReal = 0;
+                        if (Math.abs(tempImag) < EPSILON) tempImag = 0;
 
-                        // Only add non-zero results
-                        if (tempReal[0] != 0 || tempImag[0] != 0) {
-                            // Add to buffer
-                            rowBuffer[bufferIndex] = resultRow;
-                            colBuffer[bufferIndex] = resultCol;
-                            valueBuffer[bufferIndex] = new ComplexNumber(tempReal[0], tempImag[0]);
-                            bufferIndex++;
-
-                            // If buffer is full, perform batched put
-                            if (bufferIndex >= bufferSize) {
-                                for (int i = 0; i < bufferSize; i++) {
-                                    result.put(rowBuffer[i], colBuffer[i], valueBuffer[i]);
-                                }
-                                bufferIndex = 0;
-                            }
+                        if (tempReal != 0 || tempImag != 0) {
+                            result.put(resultRow, resultCol, new ComplexNumber(tempReal, tempImag));
                         }
                     }
                 }
             }
         }
-
-        // Perform final batched put for any remaining items in the buffer
-        for (int i = 0; i < bufferIndex; i++) {
-            result.put(rowBuffer[i], colBuffer[i], valueBuffer[i]);
-        }
-
         return result;
     }
 
@@ -375,7 +347,7 @@ public final class ComplexMath {
         int[] nnzTracker = new int[leftHeight];
         int nnzTrackerIndex = 0;
 
-        // For each column j of B
+        // For each column j of rightWidth
         for (int j = 0; j < rightWidth; j++) {
             // For each non-zero element in column j of B
             for (int pb = rightMatrix.getColPointers().get(j); pb < rightMatrix.getColPointers().get(j + 1); pb++) {
@@ -399,7 +371,7 @@ public final class ComplexMath {
                 int i = nnzTracker[s];
                 if (!isZero(dense[i])) {
                     resultMatrix.put(i, j, dense[i]);
-                    dense[i] = new ComplexNumber(0, 0);  // Reset for next iteration
+//                    dense[i] = new ComplexNumber(0, 0);  // Reset for next iteration
                 }
             }
             nnzTrackerIndex = 0;  // Reset for next column
