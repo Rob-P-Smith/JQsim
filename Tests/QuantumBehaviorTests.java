@@ -649,7 +649,7 @@ public class QuantumBehaviorTests {
     }
 
     @Test
-    public void quantumProbabilityEstimationTests(){
+    public void quantumPhaseEstimationTests(){
         jqs qsk = new jqs(8);
         qsk.X(7);
         assertEquals("Two Highest Magnitude phases:\n" +

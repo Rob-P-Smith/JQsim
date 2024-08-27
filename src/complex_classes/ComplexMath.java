@@ -76,11 +76,19 @@ public final class ComplexMath {
             throw new IllegalArgumentException("Matrix dimensions do not match for multiplication.");
         }
 
-        if (rightMatrix.getWidth() == 1) {
-            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
-        } else {
-            return multiplyMatrixSequential(leftMatrix, rightMatrix);
-        }
+                    return multiplyMatrixSequential(leftMatrix, rightMatrix);
+
+//        if (rightMatrix.getWidth() == 1) {
+//            return multiplyMatrixVectorSequential(leftMatrix, rightMatrix);
+//        } else {
+//            return multiplyMatrixSequential(leftMatrix, rightMatrix);
+//        }
+
+//        if (rightMatrix.getWidth() == 1) {
+//            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);
+//        } else {
+//            return multiplyMatrixParallel(leftMatrix, rightMatrix);
+//        }
 
 //        if (rightMatrix.getWidth() == 1 && rightMatrix.getHeight() >= SINGLE_THREAD_THRESHOLD) {
 //            return multiplyMatrixVectorParallel(leftMatrix, rightMatrix);

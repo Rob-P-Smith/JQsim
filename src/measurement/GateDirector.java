@@ -87,9 +87,11 @@ public class GateDirector {
      * @return The SparseMatrix representing the operator.
      */
     private static ComplexSparse decodeOperator(WorkItem work) {
+
         ComplexSparse singleOperator = null;
         String worker = work.getOperator();
-        switch (worker) {
+        switch (worker)
+        {
             case ("X"), ("CX"), ("CXX"), ("TOFFOLI") -> singleOperator = PAULI_X.getMatrix();
             case ("Y"), ("CY") -> singleOperator = PAULI_Y.getMatrix();
             case ("Z"), ("CZ") -> singleOperator = PAULI_Z.getMatrix();

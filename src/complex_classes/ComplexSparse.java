@@ -172,9 +172,8 @@ public final class ComplexSparse {
 
         lock.writeLock().lock();
         try {
-            int start = colPointers.get(col);
+            int insertionPoint = colPointers.get(col);
             int end = colPointers.get(col + 1);
-            int insertionPoint = start;
 
             // Find the insertion point
             while (insertionPoint < end && rowIndices.get(insertionPoint) < row) {
@@ -183,21 +182,19 @@ public final class ComplexSparse {
 
             if (insertionPoint < end && rowIndices.get(insertionPoint) == row) {
                 // Update existing value
-                if (ComplexMath.isZero(value)) {
-                    // Remove the element if the new value is zero
-                    values.remove(insertionPoint);
-                    rowIndices.remove(insertionPoint);
-                    for (int i = col + 1; i < colPointers.size(); i++) {
-                        colPointers.set(i, colPointers.get(i) - 1);
-                    }
-                } else {
+//                if (ComplexMath.isZero(value)) {
+//                    // Remove the element if the new value is zero
+//                    values.remove(insertionPoint);
+//                    rowIndices.remove(insertionPoint);
+//                    for (int i = col + 1; i < colPointers.size(); i++) {
+//                        colPointers.set(i, colPointers.get(i) - 1);
+//                    }
+//                } else {
                     // Update the value
-//                    values.set(insertionPoint, new ComplexNumber(value.getReal(), value.getImag()));
                     values.set(insertionPoint, value);
-                }
+//                }
             } else if (!ComplexMath.isZero(value)) {
                 // Insert new non-zero value
-//                values.add(insertionPoint, new ComplexNumber(value.getReal(), value.getImag()));
                 values.add(insertionPoint, value);
                 rowIndices.add(insertionPoint, row);
                 for (int i = col + 1; i < colPointers.size(); i++) {

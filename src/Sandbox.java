@@ -9,8 +9,8 @@ import interpreter.jqs;
  */
 
 public class Sandbox {
-    private static int maxQubits = 14;
-    private static int runsCount = 2;
+    private static int maxQubits = 8;
+    private static int runsCount = 1;
 
     /**
      * Main method for testing out quantum circuits while building the simulator.
@@ -24,7 +24,7 @@ public class Sandbox {
 //        String result = jqs.QPE("R1",2*Math.PI/5, 0, 4,5);
 //        System.out.println(result);
 
-        benchmark("Basic");
+        benchmark("QPE");
     }
 
     /**
@@ -35,7 +35,7 @@ public class Sandbox {
 
         switch (type) {
             case "Basic" -> {
-                for (int qubits = 2; qubits <= maxQubits; qubits++) {
+                for (int qubits = 11; qubits <= maxQubits; qubits++) {
                     System.out.println("\nTesting " + qubits + " qubits.");
                     long totalRunsTime = 0;
                     for (int r = 0; r < runsCount; r++) {
@@ -129,15 +129,16 @@ public class Sandbox {
                 }
             }
             case "QPE" -> {
-                for (int qubits = 6; qubits <= maxQubits; qubits = qubits +2) {
+                for (int qubits = 8; qubits <= maxQubits; qubits = qubits +2) {
                     long totalRunsTime = 0;
                     System.out.print("\nTesting " + qubits + " qubits.\n");
                     for (int r = 0; r < runsCount; r++) {
                         long startTime = System.nanoTime();
 
                         jqs qsk = new jqs(qubits);
-//                        String result = qsk.QPE("R1", 2*Math.PI/2, 0,qubits-2, qubits-1);
-                        String result = qsk.QPE("S", 0,qubits-2, qubits-1);
+                        qsk.X(qubits-1);
+                        String result = qsk.QPE("R1", 5*Math.PI/7, 0,qubits-2, qubits-1);
+//                        String result = qsk.QPE("S", 0,qubits-2, qubits-1);
 
 
                         long endTime = System.nanoTime();
